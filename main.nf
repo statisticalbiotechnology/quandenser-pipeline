@@ -44,7 +44,7 @@ process tide_indexing {
 process tide_perc_search {
   publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true 
   input:
-	file("*.index/*") from db_index.collect()
+	file("${seq_index_name}/*") from db_index.collect()
 	file "spec.ms2"  from spectra
   output:
 	file("crux-output/*") into id_files
