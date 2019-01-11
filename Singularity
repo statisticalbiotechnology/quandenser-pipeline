@@ -12,7 +12,7 @@ From:ubuntu:bionic-20180526
     apt-get update
     apt-get -y install git wget unzip
     apt-get -y install default-jre
-    apt-get -y install python3 python3-pip python3-numpy python3-scipy python3-matplotlib
+    DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python3-pip python3-numpy python3-scipy python3-matplotlib
     
     echo "Installling packages with pip"
     pip3 install triqler
