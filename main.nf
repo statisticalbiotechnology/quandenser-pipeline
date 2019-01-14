@@ -50,6 +50,7 @@ process tide_perc_search {
 	file("crux-output/*") into id_files
   script:
 	"""
+	echo "${seq_index_name}"
 	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T spec.ms2 *.index
 	crux percolator --top-match 1 crux-output/tide-search.txt
      	"""
@@ -65,8 +66,8 @@ process triqle {
 	file("proteins.*") into triqler_output
   script:
 	"""
-	python prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-	python -m triqler --fold_change_eval 0.8 triqler_input.tsv
+	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
+	triqler --fold_change_eval 0.8 triqler_input.tsv
      	"""  
 }
 

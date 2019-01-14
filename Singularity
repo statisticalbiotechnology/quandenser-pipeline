@@ -7,6 +7,10 @@ From:ubuntu:bionic-20180526
 %labels
    AUTHOR lukas.kall@scilifelab.se
 
+%files
+   script/percolator.py /usr/local/bin
+   script/prepare_input.py /usr/local/bin
+
 %post
     echo "Installling packages with apt-get"
     apt-get update
@@ -27,15 +31,6 @@ From:ubuntu:bionic-20180526
     unzip -uq crux-3.2.Linux.x86_64.zip
     cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
 
-    
-    mkdir scripts
-    cd scripts    
-    wget https://raw.githubusercontent.com/statisticalbiotechnology/quandenser/master/script/prepare_input.py
-    wget https://raw.githubusercontent.com/statisticalbiotechnology/quandenser/master/script/percolator.py
-    wget https://raw.githubusercontent.com/statisticalbiotechnology/quandenser/master/script/normalize_intensities.py
-    chmod a+x *
-    cp -f *.py /usr/local/bin/
-    
     echo "The post section is where you can install, and configure your container."
 
 %runscript
