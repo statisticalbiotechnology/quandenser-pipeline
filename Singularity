@@ -17,11 +17,11 @@ From:ubuntu:bionic-20180526
     apt-get -y install git wget unzip
     apt-get -y install default-jre
     DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python3-pip python3-numpy python3-scipy python3-matplotlib
-    update-alternatives  --set python /usr/bin/python3
-    update-alternatives  --set pip /usr/bin/pip3
+    ln -s /usr/bin/python3 /usr/local/bin/python
+    ln -s /usr/bin/pip3 /usr/local/bin/pip
     
     echo "Installling packages with pip"
-    pip3 install triqler
+    pip install triqler
     
     echo "Installling packages dowloaded separately"
     cd $(mktemp -d)
