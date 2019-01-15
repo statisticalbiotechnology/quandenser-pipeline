@@ -10,6 +10,7 @@ From:ubuntu:bionic-20180526
 %files
    script/percolator.py /usr/local/bin
    script/prepare_input.py /usr/local/bin
+   script/normalize_intensities.py /usr/local/bin
 
 %post
     echo "Installling packages with apt-get"
