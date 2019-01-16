@@ -75,4 +75,15 @@ Singularity successfully installed (version 2.5.2) and also nextflow has been ad
 Forked the repo quandenser-pipeline, so I will work from there instead
 
 
+### 15:15
+I'm using the scripts from the quandenser-pipeline to learn how everything is built.
+I've made some changes to the main.nf, since my files are in another directory. The script crashes at "tide_indexing", due to this error:
+
+	  /bin/bash: line 0: cd: /media/hdd/timothy/quandenser-pipeline/work/3b/7bd2182203f672f2a3b4d8efe520c4: No such file or directory
+	  /bin/bash: .command.sh: No such file or directory
+
+However, I believe the problem is my fault, due to where I have put my files and changed some parameters. 
+
+
+
 
