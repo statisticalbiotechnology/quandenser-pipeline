@@ -85,5 +85,13 @@ I've made some changes to the main.nf, since my files are in another directory. 
 However, I believe the problem is my fault, due to where I have put my files and changed some parameters. 
 
 
+### 15:30
+I found something similar on the web.
+
+https://github.com/nf-core/rnaseq/issues/29
+
+The problem might be how I installed Singularity.
+
+
 
 
