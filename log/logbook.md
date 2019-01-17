@@ -113,3 +113,27 @@ The batch file list seems to have trouble with relative paths, but when I add th
 
 Empty rows in the batch files will crash the nextflow pipeline. I'm thinking of adding a small part which checks for empty rows and removes them.
 
+
+### 14:20
+I'm thinking of monitoring the RAM usage for different sizes of mzML. Perhaps it would be beneficial to know the usage requirements for quandenser. I made a quick python script that monitors the ram and outputs a csv file
+
+
+### 14:30
+Perhaps the python file is not needed. Nextflow has something called "-with-report" that does it for me. I will check it out.
+
+Also, the quandenser seems to work fine in the singularity container with the test data. I have yet to try crux and triqler.
+
+
+### 14:43
+The reports function seems to work fine. However, it requires:
+
+ps, date, sed, grep, egrep, awk
+
+
+### 16:10
+Adding the line
+
+	.filter{ it.size() > 1 }  // filters any input that is not <path> <X>
+
+in the channel part of run_quandenser.nf seems to filter out any empty lines and such. It took about 40 minutes to find it, but I believe that filtering and preventing crashes is important to make the pipeline robust. I now need to find a way to use relative paths for the batch_file file
+
