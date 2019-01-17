@@ -2,8 +2,8 @@
 
 echo true
 
-params.db = "$HOME/tmp/singulquand_data/iprg2016_with_labels.fasta"
-params.file_def = "$HOME/tmp/singulquand_data/file_list.txt"
+params.db = "/media/hdd/timothy/MSfiles/iprg2016_with_labels.fasta"
+params.file_def = "/media/hdd/timothy/MSfiles/file_list.txt"
 
 db = file(params.db)
 seq_index_name = "${db.getName()}.index"
