@@ -105,3 +105,11 @@ I will also work on the main github repo, instead of the fork.
 ### 11:50
 I'm now testing the singularity container with only running quandenser. There is a problem with the working directory, but I'll find a way to fix it (probably something with my config)
 
+
+### 14:00
+I found some things to think about when doing the nextflow pipeline.
+
+The batch file list seems to have trouble with relative paths, but when I add the full paths to the file, it works fine.
+
+Empty rows in the batch files will crash the nextflow pipeline. I'm thinking of adding a small part which checks for empty rows and removes them.
+
