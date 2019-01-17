@@ -6,8 +6,6 @@ change the path to where the database is and the batch file is
 */
 params.db = "/media/hdd/timothy/MSfiles/iprg2016_with_labels.fasta"
 params.batch_file = "/media/hdd/timothy/MSfiles/file_list.txt"
-
-
 db = file(params.db)  // Sets "db" as the file defined above
 file_def = file(params.batch_file)  // batch_file
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
@@ -15,9 +13,10 @@ seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 Channel
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
+  .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
   .map { it -> file(it[0]) }
   .into{ spectra_in; spectra_in_q }
- 
+
 process quandenser {
   publishDir ".", mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   input:
@@ -31,3 +30,4 @@ process quandenser {
 	quandenser --batch list.txt --max-missing 3 --dinosaur-memory 16G
 	"""
 }
+
