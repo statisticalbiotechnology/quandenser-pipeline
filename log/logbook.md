@@ -100,3 +100,8 @@ The problem might be how I installed Singularity.
 Since Lukas has created the Singularity container, I will create some basic nextflow pipelines to learn how to handle it.
 
 I will also work on the main github repo, instead of the fork.
+
+
+### 11:50
+I'm now testing the singularity container with only running quandenser. There is a problem with the working directory, but I'll find a way to fix it (probably something with my config)
+
