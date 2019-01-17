@@ -1,5 +1,6 @@
 # Containerization of microbial protoeomics data processing pipelines
-## logbook Timothy Bergström
+
+## Logbook Timothy Bergström
 
 
 2019-01-16
@@ -93,5 +94,9 @@ https://github.com/nf-core/rnaseq/issues/29
 The problem might be how I installed Singularity.
 
 
+2019-01-17
+----
+### 10:30
+Since Lukas has created the Singularity container, I will create some basic nextflow pipelines to learn how to handle it.
 
-
+I will also work on the main github repo, instead of the fork.
