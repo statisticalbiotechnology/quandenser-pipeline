@@ -1,0 +1,42 @@
+Jan-17 10:07:45.551 [main] DEBUG nextflow.cli.Launcher - $> /usr/local/bin/nextflow test.nf
+Jan-17 10:07:45.622 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 18.10.1
+Jan-17 10:07:45.627 [main] INFO  nextflow.cli.CmdRun - Launching `test.nf` [marvelous_jennings] - revision: e59bf69202
+Jan-17 10:07:45.680 [main] DEBUG nextflow.Session - Session uuid: fa094cd8-85a5-4a1b-8754-bcdb818c5482
+Jan-17 10:07:45.680 [main] DEBUG nextflow.Session - Run name: marvelous_jennings
+Jan-17 10:07:45.682 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jan-17 10:07:45.688 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 18.10.1 build 5003
+  Modified: 24-10-2018 14:03 UTC (16:03 CEST)
+  System: Linux 4.15.0-43-generic
+  Runtime: Groovy 2.5.3 on OpenJDK 64-Bit Server VM 1.8.0_191-8u191-b12-0ubuntu0.18.04.1-b12
+  Encoding: UTF-8 (UTF-8)
+  Process: 19785@bose [127.0.1.1]
+  CPUs: 8 - Mem: 31.4 GB (13.5 GB) - Swap: 7.9 GB (7.9 GB)
+Jan-17 10:07:45.726 [main] DEBUG nextflow.Session - Work-dir: /media/hdd/timothy/quandenser-pipeline/WIP/work [ext2/ext3]
+Jan-17 10:07:45.726 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /media/hdd/timothy/quandenser-pipeline/WIP/bin
+Jan-17 10:07:45.892 [main] DEBUG nextflow.Session - Session start invoked
+Jan-17 10:07:45.896 [main] DEBUG nextflow.processor.TaskDispatcher - Dispatcher > start
+Jan-17 10:07:45.897 [main] DEBUG nextflow.script.ScriptRunner - > Script parsing
+Jan-17 10:07:46.122 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jan-17 10:07:46.174 [main] DEBUG nextflow.processor.ProcessFactory - << taskConfig executor: null
+Jan-17 10:07:46.175 [main] DEBUG nextflow.processor.ProcessFactory - >> processorType: 'local'
+Jan-17 10:07:46.178 [main] DEBUG nextflow.executor.Executor - Initializing executor: local
+Jan-17 10:07:46.179 [main] INFO  nextflow.executor.Executor - [warm up] executor > local
+Jan-17 10:07:46.181 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=31.4 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jan-17 10:07:46.183 [main] DEBUG nextflow.processor.TaskDispatcher - Starting monitor: LocalPollingMonitor
+Jan-17 10:07:46.183 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: local)
+Jan-17 10:07:46.184 [main] DEBUG nextflow.executor.Executor - Invoke register for executor: local
+Jan-17 10:07:46.221 [main] DEBUG nextflow.Session - >>> barrier register (process: test)
+Jan-17 10:07:46.222 [main] DEBUG nextflow.processor.TaskProcessor - Creating operator > test -- maxForks: 8
+Jan-17 10:07:46.240 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Jan-17 10:07:46.240 [main] DEBUG nextflow.Session - Session await
+Jan-17 10:07:46.386 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jan-17 10:07:46.388 [Task submitter] INFO  nextflow.Session - [99/54eb55] Submitted process > test
+Jan-17 10:07:46.406 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: test; status: COMPLETED; exit: 0; error: -; workDir: /media/hdd/timothy/quandenser-pipeline/WIP/work/99/54eb55c422cb07d3521d604c2fa51d]
+Jan-17 10:07:46.415 [Actor Thread 2] DEBUG nextflow.Session - <<< barrier arrive (process: test)
+Jan-17 10:07:46.416 [main] DEBUG nextflow.Session - Session await > all process finished
+Jan-17 10:07:46.416 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: local)
+Jan-17 10:07:46.416 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jan-17 10:07:46.419 [main] DEBUG nextflow.trace.StatsObserver - Workflow completed > WorkflowStats[succeedCount=1; failedCount=0; ignoredCount=0; cachedCount=0; succeedDuration=1ms; failedDuration=0ms; cachedDuration=0ms]
+Jan-17 10:07:46.448 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Jan-17 10:07:46.456 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
