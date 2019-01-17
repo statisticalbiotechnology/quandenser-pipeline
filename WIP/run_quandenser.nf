@@ -43,7 +43,7 @@ process tide_indexing {
 }
 
 process tide_perc_search {
-  publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true 
+  publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true
   input:
 	file("${seq_index_name}/*") from db_index.collect()
 	file "spec.ms2" from spectra
@@ -57,7 +57,7 @@ process tide_perc_search {
 }
 
 process triqle {
-  publishDir ".", mode: 'copy', pattern: "proteins.*",overwrite: true 
+  publishDir ".", mode: 'copy', pattern: "proteins.*",overwrite: true
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
 	file("crux-output/*") from id_files.collect()
@@ -68,8 +68,7 @@ process triqle {
 	"""
 	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
 	triqler --fold_change_eval 0.8 triqler_input.tsv
-     	"""  
+     	"""
 }
 
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
-

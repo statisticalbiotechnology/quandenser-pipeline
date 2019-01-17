@@ -6,9 +6,7 @@ SINGULARITY_IMAGE="../singulqand.simg"
 SINGULARITY_ENABLE="-with-singularity"
 STDOUT_FILE="Nextflow_output/stdout.txt"
 
-
 nextflow $NEXTFLOW_PIPELINE $SINGULARITY_ENABLE $SINGULARITY_IMAGE -c $CONFIG_LOCATION $NEXTFLOW_OUTPUTS | tee $STDOUT_FILE
-
 
 # Notes: by using "-with-weblog", you could send the output to a url (HTTP POST request)
 # This means you could get notified with your webserver when the pipeline is finisheds
