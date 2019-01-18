@@ -150,7 +150,7 @@ Python is not required for the project per se, but I would like to have it avail
 The main ssd disk is almost full, so I moved a couple of files from one user's download folder to a external hard drive, and put a link in the download folder to the
 external hard drive. I hope he doesnt mind
 
-The 2TB hard drive does not have enough space to fit the mzML files inside (about 70 Gb left), so I'll be working on another 2TB hard drive instead.
+The 2TB hard drive does not have enough space to fit the mzML files inside (about 70 Gb left), so I'll be working on another 10TB hard drive instead.
 
 
 ### 10:45
