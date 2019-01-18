@@ -10,7 +10,7 @@ I upgraded from ubuntu 14.04 to 16.04, but the screen is black and only flashes 
 
 
 ### 9:15
-The problem has been fixed. The solution can be found here: 
+The problem has been fixed. The solution can be found here:
 
 https://askubuntu.com/questions/777803/apt-relocation-error-version-glibcxx-3-4-21-not-defined-in-file-libstdc-so-6
 
@@ -19,7 +19,7 @@ How to fix: reboot and press escape. Boot to recovery mode and enable networking
 	wget http://security.ubuntu.com/ubuntu/pool/main/g/gcc-5/libstdc++6_5.4.0-6ubuntu1~16.04.10_amd64.deb
 	sudo dpkg -i libstdc++6_5.4.0-6ubuntu1~16.04.10_amd64.deb
 	sudo apt-get -f install
-	
+
 This fixed the problem.
 
 I'll upgrade from 16.04 to 18.04 now.
@@ -38,12 +38,12 @@ https://askubuntu.com/questions/2901/unmanaged-network-icon-network-manangement-
 
 
 	sudo nano /etc/network/interfaces
-	
-Add lines at the end: 
+
+Add lines at the end:
 
 	auto eth0
 	iface eth0 inet dhcp
-	
+
 Got to /etc/NetworkManager/NetworkManager.conf and change:
 
 	managed=false
@@ -83,7 +83,7 @@ I've made some changes to the main.nf, since my files are in another directory. 
 	  /bin/bash: line 0: cd: /media/hdd/timothy/quandenser-pipeline/work/3b/7bd2182203f672f2a3b4d8efe520c4: No such file or directory
 	  /bin/bash: .command.sh: No such file or directory
 
-However, I believe the problem is my fault, due to where I have put my files and changed some parameters. 
+However, I believe the problem is my fault, due to where I have put my files and changed some parameters.
 
 
 ### 15:30
@@ -137,3 +137,22 @@ Adding the line
 
 in the channel part of run_quandenser.nf seems to filter out any empty lines and such. It took about 40 minutes to find it, but I believe that filtering and preventing crashes is important to make the pipeline robust. I now need to find a way to use relative paths for the batch_file file
 
+
+2019-01-18
+----
+### 09:30
+Some minor problems on the computer I'm working on has been fixed.
+
+There were 4 versions of python installed on the computer; 2.7, 3.4, 3.7 and 3.7. Ubuntu 18.04 LTS require python 3.6 to function, so I cannot uninstall it.
+Python 2.7 seems to be the most used, so I kept it. Python 3.4 have a couple of site packages which seems to be used, so I'll be working on python 3.6 instead.
+Python is not required for the project per se, but I would like to have it available for future use.
+
+The main ssd disk is almost full, so I moved a couple of files from one user's download folder to a external hard drive, and put a link in the download folder to the
+external hard drive. I hope he doesnt mind
+
+The 2TB hard drive does not have enough space to fit the mzML files inside (about 70 Gb left), so I'll be working on another 2TB hard drive instead.
+
+
+### 10:45
+I compared the results from triqler which were completed about 2 months ago, but they don't seem to have the same results. Perhaps a different version of
+Crux was installed at home? I need to check the singularity image installation if that is the case. I'm downloading some mzML files from Michael, to test if they work.
