@@ -166,3 +166,21 @@ Comparing proteins.1vs2.tsv from previous and singularity, the difference is qui
 Singularity: 1144 proteins, 3278 total number of peptides
 
 Previous: 1321 proteins, 7279 total number of peptides
+
+
+### 11:45
+To test my theory, I'll be running the test data set without the singularity image, the same way I did before.
+
+I looked through the nextflow pipeline and found two differences in the tide search node. The difference in the test data .sh file are:
+
+The .sh file has this as input:
+
+	consensus_spectra/MaRaCluster.consensus.part*.ms2
+
+Meaning the variable uses all files with the name part*. However, the nextflow pipeline uses:
+
+	file "Quandenser_output/consensus_spectra/MaRaCluster.consensus.part1.ms2" into spectra
+
+Another difference is that the "overwrite" option is true, but I don't think that will make a difference.
+
+We will see if there are multiple parts after running MaRaCluster. I will probably get the result in a hour.
