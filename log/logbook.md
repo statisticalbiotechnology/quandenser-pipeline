@@ -143,7 +143,7 @@ in the channel part of run_quandenser.nf seems to filter out any empty lines and
 ### 09:30
 Some minor problems on the computer I'm working on has been fixed.
 
-There were 4 versions of python installed on the computer; 2.7, 3.4, 3.7 and 3.7. Ubuntu 18.04 LTS require python 3.6 to function, so I cannot uninstall it.
+There were 4 versions of python installed on the computer; 2.7, 3.4, 3.6 and 3.7. Ubuntu 18.04 LTS require python 3.6 to function, so I cannot uninstall it.
 Python 2.7 seems to be the most used, so I kept it. Python 3.4 have a couple of site packages which seems to be used, so I'll be working on python 3.6 instead.
 Python is not required for the project per se, but I would like to have it available for future use.
 
