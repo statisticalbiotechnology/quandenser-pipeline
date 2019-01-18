@@ -154,5 +154,15 @@ The 2TB hard drive does not have enough space to fit the mzML files inside (abou
 
 
 ### 10:45
-I compared the results from triqler which were completed about 2 months ago, but they don't seem to have the same results. Perhaps a different version of
-Crux was installed at home? I need to check the singularity image installation if that is the case. I'm downloading some mzML files from Michael, to test if they work.
+I compared the results from triqler which were completed about 2 months ago at home using the workflow suggested by the example data, but they don't seem to have the same results.
+Perhaps a different version of Crux was installed at home? I need to check the singularity image installation if that is the case.
+
+I'm also downloading some mzML files from Michael, to test if they work.
+
+
+### 11:00
+Comparing proteins.1vs2.tsv from previous and singularity, the difference is quite large.
+
+Singularity: 1144 proteins, 3278 total number of peptides
+
+Previous: 1321 proteins, 7279 total number of peptides
