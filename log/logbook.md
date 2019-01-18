@@ -203,3 +203,21 @@ The new run had a consensus spectra with the size of: 147,7 MB
 While the singularity run had a size of: 147,9 MB
 
 I tried to recalculate the singularity input with triqler as the example set, but I got pretty much the same result... I have no idea what the problem could be.
+
+
+### 14:00
+Added so the nextflow pipeline can handle multiple ms2 spectra (untested)
+
+
+### 14:10
+Comparing the outputs from crux and triqler seems to be very similar, so I don't really understand why the singularity run has less proteins matched
+
+
+### 14:15
+I might have found what is different. In the file "tide-search.txt", the differences in size are:
+
+New native run: 47,3 MB, 195056 lines
+
+Singularity run: 35,9 MB, 195851 lines
+
+This means that the native one finds more matches, for some reason. Perhaps this has nothing to do with it, but it is a start
