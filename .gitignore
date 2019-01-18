@@ -105,3 +105,9 @@ venv.bak/
 
 # any nextflow logs
 .nextflow*
+
+# quandenser, work and crux outputs
+**/Quandenser_output
+**/crux-output
+**/work
+**.simg
