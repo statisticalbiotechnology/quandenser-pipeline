@@ -23,7 +23,7 @@ process quandenser {
 	file 'list.txt' from file_def
 	file('mzML/*') from spectra_in.collect()   // spectra_in_q for parallel run
   output:
-	file "Quandenser_output/consensus_spectra/MaRaCluster.consensus.part1.ms2" into spectra
+	file("Quandenser_output/consensus_spectra/MaRaCluster.consensus.part*.ms2") into spectra
 	file "Quandenser_output/*" into quandenser_out
   script:
 	"""
@@ -46,17 +46,17 @@ process tide_perc_search {
   publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true
   input:
 	file("${seq_index_name}/*") from db_index.collect()
-	file "spec.ms2" from spectra
+	file("*.ms2") from spectra.collect()
   output:
 	file("crux-output/*") into id_files
   script:
 	"""
-	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T spec.ms2 *.index
+	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T *.ms2 *.index
 	crux percolator --top-match 1 crux-output/tide-search.txt
   """
 }
 
-process triqle {
+process triqler {
   publishDir ".", mode: 'copy', pattern: "proteins.*",overwrite: true
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
