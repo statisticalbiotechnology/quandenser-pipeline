@@ -4,8 +4,8 @@ echo true
 /* Important:
 change the path to where the database is and the batch file is
 */
-params.db = "/media/hdd/timothy/MSfiles/iprg2016_with_labels.fasta"
-params.batch_file = "/media/hdd/timothy/MSfiles/file_list.txt"
+params.db = "/media/storage/timothy/MSfiles/iprg2016_with_labels.fasta"
+params.batch_file = "/media/storage/timothy/MSfiles/file_list.txt"
 db = file(params.db)  // Sets "db" as the file defined above
 file_def = file(params.batch_file)  // batch_file
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
@@ -53,7 +53,7 @@ process tide_perc_search {
 	"""
 	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T spec.ms2 *.index
 	crux percolator --top-match 1 crux-output/tide-search.txt
-     	"""
+  """
 }
 
 process triqle {
@@ -68,7 +68,7 @@ process triqle {
 	"""
 	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
 	triqler --fold_change_eval 0.8 triqler_input.tsv
-     	"""
+  """
 }
 
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
