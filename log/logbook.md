@@ -184,3 +184,22 @@ Meaning the variable uses all files with the name part*. However, the nextflow p
 Another difference is that the "overwrite" option is true, but I don't think that will make a difference.
 
 We will see if there are multiple parts after running MaRaCluster. I will probably get the result in a hour.
+
+
+### 13:40
+Run completed. It took 7294.94 seconds, or about 2 hours. That is very interesting, since the singularity image file took 1 h and 45 minutes.
+The difference was that the "native" run used a maximum of about 12 Gb while the singularity image took 24 Gb maximum. Perhaps it shows that limiting
+memory with -dinosaur-memory does not work in the singularity node.
+
+
+### 13:45
+I found one problem. There are only 1 MaRaCluster.consensus.part1.ms2 in the output, not several parts, so my idea was wrong.
+
+The new run looks like this:
+
+New Run: 1313 proteins, 6937 total number of peptides
+
+The new run had a consensus spectra with the size of: 147,7 MB
+While the singularity run had a size of: 147,9 MB
+
+I tried to recalculate the singularity input with triqler as the example set, but I got pretty much the same result... I have no idea what the problem could be.
