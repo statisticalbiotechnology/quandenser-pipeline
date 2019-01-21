@@ -246,3 +246,20 @@ If you need more, you can use "fat" nodes with 256 Gb of RAM (13.6 Gb/core) and 
 
 However, for larger mzML files, the RAM problem could be very problematic. Perhaps I could do a performance analysis where I run
 quandenser with mzML of difference size (resized used MSconvert) by changing the scan time, thus being able to create a RAM usage graph.
+
+
+### 15:45
+Currently waiting for the calculations to finish in uppmax + locally. Working on the project plan report which is supposed to be
+handed in on friday.
+
+
+### 16:20
+The local calculations have finished. I'm pleased with the results:
+
+The real memory of the calculations peak at 15.5 Gb. I monitored the RAM during processing and it
+never reached above 24 GB. Perhaps the new fixed pipeline made it work somehow?
+
+The results are fine now and comparable to the "native" run without the container.
+
+This means that IF the process works on uppmax (we will see soon), the pipeline is pretty much
+"ready to go".
