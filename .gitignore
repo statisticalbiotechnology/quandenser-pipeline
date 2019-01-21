@@ -111,6 +111,3 @@ venv.bak/
 **/crux-output
 **/work
 **.simg
-
-# Example runs
-WIP/RUN_*
