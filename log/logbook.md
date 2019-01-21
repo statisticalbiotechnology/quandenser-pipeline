@@ -268,3 +268,10 @@ This means that IF the process works on uppmax (we will see soon), the pipeline 
 ### 16:25
 The uppmax run is not finished yet. The reason is that uppmax uses Xeon E5-2630 V4 processors running at 2.2 GHz (turbo 3.1 GHz) while I got a i7-4790K running at 4.0 GHz, which takes 2 hours to run the
 full example data set. I only put the slurm batch job at 3 hours and with only 8 cores, so I might need to reconsider the time it takes on uppmax when I set the computation time.
+
+
+### 17:00
+Very strange, the results from uppmax showed the same output as last time, where less proteins and peptides were matched
+compared to the local variant even though they ran the exact same pipeline and mzML files. According to the outputs, both
+processes used all the files they were assigned. I'm starting to believe that it might be something with quandenser that
+give these results.
