@@ -2,4 +2,7 @@
 A nextflow/singularity pipeline for quandenser
 
 
-# FILL IN WITH HOW TO USE THE PIPELINE WHEN DONE
+# Todo:
+
+  -Debug output and find out why output from container != regular output
+  -
