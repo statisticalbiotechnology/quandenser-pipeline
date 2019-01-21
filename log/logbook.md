@@ -236,3 +236,13 @@ I've uploaded the pipeline to uppmax (the data cluster) and have submitted a slu
 ### 14:10
 It seems to no have crashed yet, so that is good. Hopefully I will get some results. I will try to run the exact same pipeline
 locally too.
+
+
+### 14:40
+Note to self: 1 node at rackham has 20 cores and 128 Gb RAM --> each core gets 6.8 Gb RAM. I'm running 8 nodes, meaning
+the total amount of RAM is 54.4 Gb, which is more than enough for the increased RAM usage.
+
+If you need more, you can use "fat" nodes with 256 Gb of RAM (13.6 Gb/core) and 1TB RAM nodes.
+
+However, for larger mzML files, the RAM problem could be very problematic. Perhaps I could do a performance analysis where I run
+quandenser with mzML of difference size (resized used MSconvert) by changing the scan time, thus being able to create a RAM usage graph.
