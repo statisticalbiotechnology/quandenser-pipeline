@@ -263,3 +263,8 @@ The results are fine now and comparable to the "native" run without the containe
 
 This means that IF the process works on uppmax (we will see soon), the pipeline is pretty much
 "ready to go".
+
+
+### 16:25
+The uppmax run is not finished yet. The reason is that uppmax uses Xeon E5-2630 V4 processors running at 2.2 GHz (turbo 3.1 GHz) while I got a i7-4790K running at 4.0 GHz, which takes 2 hours to run the
+full example data set. I only put the slurm batch job at 3 hours and with only 8 cores, so I might need to reconsider the time it takes on uppmax when I set the computation time.
