@@ -7,6 +7,7 @@ Todo:
   - Debug output and find out why output from container != non-container
   - Limit RAM usage (container uses about twice as much RAM as non-container)
   - Make batch file use relative file locations (would make it much easier to run on cluster)
+  - Remove workfolder when done (since it prevents scp copy from uppmax)
 
 
 Extra features (might be added):
