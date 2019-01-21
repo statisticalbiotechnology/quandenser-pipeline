@@ -23,13 +23,27 @@ process quandenser {
 	file 'list.txt' from file_def
 	file('mzML/*') from spectra_in.collect()   // spectra_in_q for parallel run
   output:
-	file("Quandenser_output/consensus_spectra/MaRaCluster.consensus.part*.ms2") into spectra
+	file("Quandenser_output/consensus_spectra/**") into spectra
 	file "Quandenser_output/*" into quandenser_out
   script:
 	"""
 	quandenser --batch list.txt --max-missing 3 --dinosaur-memory 16G
 	"""
 }
+
+/*
+process test {
+  input:
+  file ms2_files from Channel.fromPath("/media/storage/timothy/quandenser-pipeline/WIP/Quandenser_output/consensus_spectra/*")
+  file q_out from Channel.fromPath("/media/storage/timothy/quandenser-pipeline/WIP/Quandenser_output/*")
+  output:
+  file ms2_files into spectra
+  file q_out into quandenser_out
+  """
+  echo Done
+  """
+}
+*/
 
 process tide_indexing {
   input:
@@ -46,15 +60,16 @@ process tide_perc_search {
   publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true
   input:
 	file("${seq_index_name}/*") from db_index.collect()
-	file("*.ms2") from spectra.collect()
+	file ms2_files from spectra.collect()  // PS: Sentistive to nameing (no blankspace, paranthesis and such)
   output:
 	file("crux-output/*") into id_files
   script:
 	"""
-	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T *.ms2 *.index
+	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T ${ms2_files} *.index
 	crux percolator --top-match 1 crux-output/tide-search.txt
   """
 }
+
 
 process triqler {
   publishDir ".", mode: 'copy', pattern: "proteins.*",overwrite: true
