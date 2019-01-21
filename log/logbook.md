@@ -221,3 +221,18 @@ New native run: 47,3 MB, 195056 lines
 Singularity run: 35,9 MB, 195851 lines
 
 This means that the native one finds more matches, for some reason. Perhaps this has nothing to do with it, but it is a start
+
+
+2019-01-21
+----
+### 13:00
+Fixed so the nextflow pipeline can use multiple ms2 files.
+
+
+### 14:00
+I've uploaded the pipeline to uppmax (the data cluster) and have submitted a slurm job.
+
+
+### 14:10
+It seems to no have crashed yet, so that is good. Hopefully I will get some results. I will try to run the exact same pipeline
+locally too.
