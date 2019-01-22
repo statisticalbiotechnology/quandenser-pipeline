@@ -1,0 +1,1331 @@
+tee: Nextflow_output/stdout.txt: No such file or directory
+N E X T F L O W  ~  version 18.10.1
+Launching `run_quandenser.nf` [nauseous_morse] - revision: 7da761ec1b
+[warm up] executor > local
+[30/518e34] Submitted process > quandenser
+[31/d2b0d1] Submitted process > tide_indexing
+[f7/d0eec7] Submitted process > tide_perc_search
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A1.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631373301810
+peaky hills, n=916241
+peaky hill checkSum = 317221604871574
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=122141
+clusters deconvolved
+deisotoping complete
+isotopes, n=114917
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/A1.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.039
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.447
+          deisotope time: _ days __:__:59.830
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:_1.395
+              write time: _ days __:__:_1.561
+
+         deiso edge time: _ days __:__:20.297
+          deiso rip time: _ days __:__:__.210
+       deiso deconv time: _ days __:__:39.322
+
+total time: _ days __:_1:43.649
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A2.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: A2
+
+.                              .
+[==============================]all hills, n=914241
+hill checkSum = 314638608753359
+peaky hills, n=903370
+peaky hill checkSum = 307732239590863
+  nScans    nHills
+         2        0
+         3   253940
+         4   139200
+      5-10   273312
+     10-20   149872
+     20-50    76236
+    50-100     9775
+   100-200     1035
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120471
+clusters deconvolved
+deisotoping complete
+isotopes, n=113973
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/A2.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.489
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.650
+          deisotope time: _ days __:__:46.202
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:_1.025
+              write time: _ days __:__:_1.529
+
+         deiso edge time: _ days __:__:19.504
+          deiso rip time: _ days __:__:__.259
+       deiso deconv time: _ days __:__:26.438
+
+total time: _ days __:_1:29.174
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A3.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: A3
+
+.                              .
+[==============================]all hills, n=921343
+hill checkSum = 319167479394090
+peaky hills, n=910008
+peaky hill checkSum = 311926363332147
+  nScans    nHills
+         2        0
+         3   255804
+         4   139758
+      5-10   277015
+     10-20   150079
+     20-50    76530
+    50-100     9730
+   100-200     1092
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120934
+clusters deconvolved
+deisotoping complete
+isotopes, n=112795
+writing isotope pattern reports...
+isotope pattern reports written
+[INFO] [01/22/2019 10:11:54.585] [actor-system-akka.actor.default-dispatcher-5] [akka://actor-system/user/$b/$Gb] Message [akka.dispatch.sysmsg.Terminate] from Actor[akka://actor-system/user/$b/$Gb#-163201364] to Actor[akka://actor-system/user/$b/$Gb#-163201364] was not delivered. [1] dead letters encountered. This logging can be turned off or adjusted with configuration settings 'akka.log-dead-letters' and 'akka.log-dead-letters-during-shutdown'.
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/A3.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.886
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.573
+          deisotope time: _ days __:_1:26.704
+ iso pattern report time: _ days __:__:__.__3
+         mass calib time: _ days __:__:_5.784
+              write time: _ days __:__:10.685
+
+         deiso edge time: _ days __:__:20.577
+          deiso rip time: _ days __:__:__.199
+       deiso deconv time: _ days __:_1:05.925
+
+total time: _ days __:_2:26.044
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B1.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: B1
+
+.                              .
+[==============================]all hills, n=909707
+hill checkSum = 312186319238605
+peaky hills, n=899333
+peaky hill checkSum = 305617093894717
+  nScans    nHills
+         2        0
+         3   260432
+         4   140996
+      5-10   272303
+     10-20   145050
+     20-50    71151
+    50-100     8444
+   100-200      957
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120980
+clusters deconvolved
+deisotoping complete
+isotopes, n=113820
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/B1.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:51.382
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.071
+          deisotope time: _ days __:__:44.019
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:_1.050
+              write time: _ days __:__:_1.448
+
+         deiso edge time: _ days __:__:19.176
+          deiso rip time: _ days __:__:__.197
+       deiso deconv time: _ days __:__:24.645
+
+total time: _ days __:_2:04.924
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B2.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: B2
+
+.                              .
+[==============================]all hills, n=915504
+hill checkSum = 316368482090260
+peaky hills, n=904930
+peaky hill checkSum = 309604268188179
+  nScans    nHills
+         2        0
+         3   263343
+         4   141140
+      5-10   274138
+     10-20   145578
+     20-50    71272
+    50-100     8541
+   100-200      918
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=121878
+clusters deconvolved
+deisotoping complete
+isotopes, n=113670
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/B2.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.970
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.047
+          deisotope time: _ days __:__:42.281
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:_1.076
+              write time: _ days __:__:_1.724
+
+         deiso edge time: _ days __:__:20.819
+          deiso rip time: _ days __:__:__.396
+       deiso deconv time: _ days __:__:21.064
+
+total time: _ days __:_1:28.372
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B3.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: B3
+
+.                              .
+[==============================]all hills, n=908824
+hill checkSum = 311174240702129
+peaky hills, n=898266
+peaky hill checkSum = 304500415833920
+  nScans    nHills
+         2        0
+         3   261057
+         4   140241
+      5-10   270961
+     10-20   144985
+     20-50    71581
+    50-100     8506
+   100-200      935
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120111
+clusters deconvolved
+deisotoping complete
+isotopes, n=112362
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/B3.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.117
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:_1:34.173
+          deisotope time: _ days __:__:45.696
+ iso pattern report time: _ days __:__:__.__3
+         mass calib time: _ days __:__:_1.140
+              write time: _ days __:__:_1.455
+
+         deiso edge time: _ days __:__:23.836
+          deiso rip time: _ days __:__:__.304
+       deiso deconv time: _ days __:__:21.556
+
+total time: _ days __:_2:42.880
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C1.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: C1
+
+.                              .
+[==============================]all hills, n=885425
+hill checkSum = 285307878877306
+peaky hills, n=872610
+peaky hill checkSum = 277653450648597
+  nScans    nHills
+         2        0
+         3   236122
+         4   130068
+      5-10   267832
+     10-20   150404
+     20-50    76122
+    50-100    10760
+   100-200     1302
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=115793
+clusters deconvolved
+deisotoping complete
+isotopes, n=107573
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/C1.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.334
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.730
+          deisotope time: _ days __:__:40.147
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.984
+              write time: _ days __:__:_1.497
+
+         deiso edge time: _ days __:__:19.671
+          deiso rip time: _ days __:__:__.182
+       deiso deconv time: _ days __:__:20.293
+
+total time: _ days __:_1:25.975
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C2.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: C2
+
+.                              .
+[==============================]all hills, n=887877
+hill checkSum = 286477508090051
+peaky hills, n=875064
+peaky hill checkSum = 278831431695812
+  nScans    nHills
+         2        0
+         3   235486
+         4   130287
+      5-10   268124
+     10-20   151802
+     20-50    77426
+    50-100    10609
+   100-200     1330
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=115353
+clusters deconvolved
+deisotoping complete
+isotopes, n=106951
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/C2.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.925
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.332
+          deisotope time: _ days __:__:41.885
+ iso pattern report time: _ days __:__:__.__3
+         mass calib time: _ days __:__:_1.268
+              write time: _ days __:__:_1.550
+
+         deiso edge time: _ days __:__:20.950
+          deiso rip time: _ days __:__:__.385
+       deiso deconv time: _ days __:__:20.548
+
+total time: _ days __:_1:27.227
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C3.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: C3
+
+.                              .
+[==============================]all hills, n=899367
+hill checkSum = 294190547970872
+peaky hills, n=885902
+peaky hill checkSum = 286054379662907
+  nScans    nHills
+         2        0
+         3   238218
+         4   131029
+      5-10   271676
+     10-20   154615
+     20-50    78496
+    50-100    10591
+   100-200     1277
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=116517
+clusters deconvolved
+deisotoping complete
+isotopes, n=107464
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/C3.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.235
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:_1:28.312
+          deisotope time: _ days __:__:43.695
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.975
+              write time: _ days __:__:_1.427
+
+         deiso edge time: _ days __:__:24.612
+          deiso rip time: _ days __:__:__.166
+       deiso deconv time: _ days __:__:18.916
+
+total time: _ days __:_2:34.931
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_6_to_7.psms.pout_dinosaur
+   out name: C2
+
+.                              .
+[==============================]all hills, n=887877
+hill checkSum = 286477509970647
+peaky hills, n=875064
+peaky hill checkSum = 278831433106503
+  nScans    nHills
+         2        0
+         3   235486
+         4   130287
+      5-10   268124
+     10-20   151802
+     20-50    77426
+    50-100    10609
+   100-200     1330
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=358946
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_6_to_7.psms.pout_dinosaur/C2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.887
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.283
+          deisotope time: _ days __:__:37.897
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:15.517
+              write time: _ days __:__:_2.388
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_1:44.084
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_5_to_4.psms.pout_dinosaur
+   out name: B2
+
+.                              .
+[==============================]all hills, n=915504
+hill checkSum = 316368479371060
+peaky hills, n=904930
+peaky hill checkSum = 309604265530968
+  nScans    nHills
+         2        0
+         3   263343
+         4   141140
+      5-10   274138
+     10-20   145578
+     20-50    71272
+    50-100     8541
+   100-200      918
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=374772
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_5_to_4.psms.pout_dinosaur/B2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.430
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:_1:35.096
+          deisotope time: _ days __:__:40.262
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:12.580
+              write time: _ days __:__:_2.367
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:58.505
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_7_to_8.psms.pout_dinosaur
+   out name: C3
+
+.                              .
+[==============================]all hills, n=899367
+hill checkSum = 294190551388195
+peaky hills, n=885902
+peaky hill checkSum = 286054383023540
+  nScans    nHills
+         2        0
+         3   238218
+         4   131029
+      5-10   271676
+     10-20   154615
+     20-50    78496
+    50-100    10591
+   100-200     1277
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=438371
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_7_to_8.psms.pout_dinosaur/C3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.006
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:29.272
+          deisotope time: _ days __:_2:31.871
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:15.513
+              write time: _ days __:__:_3.318
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:47.151
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_4_to_1.psms.pout_dinosaur
+   out name: A2
+
+.                              .
+[==============================]all hills, n=914241
+hill checkSum = 314638607956865
+peaky hills, n=903370
+peaky hill checkSum = 307732238797361
+  nScans    nHills
+         2        0
+         3   253940
+         4   139200
+      5-10   273312
+     10-20   149872
+     20-50    76236
+    50-100     9775
+   100-200     1035
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=448733
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_4_to_1.psms.pout_dinosaur/A2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:18.786
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.834
+          deisotope time: _ days __:__:48.146
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:19.263
+              write time: _ days __:__:_3.416
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:00.867
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_8_to_2.psms.pout_dinosaur
+   out name: A3
+
+.                              .
+[==============================]all hills, n=921343
+hill checkSum = 319167464812146
+peaky hills, n=910008
+peaky hill checkSum = 311926349336141
+  nScans    nHills
+         2        0
+         3   255804
+         4   139758
+      5-10   277015
+     10-20   150079
+     20-50    76530
+    50-100     9730
+   100-200     1092
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=514338
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_8_to_2.psms.pout_dinosaur/A3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.580
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.836
+          deisotope time: _ days __:_1:25.401
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:18.408
+              write time: _ days __:__:_4.572
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:41.571
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_1_to_0.psms.pout_dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631366391182
+peaky hills, n=916241
+peaky hill checkSum = 317221598064966
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=547616
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_1_to_0.psms.pout_dinosaur/A1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.714
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.824
+          deisotope time: _ days __:_1:29.026
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:26.433
+              write time: _ days __:__:_5.018
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:53.762
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_2_to_0.psms.pout_dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631367420878
+peaky hills, n=916241
+peaky hill checkSum = 317221599057647
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=538530
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_2_to_0.psms.pout_dinosaur/A1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.878
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.090
+          deisotope time: _ days __:_1:20.647
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:21.676
+              write time: _ days __:__:_5.560
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:41.479
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_3_to_0.psms.pout_dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631374172927
+peaky hills, n=916241
+peaky hill checkSum = 317221605709038
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=386415
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_3_to_0.psms.pout_dinosaur/A1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:18.640
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:27.578
+          deisotope time: _ days __:__:36.821
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:11.209
+              write time: _ days __:__:_2.449
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_1:41.589
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_0_to_1.psms.pout_dinosaur
+   out name: A2
+
+.                              .
+[==============================]all hills, n=914241
+hill checkSum = 314638615928038
+peaky hills, n=903370
+peaky hill checkSum = 307732246272330
+  nScans    nHills
+         2        0
+         3   253940
+         4   139200
+      5-10   273312
+     10-20   149872
+     20-50    76236
+    50-100     9775
+   100-200     1035
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=607120
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_0_to_1.psms.pout_dinosaur/A2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.637
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.782
+          deisotope time: _ days __:_3:13.265
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:24.220
+              write time: _ days __:__:11.000
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_4:56.579
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/A3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_0_to_2.psms.pout_dinosaur
+   out name: A3
+
+.                              .
+[==============================]all hills, n=921343
+hill checkSum = 319167469079821
+peaky hills, n=910008
+peaky hill checkSum = 311926353195670
+  nScans    nHills
+         2        0
+         3   255804
+         4   139758
+      5-10   277015
+     10-20   150079
+     20-50    76530
+    50-100     9730
+   100-200     1092
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=595054
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_0_to_2.psms.pout_dinosaur/A3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.096
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.159
+          deisotope time: _ days __:_2:26.708
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:18.225
+              write time: _ days __:__:10.132
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:56.158
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_0_to_3.psms.pout_dinosaur
+   out name: B1
+
+.                              .
+[==============================]all hills, n=909707
+hill checkSum = 312186321932328
+peaky hills, n=899333
+peaky hill checkSum = 305617096567004
+  nScans    nHills
+         2        0
+         3   260432
+         4   140996
+      5-10   272303
+     10-20   145050
+     20-50    71151
+    50-100     8444
+   100-200      957
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=579271
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_0_to_3.psms.pout_dinosaur/B1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.642
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:22.548
+          deisotope time: _ days __:_2:00.898
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:19.309
+              write time: _ days __:__:_9.230
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:24.856
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_1_to_4.psms.pout_dinosaur
+   out name: B2
+
+.                              .
+[==============================]all hills, n=915504
+hill checkSum = 316368476731324
+peaky hills, n=904930
+peaky hill checkSum = 309604262918719
+  nScans    nHills
+         2        0
+         3   263343
+         4   141140
+      5-10   274138
+     10-20   145578
+     20-50    71272
+    50-100     8541
+   100-200      918
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=583826
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_1_to_4.psms.pout_dinosaur/B2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:17.033
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:22.564
+          deisotope time: _ days __:_2:20.728
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:17.520
+              write time: _ days __:__:_9.690
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:47.690
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_2_to_8.psms.pout_dinosaur
+   out name: C3
+
+.                              .
+[==============================]all hills, n=899367
+hill checkSum = 294190552437851
+peaky hills, n=885902
+peaky hill checkSum = 286054384081004
+  nScans    nHills
+         2        0
+         3   238218
+         4   131029
+      5-10   271676
+     10-20   154615
+     20-50    78496
+    50-100    10591
+   100-200     1277
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=544365
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_2_to_8.psms.pout_dinosaur/C3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.531
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.384
+          deisotope time: _ days __:_3:06.019
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:15.999
+              write time: _ days __:__:10.902
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_4:38.574
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/B3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_4_to_5.psms.pout_dinosaur
+   out name: B3
+
+.                              .
+[==============================]all hills, n=908824
+hill checkSum = 311174240630234
+peaky hills, n=898266
+peaky hill checkSum = 304500416134052
+  nScans    nHills
+         2        0
+         3   261057
+         4   140241
+      5-10   270961
+     10-20   144985
+     20-50    71581
+    50-100     8506
+   100-200      935
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=573748
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_4_to_5.psms.pout_dinosaur/B3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:15.862
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.165
+          deisotope time: _ days __:_2:07.588
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:18.131
+              write time: _ days __:__:_9.273
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:30.563
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_8_to_7.psms.pout_dinosaur
+   out name: C2
+
+.                              .
+[==============================]all hills, n=887877
+hill checkSum = 286477510269521
+peaky hills, n=875064
+peaky hill checkSum = 278831433844038
+  nScans    nHills
+         2        0
+         3   235486
+         4   130287
+      5-10   268124
+     10-20   151802
+     20-50    77426
+    50-100    10609
+   100-200     1330
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=526629
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_8_to_7.psms.pout_dinosaur/C2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.771
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.098
+          deisotope time: _ days __:_2:29.526
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:15.085
+              write time: _ days __:__:10.581
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:54.701
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: /media/storage/timothy/MSfiles/mzML/C1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_7_to_6.psms.pout_dinosaur
+   out name: C1
+
+.                              .
+[==============================]all hills, n=885425
+hill checkSum = 285307869607634
+peaky hills, n=872610
+peaky hill checkSum = 277653441582856
+  nScans    nHills
+         2        0
+         3   236122
+         4   130068
+      5-10   267832
+     10-20   150404
+     20-50    76122
+    50-100    10760
+   100-200     1302
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=523726
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_7_to_6.psms.pout_dinosaur/C1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:16.284
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:22.740
+          deisotope time: _ days __:_2:07.500
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:14.619
+              write time: _ days __:__:_9.958
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:26.777
+[ba/1593cd] Submitted process > triqler
+Processing cluster 10000
+Processing cluster 20000
+Processing cluster 30000
+Processing cluster 40000
+Processing cluster 50000
+Calculating factor array 1
+Calculating factor array 2
+Calculating factor array 3
+Calculating factor array 4
+Calculating factor array 5
+Calculating factor array 6
+Calculating factor array 7
+Calculating factor array 8
+Calculating factor array 9
+Writing Quandenser_output/Quandenser.feature_groups.normalized.tsv
+Writing cluster 10000
+Writing cluster 20000
+Writing cluster 30000
+Writing cluster 40000
+Writing cluster 50000
+Parsing cluster quant file
+Processing feature group 1
+Processing feature group 10001
+Processing feature group 20001
+Processing feature group 30001
+Processing feature group 40001
+Processing feature group 50001
+Triqler version 0.1.4
+Copyright (c) 2018 Matthew The. All rights reserved.
+Written by Matthew The (matthew.the@scilifelab.se) in the
+School of Engineering Sciences in Chemistry, Biotechnology and Health at the
+Royal Institute of Technology in Stockholm.
+
+Parsing triqler input file
+Calculating identification PEPs
+featureClusterIdx: 0
+featureClusterIdx: 10000
+featureClusterIdx: 20000
+featureClusterIdx: 30000
+featureClusterIdx: 40000
+featureClusterIdx: 50000
+Dividing intensities by 10000 for increased readability
+Surviving spectrumIdxs: 55286
+Converting to peptide quant rows
+Calculating peptide-level identification PEPs
+Writing peptide quant rows to file
+Fitting hyperparameters
+params["muDetect"], params["sigmaDetect"] = 1.557627, 0.497528
+params["muXIC"], params["sigmaXIC"] = 3.119001, 0.833125
+params["muProtein"], params["sigmaProtein"] = 0.021293, 0.143582
+params["muFeatureDiff"], params["sigmaFeatureDiff"] = -0.011818, 0.166252
+params["shapeInGroupStdevs"], params["scaleInGroupStdevs"] = 1.059813, 0.077160
+Calculating protein quants
+50 / 1307 3.83%
+100 / 1307 7.65%
+150 / 1307 11.48%
+200 / 1307 15.30%
+250 / 1307 19.13%
+300 / 1307 22.95%
+350 / 1307 26.78%
+400 / 1307 30.60%
+450 / 1307 34.43%
+500 / 1307 38.26%
+550 / 1307 42.08%
+600 / 1307 45.91%
+650 / 1307 49.73%
+700 / 1307 53.56%
+750 / 1307 57.38%
+800 / 1307 61.21%
+850 / 1307 65.03%
+900 / 1307 68.86%
+950 / 1307 72.69%
+1000 / 1307 76.51%
+1050 / 1307 80.34%
+1100 / 1307 84.16%
+1150 / 1307 87.99%
+1200 / 1307 91.81%
+1250 / 1307 95.64%
+1300 / 1307 99.46%
+Calculating protein-level identification PEPs
+proteins.1vs2.tsv
+proteins.1vs3.tsv
+proteins.2vs3.tsv
+Received: proteins.1vs2.tsv
+Received: proteins.1vs3.tsv
+Received: proteins.2vs3.tsv
