@@ -301,9 +301,12 @@ However, only 185 MB difference between directories.
 
 	59 files with a larger than 1 MB difference and 24 missing files.
 
-Crux_output: No files over 1MB difference, 0.859MB total difference in file_size
+Crux_output: No files over 1MB difference, 0.859MB total difference in file sizes.
+
 Note: tide-search.txt has a 0.6 MB difference, which could be important for debugging. Also, the crux outputs include tide_indexing
 
 Triqler output:
+
 	Local: 6481 peptides, 1308 proteins
+
 	UPPMAX: 3433 peptides, 1164 proteins
