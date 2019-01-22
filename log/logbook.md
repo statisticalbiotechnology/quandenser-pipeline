@@ -313,7 +313,12 @@ Triqler output:
 
 
 ### 10:10
-Note that the precolator size differences are not very accurate, due to the ordering of files in the folders are not
+Note that the percolator size differences are not very accurate, due to the ordering of files in the folders are not
 the same. However, the total size differences in the directories are still valid.
 
 I'm currently rerunning the same pipeline locally to see if I get some differences.
+
+
+### 13:20
+I've been looking through the logs and the nextflow reports. Right now, there are multiple variables that could be the problem.
+However, by looking at each process in nextflow and looking at how much memory and written bytes, the runs that gave less indices might be coupled to the tide-indexing. So far, I've run a bunch of runs locally and have started a new one (same parameters) in uppmax. More data to compare with will be very useful to find the problem.
