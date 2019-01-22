@@ -275,3 +275,35 @@ Very strange, the results from uppmax showed the same output as last time, where
 compared to the local variant even though they ran the exact same pipeline and mzML files. According to the outputs, both
 processes used all the files they were assigned. I'm starting to believe that it might be something with quandenser that
 give these results.
+
+
+2019-01-22
+----
+### 9:10
+Notable differences in runs of local and uppmax run (same pipeline, the only differences were the file locations):
+
+Consensus_spectra: Total of 2.12MB difference between the file, same between directories. Only 1 file
+
+	MaRaCluster.consensus.part1.ms2
+
+Dinosaur: Total of 0.133 MB difference between files (aka almost identical outputs), same between directories
+
+Maracluster: Total 1.531 MB difference, but 1 file stands out. Difference same between directories
+
+	MaRaCluster.clusters_p10 has a 1.526 MB difference
+
+Maracluster_extra_features: Total 2.02 MB difference, but 1 file stands out. Difference same between directories
+
+	MaRaCluster.clusters_p10 has a 1.526 MB difference
+
+Percolator: Total of 1476 MB differences between files in the different runs.
+However, only 185 MB difference between directories.
+
+	59 files with a larger than 1 MB difference and 24 missing files.
+
+Crux_output: No files over 1MB difference, 0.859MB total difference in file_size
+Note: tide-search.txt has a 0.6 MB difference, which could be important for debugging. Also, the crux outputs include tide_indexing
+
+Triqler output:
+	Local: 6481 peptides, 1308 proteins
+	UPPMAX: 3433 peptides, 1164 proteins
