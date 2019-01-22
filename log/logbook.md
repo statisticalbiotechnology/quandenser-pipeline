@@ -310,3 +310,10 @@ Triqler output:
 	Local: 6481 peptides, 1308 proteins
 
 	UPPMAX: 3433 peptides, 1164 proteins
+
+
+### 10:10
+Note that the precolator size differences are not very accurate, due to the ordering of files in the folders are not
+the same. However, the total size differences in the directories are still valid.
+
+I'm currently rerunning the same pipeline locally to see if I get some differences.
