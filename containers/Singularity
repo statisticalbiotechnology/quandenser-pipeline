@@ -1,0 +1,43 @@
+Bootstrap:docker
+From:ubuntu:bionic-20180526
+
+%environment
+    export LC_ALL=C
+
+%labels
+   AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
+
+%files
+   pwiz-bin-windows-x86-vc141-release-3_0_19014_f9d5b8a3b.tar.bz2 /tmp
+
+%post
+
+    echo "INSTALLING UTILS"
+    dpkg --add-architecture i386  # Add 32 bit compability
+    apt-get update  # Update to install needed utils
+    apt-get install -y software-properties-common wget  # Utils
+
+    echo "INSTALLING WINE"
+    wget -nc https://dl.winehq.org/wine-builds/winehq.key  # Get key for newest version
+    apt-key add winehq.key  # Add the key
+    apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'  # Main repo for ubuntu 18.04 LTS
+    apt-get update  # Update once again to be able to install wine
+    apt install -y --install-recommends winehq-stable  # Get the latest stable version (4.0 at the time of writing)
+
+    echo "INSTALLING WINETRICKS"
+    apt-get install -y winetricks  # Install wine
+
+    echo "INSTALLING .NET4.0 WITH WINETRICKS"
+    export WINEARCH="win32"  # Set wine to handle 32 bit
+    export WINEPREFIX=/.wine  # Get a clean prefix
+    wineboot -u  # Update the prefix
+    winetricks --unattended dotnet40  # Install .NET4.0 (with all older .NET. Lots of error messages here)
+    apt-get clean
+
+    echo "INSTALLING PROTEOWIZARD 32 BIT (FULL VENDOR CAPABILITIES)"
+    mkdir pwiz
+    tar xjvf /tmp/pwiz-bin-windows-x86-vc141-release-3_0_19014_f9d5b8a3b.tar.bz2 -C pwiz
+    rm /tmp/pwiz-bin-windows-x86-vc141-release-3_0_19014_f9d5b8a3b.tar.bz2
+
+%runscript
+    echo "Test"
