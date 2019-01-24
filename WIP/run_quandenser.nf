@@ -45,27 +45,18 @@ process test {
 }
 */
 
-process tide_indexing {
-  input:
-	file 'seqdb.fa' from db
-  output:
-	file "${seq_index_name}/*" into db_index
-  script:
-	"""
-	crux tide-index --missed-cleavages 2 --mods-spec 2M+15.9949 --decoy-format protein-reverse seqdb.fa ${seq_index_name}
-	"""
-}
-
 process tide_perc_search {
   publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true
   input:
-	file("${seq_index_name}/*") from db_index.collect()
+	file 'seqdb.fa' from db
 	file ms2_files from spectra.collect()  // PS: Sentistive to nameing (no blankspace, paranthesis and such)
   output:
 	file("crux-output/*") into id_files
+  file("${seq_index_name}") into index_files
   script:
 	"""
-	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T ${ms2_files} *.index
+  crux tide-index --missed-cleavages 2 --mods-spec 2M+15.9949 --decoy-format protein-reverse seqdb.fa ${seq_index_name}
+	crux tide-search --precursor-window 20 --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name}
 	crux percolator --top-match 1 crux-output/tide-search.txt
   """
 }
