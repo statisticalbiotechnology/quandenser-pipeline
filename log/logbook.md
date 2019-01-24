@@ -322,3 +322,8 @@ I'm currently rerunning the same pipeline locally to see if I get some differenc
 ### 13:20
 I've been looking through the logs and the nextflow reports. Right now, there are multiple variables that could be the problem.
 However, by looking at each process in nextflow and looking at how much memory and written bytes, the runs that gave less indices might be coupled to the tide-indexing. So far, I've run a bunch of runs locally and have started a new one (same parameters) in uppmax. More data to compare with will be very useful to find the problem.
+
+
+### 14:30
+While I was waiting for the calculations, I created a container with proteowizard. MSconvert seems to work fine.
+The problem is that it uses the native linux files, which are unable to convert vendor files.
