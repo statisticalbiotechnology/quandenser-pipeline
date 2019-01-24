@@ -111,3 +111,9 @@ venv.bak/
 **/crux-output
 **/work
 **.simg
+
+# Sandboxes
+*.sandbox
+
+# Example data
+*/example_data/*
