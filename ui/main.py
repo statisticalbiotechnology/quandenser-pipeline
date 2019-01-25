@@ -21,10 +21,11 @@ class Main(QMainWindow):
         self.title = 'Quandenser'
         self.left = 10
         self.top = 10
+        self.config_file = '../config/ui.config'
         self.config = configparser.ConfigParser()
-        self.config.read_file(open('../config/ui.config'))
-        self.WIDTH = int(self.config['graphics']['WIDTH'])  # Note: self.width overwrites self.width() function!
-        self.HEIGHT = int(self.config['graphics']['HEIGHT'])  # Config to remember size
+        self.config.read_file(open(self.config_file, 'r'))
+        self.WIDTH = int(self.config.get('graphics', 'WIDTH'))  # Note: self.width overwrites self.width() function!
+        self.HEIGHT = int(self.config.get('graphics', 'HEIGHT'))  # Config to remember size
         self.setMinimumWidth(200)
         self.setMinimumHeight(200)
         self.initUI()
@@ -92,8 +93,9 @@ class Main(QMainWindow):
 
 
     def resizeEvent(self, event):
-        self.config.set('graphics', 'WIDTH', str(self.width())
+        self.config.set('graphics', 'WIDTH', str(self.width()))
         self.config.set('graphics', 'HEIGHT', str(self.height()))
+        self.config.write(open(self.config_file, 'w'))
 
         """
         print(self.width(), self.height())
