@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo singularity build singulqand.simg Singularity
+sudo singularity build --sandbox singulqand.sandbox Singularity
