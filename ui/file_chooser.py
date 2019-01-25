@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QPushButton, QWidget, QInputDialog, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QPushButton, QFileDialog, QApplication
 from PyQt5.QtGui import QIcon
 
 class file_chooser(QPushButton):
@@ -16,8 +16,8 @@ class file_chooser(QPushButton):
         if files:
             self.display_in_file_viewer(files)
 
-    def display_in_file_viewer(files):
-        self.window().showMinimized()
+    def display_in_file_viewer(self, files):
+        print([o.showMinimized() for o in QApplication.topLevelWidgets()])
 
     def set_size(self, width, height):
         pass

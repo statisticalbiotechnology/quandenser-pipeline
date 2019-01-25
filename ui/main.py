@@ -1,9 +1,12 @@
 import sys
 import PyQt5
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
 from PyQt5.QtWidgets import QLabel, QMainWindow
 from PyQt5.QtGui import QIcon
+
+# Remember config
+import configparser
 
 # Widgets
 from file_chooser import file_chooser
@@ -18,6 +21,10 @@ class Main(QMainWindow):
         self.title = 'Quandenser'
         self.left = 10
         self.top = 10
+        self.config = configparser.ConfigParser()
+        self.config.read_file(open('../config/ui.config'))
+        self.WIDTH = int(self.config['graphics']['WIDTH'])  # Note: self.width overwrites self.width() function!
+        self.HEIGHT = int(self.config['graphics']['HEIGHT'])  # Config to remember size
         self.setMinimumWidth(200)
         self.setMinimumHeight(200)
         self.initUI()
@@ -25,12 +32,15 @@ class Main(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width(), self.height())
+        self.setGeometry(self.left, self.top, self.WIDTH, self.HEIGHT)
 
         # Central widget
-        self.main_widget = QWidget()
-        self.main_layout = QHBoxLayout()
-        self.main_widget.setLayout(self.main_layout)
+        self.tabs = QTabWidget()  # Multiple tabs
+
+        # Tab 1
+        self.tab1 = QWidget()
+        self.tab1_layout = QHBoxLayout()
+        self.tab1.setLayout(self.tab1_layout)
 
         # Init left box
         self.initLeft_box()
@@ -38,7 +48,15 @@ class Main(QMainWindow):
         # Init right box
         self.initRight_box()
 
-        self.setCentralWidget(self.main_widget)
+        # Tab 2
+        self.tab2 = QWidget()
+
+        # Add the tabs
+        self.tabs.addTab(self.tab1, "Run pipeline")
+        self.tabs.addTab(self.tab2, "Edit workflow")
+
+
+        self.setCentralWidget(self.tabs)
 
         self.show()
 
@@ -55,7 +73,7 @@ class Main(QMainWindow):
         # Add
         self.left_box_layout.addRow(self.file_chooser)
         self.left_box_layout.addRow(QLabel("msconvert arguments"), self.msconvert_arguments)
-        self.main_layout.addWidget(self.left_box)
+        self.tab1_layout.addWidget(self.left_box)
 
     def initRight_box(self):
         # Right box
@@ -70,16 +88,21 @@ class Main(QMainWindow):
         # Add
         self.right_box_layout.addWidget(self.batch_file_viewer)
         self.right_box_layout.addWidget(self.run_button)
-        self.main_layout.addWidget(self.right_box)
+        self.tab1_layout.addWidget(self.right_box)
 
 
     def resizeEvent(self, event):
+        self.config.set('graphics', 'WIDTH', str(self.width())
+        self.config.set('graphics', 'HEIGHT', str(self.height()))
+
+        """
         print(self.width(), self.height())
-        children = [self.main_layout.itemAt(i).widget() for i in range(self.main_layout.count())]
+        children = [self.tab1_layout.itemAt(i).widget() for i in range(self.tab1_layout.count())]
         for child in children:
             print(child)
             if hasattr(child, 'set_size'):
                 child.set_size(self.width(), self.height())
+        """
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
