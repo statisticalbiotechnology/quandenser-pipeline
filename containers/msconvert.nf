@@ -13,9 +13,6 @@ process msconvert {
   file("*mz5") into converted_files
   script:
 	"""
-  export WINEARCH="win32"  # Set wine to handle 32 bit
-  export WINEPREFIX=/.wine  # Get a clean prefix
-  #wine regsvr32 /pwiz/*.dll
-  wine /pwiz/msconvert.exe ${f} --mz5
+  wine msconvert ${f} --mz5
   """
 }
