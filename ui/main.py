@@ -1,110 +1,121 @@
 import sys
-import PyQt5
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
-from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
-from PyQt5.QtWidgets import QLabel, QMainWindow
-from PyQt5.QtGui import QIcon
+import os
+from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
+from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
+from PySide2.QtWidgets import QLabel, QMainWindow
+from PySide2.QtWebEngineWidgets import QWebEngineView
+from PySide2.QtGui import QIcon
+from PySide2 import QtCore
 
 # Remember config
 import configparser
 
 # Widgets
-from file_chooser import file_chooser
-from msconvert_arguments import msconvert_arguments
-from batch_file_viewer import batch_file_viewer
-from run_button import run_button
+from tab1.file_chooser import file_chooser
+from tab1.batch_file_viewer import batch_file_viewer
+from tab1.run_button import run_button
+from tab2.workflow_choose import workflow_choose
+from tab3.msconvert_arguments import msconvert_arguments
+from tab5.about import about
 
 class Main(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.title = 'Quandenser'
+        self.title = 'Quandenser-pipeline'
+        self.setWindowIcon(QIcon('quandenser_icon.jpg'))
         self.left = 10
         self.top = 10
-        self.config_file = '../config/ui.config'
-        self.config = configparser.ConfigParser()
-        self.config.read_file(open(self.config_file, 'r'))
-        self.WIDTH = int(self.config.get('graphics', 'WIDTH'))  # Note: self.width overwrites self.width() function!
-        self.HEIGHT = int(self.config.get('graphics', 'HEIGHT'))  # Config to remember size
-        self.setMinimumWidth(200)
+        self.WIDTH = 600
+        self.HEIGHT = 400
+        self.settings_path = '../config/ui.config'
+        # Restore window's previous geometry from file
+        if os.path.exists(self.settings_path):
+            settings_obj = QtCore.QSettings(self.settings_path, QtCore.QSettings.IniFormat)
+            self.restoreGeometry(settings_obj.value("windowGeometry"))
+            self.restoreState(settings_obj.value("State"))
+        self.setMinimumWidth(300)
         self.setMinimumHeight(200)
         self.initUI()
         self.show()
 
     def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.WIDTH, self.HEIGHT)
 
         # Central widget
-        self.tabs = QTabWidget()  # Multiple tabs
+        self.tabs = QTabWidget()  # Multiple tabs, slow to load
 
-        # Tab 1
-        self.tab1 = QWidget()
-        self.tab1_layout = QHBoxLayout()
-        self.tab1.setLayout(self.tab1_layout)
-
-        # Init left box
-        self.initLeft_box()
-
-        # Init right box
-        self.initRight_box()
+        # Init tab1
+        self.inittab1()
 
         # Tab 2
-        self.tab2 = QWidget()
+        self.inittab2()
+
+        # Tab 3
+        self.inittab3()
+
+        # Tab 4
+        self.inittab4()
+
+        # Tab 5
+        self.inittab5()
 
         # Add the tabs
-        self.tabs.addTab(self.tab1, "Run pipeline")
+        self.tabs.addTab(self.tab1, "MS files")
         self.tabs.addTab(self.tab2, "Edit workflow")
-
+        self.tabs.addTab(self.tab3, "MSconvert")
+        self.tabs.addTab(self.tab4, "How to use")
+        self.tabs.addTab(self.tab5, "About")
 
         self.setCentralWidget(self.tabs)
 
         self.show()
 
-    def initLeft_box(self):
-        # Left box
-        self.left_box = QWidget()
-        self.left_box_layout = QFormLayout()
-        self.left_box.setLayout(self.left_box_layout)
-
+    def inittab1(self):
+        self.tab1 = QWidget()
+        self.tab1_layout = QVBoxLayout()
+        self.tab1.setLayout(self.tab1_layout)
         # Widgets in leftbox
         self.file_chooser = file_chooser()
-        self.msconvert_arguments = msconvert_arguments()
-
-        # Add
-        self.left_box_layout.addRow(self.file_chooser)
-        self.left_box_layout.addRow(QLabel("msconvert arguments"), self.msconvert_arguments)
-        self.tab1_layout.addWidget(self.left_box)
-
-    def initRight_box(self):
-        # Right box
-        self.right_box = QWidget()
-        self.right_box_layout = QVBoxLayout()
-        self.right_box.setLayout(self.right_box_layout)
-
-        # Right box widgets
         self.batch_file_viewer = batch_file_viewer()
         self.run_button = run_button()
 
-        # Add
-        self.right_box_layout.addWidget(self.batch_file_viewer)
-        self.right_box_layout.addWidget(self.run_button)
-        self.tab1_layout.addWidget(self.right_box)
+        self.tab1_layout.addWidget(self.file_chooser)
+        self.tab1_layout.addWidget(self.batch_file_viewer)
+        self.tab1_layout.addWidget(self.run_button)
 
+    def inittab2(self):
+        self.tab2 = QWidget()
+        self.tab2_layout = QHBoxLayout()
+        self.tab2.setLayout(self.tab2_layout)
 
-    def resizeEvent(self, event):
-        self.config.set('graphics', 'WIDTH', str(self.width()))
-        self.config.set('graphics', 'HEIGHT', str(self.height()))
-        self.config.write(open(self.config_file, 'w'))
+        self.workflow_choose = workflow_choose()
 
-        """
-        print(self.width(), self.height())
-        children = [self.tab1_layout.itemAt(i).widget() for i in range(self.tab1_layout.count())]
-        for child in children:
-            print(child)
-            if hasattr(child, 'set_size'):
-                child.set_size(self.width(), self.height())
-        """
+        self.workflow = QWebEngineView()
+        html_file = open("tab2/flowchart.html")
+        self.workflow.setHtml(html_file.read())
+
+        self.tab2_layout.addWidget(self.workflow_choose)
+        self.tab2_layout.addWidget(self.workflow)
+
+    def inittab3(self):
+        self.tab3 = QWidget()
+
+    def inittab4(self):
+        self.tab4 = QWidget()
+
+    def inittab5(self):
+        self.tab5 = QWidget()
+        self.tab5_layout = QVBoxLayout()
+        self.tab5.setLayout(self.tab5_layout)
+        self.about = about()
+        self.tab5_layout.addWidget(self.about)
+
+    def closeEvent(self, event):
+        # Save window's geometry
+        settings_obj = QtCore.QSettings(self.settings_path, QtCore.QSettings.IniFormat)
+        settings_obj.setValue("windowGeometry", self.saveGeometry())
+        settings_obj.setValue("State", self.saveState())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
