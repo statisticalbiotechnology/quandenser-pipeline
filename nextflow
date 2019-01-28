@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright 2013-2018, Centre for Genomic Regulation (CRG)
+#  Copyright 2013-2019, Centre for Genomic Regulation (CRG)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
 #  limitations under the License.
 
 [[ "$NXF_DEBUG" == 'x' ]] && set -x
-NXF_VER=${NXF_VER:-'18.10.1'}
+NXF_VER=${NXF_VER:-'19.01.0'}
 NXF_ORG=${NXF_ORG:-'nextflow-io'}
 NXF_HOME=${NXF_HOME:-$HOME/.nextflow}
 NXF_PROT=${NXF_PROT:-'https'}
 NXF_BASE=${NXF_BASE:-$NXF_PROT://www.nextflow.io/releases}
 NXF_TEMP=${NXF_TEMP:-$TMPDIR}
+NXF_DIST=${NXF_DIST:-$NXF_HOME/framework}
 NXF_CLI="$0 $@"
 
 export NXF_CLI
@@ -108,9 +109,13 @@ function resolve_link() {
     fi
 }
 
+function current_ver() {
+  [[ $NXF_EDGE == 1 ]] && printf 'edge' || printf 'latest'
+}
+
 function install() {
     local tmpfile=$(make_temp)
-    local version=$(set +u; [[ $NXF_VER ]] && printf "v$NXF_VER" || printf 'latest')
+    local version=$(set +u; [[ $NXF_VER ]] && printf "v$NXF_VER" || current_ver)
     local action="a=${2:-default}"
     get "$NXF_BASE/$version/nextflow?$action" "$tmpfile" "$1" || exit $?
     mv "$tmpfile" "$1" || exit $?
@@ -210,13 +215,14 @@ while [[ $# != 0 ]]; do
       ;;
     -download)
       if [[ ! "$cmd" ]]; then
-      rm -rf "$NXF_HOME/framework/$NXF_VER" || exit $?
+      rm -rf "$NXF_DIST/$NXF_VER" || exit $?
       bash "$0" -version || exit $?
       exit 0
       fi
       ;;
     -self-update|self-update)
       if [[ ! "$cmd" ]]; then
+      [[ -z $NXF_EDGE && $NXF_VER = *-edge ]] && NXF_EDGE=1
       unset NXF_VER
       install "$0" update
       exit 0
@@ -258,7 +264,7 @@ CAPSULE_CACHE_DIR=${CAPSULE_CACHE_DIR:="$NXF_HOME/capsule"}
 NXF_PACK=one
 NXF_MODE=${NXF_MODE:-''}
 NXF_JAR=${NXF_JAR:-nextflow-$NXF_VER-$NXF_PACK.jar}
-NXF_BIN=${NXF_BIN:-$NXF_HOME/framework/$NXF_VER/$NXF_JAR}
+NXF_BIN=${NXF_BIN:-$NXF_DIST/$NXF_VER/$NXF_JAR}
 NXF_PATH=$(dirname "$NXF_BIN")
 NXF_URL=${NXF_URL:-$NXF_BASE/v$NXF_VER/$NXF_JAR}
 NXF_GRAB=${NXF_GRAB:-''}
@@ -266,6 +272,9 @@ NXF_CLASSPATH=${NXF_CLASSPATH:-''}
 NXF_MPIRUN=${NXF_MPIRUN:=''}
 NXF_HOST=${HOSTNAME:-localhost}
 [[ $NXF_LAUNCHER ]] || NXF_LAUNCHER=${NXF_HOME}/tmp/launcher/nextflow-${NXF_PACK}_${NXF_VER}/${NXF_HOST}
+
+[ ! $NXF_MODE ] && [[ $NXF_CLOUD_DRIVER == google ]] && NXF_MODE='google'
+[ ! $NXF_MODE ] && [[ $GOOGLE_APPLICATION_CREDENTIALS ]] && NXF_MODE='google'
 
 if [[ $NXF_MODE == ignite ]]; then
     # Fix JDK bug when there's a limit on the OS virtual memory
@@ -295,7 +304,7 @@ if [ ! -x "$JAVA_CMD" ] ; then
             JAVA_CMD="$JAVA_HOME/bin/java"
         fi
     elif [ -x /usr/libexec/java_home ]; then
-        JAVA_CMD="$(/usr/libexec/java_home -v 1.8)/bin/java"
+        JAVA_CMD="$(/usr/libexec/java_home -v 1.8+)/bin/java"
     else
         JAVA_CMD="$(which java)" || JAVA_CMD=java
     fi
