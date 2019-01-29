@@ -1,0 +1,89 @@
+%Imports and headers
+\documentclass[a4paper]{article}  %Or use titlepage
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{float} %makes you be able to use H option, places fig there and only there. VERY useful
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+%% Extra packages for color and stuff
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage[some]{background}
+
+%% Header, foot and page number in bottom right corner
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+
+% For gantt chart
+\usepackage{pgfgantt}
+
+%% For long comments
+\usepackage{comment}
+
+% Turn on the style
+\pagestyle{fancy}
+% Clear the header and footer
+\fancyhead{}
+\fancyfoot{}
+
+% The file containing our references, in BibTeX format
+\usepackage{csquotes} % Recommended by biblatex
+\usepackage[style=numeric,sorting=none,backend=biber]{biblatex}
+\addbibresource{references.bib}
+
+%%%%% Title page
+\begin{document}
+\thispagestyle{empty}
+\input{Chapters/0.0_title.tex}
+\newpage
+
+%%%%% Table of contents
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+
+%%%%% Chapters
+% set footer
+% Set the right side of the footer to be the page number
+\fancyfoot[R]{\thepage}  % Page number
+\fancyfoot[L]{\date{\today}}  % date on footer
+\fancyhead[C]{BB200X - Project plan}  % Text on head
+\setcounter{page}{1}
+
+% document
+\input{Chapters/1.0_introduction.tex}
+%\newpage
+\input{Chapters/2.0_objectives.tex}
+%\newpage
+\input{Chapters/3.0_WBS.tex}
+%\newpage
+\input{Chapters/4.0_milestones.tex}
+%\newpage
+\input{Chapters/5.0_timeplan.tex}
+%\newpage
+\input{Chapters/6.0_moscow.tex}
+%\newpage
+\input{Chapters/7.0_business_case.tex}
+%\newpage
+\input{Chapters/8.0_stakeholder_analysis.tex}
+%\newpage
+\input{Chapters/9.0_risk_assesement.tex}
+%\newpage
+\input{Chapters/10.0_swot.tex}
+\newpage
+\printbibliography
+
+
+\end{document}
