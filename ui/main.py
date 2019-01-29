@@ -2,7 +2,7 @@ import sys
 import os
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
-from PySide2.QtWidgets import QLabel, QMainWindow
+from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit
 from PySide2.QtWebEngineWidgets import QWebEngineView
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
@@ -12,6 +12,7 @@ import configparser
 
 # Widgets
 from tab1.file_chooser import file_chooser
+from tab1.database_viewer import database_viewer
 from tab1.batch_file_viewer import batch_file_viewer
 from tab1.run_button import run_button
 from tab2.workflow_choose import workflow_choose
@@ -35,14 +36,12 @@ class Main(QMainWindow):
         self.setMinimumHeight(200)
         self.initUI()
 
-        self.widget_counter = 0  # Since the recursion loads the same way, this "hack" fixes unique names
         if os.path.exists(self.settings_path):
             self.restoreGeometry(self.settings_obj.value("windowGeometry"))
             self.restoreState(self.settings_obj.value("State_main"))
             children = self.children()
             for child in children:
                 self.recurse_children(child, save=False)
-            self.widget_counter = 0  # Reset
         self.show()
 
     def initUI(self):
@@ -81,12 +80,17 @@ class Main(QMainWindow):
         self.tab1 = QWidget()
         self.tab1_layout = QVBoxLayout()
         self.tab1.setLayout(self.tab1_layout)
+
         # Widgets in leftbox
-        self.file_chooser = file_chooser()
+        self.fasta_chooser = file_chooser(type='fasta')
+        self.database_viewer = database_viewer()
+        self.ms_chooser = file_chooser(type='ms')
         self.batch_file_viewer = batch_file_viewer()
         self.run_button = run_button()
 
-        self.tab1_layout.addWidget(self.file_chooser)
+        self.tab1_layout.addWidget(self.fasta_chooser)
+        self.tab1_layout.addWidget(self.database_viewer)
+        self.tab1_layout.addWidget(self.ms_chooser)
         self.tab1_layout.addWidget(self.batch_file_viewer)
         self.tab1_layout.addWidget(self.run_button)
 
@@ -129,18 +133,20 @@ class Main(QMainWindow):
         children = parent.children()
         if children == []:
             return
-        if save:
-            for child in children:
-                if hasattr(child, 'saveGeometry'):
-                    self.settings_obj.setValue(f"State_{self.widget_counter}", child.saveGeometry())
-                    self.widget_counter += 1
-                self.recurse_children(child, save=save)
-        else:
-            for child in children:
-                if hasattr(child, 'restoreGeometry'):
-                    child.restoreGeometry(self.settings_obj.value(f"State_{self.widget_counter}"))
-                    self.widget_counter += 1
-                self.recurse_children(child, save=save)
+        for child in children:
+            self.child_settings(child, save=save)
+            self.recurse_children(child, save=save)  # WE HAVE TO GO DEEPER!
+
+    def child_settings(self, child, save=True):
+        if isinstance(child, QPushButton):
+            pass
+        elif isinstance(child, QTextEdit):
+            if save:
+                self.settings_obj.setValue(f"State_{child.__class__.__name__}", child.toPlainText())
+            else:
+                child.setPlainText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
