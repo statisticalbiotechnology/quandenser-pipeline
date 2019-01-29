@@ -117,3 +117,9 @@ venv.bak/
 
 # Example data
 */example_data/*
+
+# Triqler inputs
+**/triqler_input.*
+
+# Index files
+**/*.index
