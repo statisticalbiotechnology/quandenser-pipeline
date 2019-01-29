@@ -29,14 +29,20 @@ class Main(QMainWindow):
         self.WIDTH = 600
         self.HEIGHT = 400
         self.settings_path = '../config/ui.config'
+        self.settings_obj = QtCore.QSettings(self.settings_path, QtCore.QSettings.IniFormat)
         # Restore window's previous geometry from file
-        if os.path.exists(self.settings_path):
-            settings_obj = QtCore.QSettings(self.settings_path, QtCore.QSettings.IniFormat)
-            self.restoreGeometry(settings_obj.value("windowGeometry"))
-            self.restoreState(settings_obj.value("State"))
         self.setMinimumWidth(300)
         self.setMinimumHeight(200)
         self.initUI()
+
+        self.widget_counter = 0  # Since the recursion loads the same way, this "hack" fixes unique names
+        if os.path.exists(self.settings_path):
+            self.restoreGeometry(self.settings_obj.value("windowGeometry"))
+            self.restoreState(self.settings_obj.value("State_main"))
+            children = self.children()
+            for child in children:
+                self.recurse_children(child, save=False)
+            self.widget_counter = 0  # Reset
         self.show()
 
     def initUI(self):
@@ -112,10 +118,29 @@ class Main(QMainWindow):
         self.tab5_layout.addWidget(self.about)
 
     def closeEvent(self, event):
-        # Save window's geometry
-        settings_obj = QtCore.QSettings(self.settings_path, QtCore.QSettings.IniFormat)
-        settings_obj.setValue("windowGeometry", self.saveGeometry())
-        settings_obj.setValue("State", self.saveState())
+        self.settings_obj.setValue("windowGeometry", self.saveGeometry())
+        self.settings_obj.setValue("State_main", self.saveState())
+        children = self.children()
+        self.widget_counter = 0  # Reset
+        for child in children:
+            self.recurse_children(child)
+
+    def recurse_children(self, parent, save=True):
+        children = parent.children()
+        if children == []:
+            return
+        if save:
+            for child in children:
+                if hasattr(child, 'saveGeometry'):
+                    self.settings_obj.setValue(f"State_{self.widget_counter}", child.saveGeometry())
+                    self.widget_counter += 1
+                self.recurse_children(child, save=save)
+        else:
+            for child in children:
+                if hasattr(child, 'restoreGeometry'):
+                    child.restoreGeometry(self.settings_obj.value(f"State_{self.widget_counter}"))
+                    self.widget_counter += 1
+                self.recurse_children(child, save=save)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
