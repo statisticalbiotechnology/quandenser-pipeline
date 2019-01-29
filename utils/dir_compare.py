@@ -1,4 +1,4 @@
-size_threshold = 1
+size_threshold = 0.5
 root_dir = '../WIP'
 
 from tkinter import filedialog
@@ -12,12 +12,6 @@ root = Tk()
 root.withdraw()
 dir_1 = filedialog.askdirectory(parent=root,initialdir=root_dir,title='Select directory 1')
 dir_2 = filedialog.askdirectory(parent=root,initialdir=root_dir,title='Select directory 2')
-
-if "Linux" in platform.platform():
-    dir_1_size = subprocess.check_output(['du','-sm', dir_1]).split()[0].decode('utf-8')  # ONLY WORKS ON LINUX
-    dir_2_size = subprocess.check_output(['du','-sm', dir_2]).split()[0].decode('utf-8')  # ONLY WORKS ON LINUX
-    dir_1_size, dir_2_size = int(dir_1_size), int(dir_2_size)
-    print(f"dir1 = {dir_1_size}MB and dir2 = {dir_2_size}MB, aka {round(dir_1_size - dir_2_size, 3)}MB difference")
 
 # Store
 files_dict = {0: {},
@@ -56,11 +50,11 @@ for name in files_dict[0].keys():
         size2 = round(files_dict[1][name][0], 3)
         total_diff_size += abs(size1 - size2)
         if abs(size1 - size2) > size_threshold:
-            diff = WARNING
+            diff = FAIL
             diff_files += 1
         else:
-            diff = OKBLUE
-        print(f"{OKBLUE}{name}{ENDC} where dir1 has size {size1}MB and file in dir2 has size {size2}MB, {diff}{round(size1 - size2, 3)}MB{ENDC} difference")
+            diff = OKGREEN
+        print(f"{OKBLUE}{name}{ENDC} where dir1 has size {OKBLUE}{size1}MB{ENDC} and file in dir2 has size {OKBLUE}{size2}MB{ENDC}, {diff}{round(size1 - size2, 3)}MB{ENDC} difference")
     else:
         print(WARNING + f"{name} does not exist in dir2" + ENDC)
         missing_files += 1
@@ -73,3 +67,9 @@ for name in files_dict[1].keys():
 print(f"Total of {OKBLUE}{diff_files}{ENDC} over \
 {size_threshold}MB difference and {OKBLUE}{missing_files}{ENDC} missing files")
 print(f"A total of {round(total_diff_size, 3)}MB difference in file sizes (excluding missing files)")
+
+if "Linux" in platform.platform():
+    dir_1_size = subprocess.check_output(['du','-sm', dir_1]).split()[0].decode('utf-8')  # ONLY WORKS ON LINUX
+    dir_2_size = subprocess.check_output(['du','-sm', dir_2]).split()[0].decode('utf-8')  # ONLY WORKS ON LINUX
+    dir_1_size, dir_2_size = int(dir_1_size), int(dir_2_size)
+    print(f"dir1 = {dir_1_size}MB and dir2 = {dir_2_size}MB, aka {round(dir_1_size - dir_2_size, 3)}MB difference")
