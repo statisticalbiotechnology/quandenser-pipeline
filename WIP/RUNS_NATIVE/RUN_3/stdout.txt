@@ -1,0 +1,1697 @@
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A1.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631372647670
+peaky hills, n=916241
+peaky hill checkSum = 317221604243486
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=122079
+clusters deconvolved
+deisotoping complete
+isotopes, n=114805
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/A1.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.953
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.028
+          deisotope time: _ days __:_1:02.365
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.837
+              write time: _ days __:__:_1.264
+
+         deiso edge time: _ days __:__:21.214
+          deiso rip time: _ days __:__:__.176
+       deiso deconv time: _ days __:__:40.974
+
+total time: _ days __:_1:52.686
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A2.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: A2
+
+.                              .
+[==============================]all hills, n=914241
+hill checkSum = 314638606908508
+peaky hills, n=903370
+peaky hill checkSum = 307732237380140
+  nScans    nHills
+         2        0
+         3   253940
+         4   139200
+      5-10   273312
+     10-20   149872
+     20-50    76236
+    50-100     9775
+   100-200     1035
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120463
+clusters deconvolved
+deisotoping complete
+isotopes, n=113873
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/A2.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.796
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.505
+          deisotope time: _ days __:__:49.507
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.979
+              write time: _ days __:__:_1.304
+
+         deiso edge time: _ days __:__:20.117
+          deiso rip time: _ days __:__:__.203
+       deiso deconv time: _ days __:__:29.186
+
+total time: _ days __:_1:40.329
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A3.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: A3
+
+.                              .
+[==============================]all hills, n=921343
+hill checkSum = 319167468071692
+peaky hills, n=910008
+peaky hill checkSum = 311926352224314
+  nScans    nHills
+         2        0
+         3   255804
+         4   139758
+      5-10   277015
+     10-20   150079
+     20-50    76530
+    50-100     9730
+   100-200     1092
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120975
+clusters deconvolved
+deisotoping complete
+isotopes, n=112782
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/A3.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.008
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.154
+          deisotope time: _ days __:_1:02.872
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:_1.000
+              write time: _ days __:__:_1.305
+
+         deiso edge time: _ days __:__:20.114
+          deiso rip time: _ days __:__:__.167
+       deiso deconv time: _ days __:__:42.590
+
+total time: _ days __:_1:51.585
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B1.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: B1
+
+.                              .
+[==============================]all hills, n=909707
+hill checkSum = 312186324679298
+peaky hills, n=899333
+peaky hill checkSum = 305617099292068
+  nScans    nHills
+         2        0
+         3   260432
+         4   140996
+      5-10   272303
+     10-20   145050
+     20-50    71151
+    50-100     8444
+   100-200      957
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=121028
+clusters deconvolved
+deisotoping complete
+isotopes, n=113983
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/B1.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.049
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.927
+          deisotope time: _ days __:__:46.402
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.759
+              write time: _ days __:__:_1.277
+
+         deiso edge time: _ days __:__:20.091
+          deiso rip time: _ days __:__:__.436
+       deiso deconv time: _ days __:__:25.874
+
+total time: _ days __:_1:34.667
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B2.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: B2
+
+.                              .
+[==============================]all hills, n=915504
+hill checkSum = 316368470690678
+peaky hills, n=904930
+peaky hill checkSum = 309604256976487
+  nScans    nHills
+         2        0
+         3   263343
+         4   141140
+      5-10   274138
+     10-20   145578
+     20-50    71272
+    50-100     8541
+   100-200      918
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=121936
+clusters deconvolved
+deisotoping complete
+isotopes, n=113766
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/B2.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.959
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.089
+          deisotope time: _ days __:__:41.048
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.852
+              write time: _ days __:__:_1.230
+
+         deiso edge time: _ days __:__:19.207
+          deiso rip time: _ days __:__:__.177
+       deiso deconv time: _ days __:__:21.662
+
+total time: _ days __:_1:29.414
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B3.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: B3
+
+.                              .
+[==============================]all hills, n=908824
+hill checkSum = 311174231598058
+peaky hills, n=898266
+peaky hill checkSum = 304500407245783
+  nScans    nHills
+         2        0
+         3   261057
+         4   140241
+      5-10   270961
+     10-20   144985
+     20-50    71581
+    50-100     8506
+   100-200      935
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=120088
+clusters deconvolved
+deisotoping complete
+isotopes, n=112359
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/B3.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.132
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.382
+          deisotope time: _ days __:__:45.087
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.832
+              write time: _ days __:__:_1.209
+
+         deiso edge time: _ days __:__:20.423
+          deiso rip time: _ days __:__:__.174
+       deiso deconv time: _ days __:__:24.489
+
+total time: _ days __:_1:32.870
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C1.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: C1
+
+.                              .
+[==============================]all hills, n=885425
+hill checkSum = 285307877380324
+peaky hills, n=872610
+peaky hill checkSum = 277653449514543
+  nScans    nHills
+         2        0
+         3   236122
+         4   130068
+      5-10   267832
+     10-20   150404
+     20-50    76122
+    50-100    10760
+   100-200     1302
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=115795
+clusters deconvolved
+deisotoping complete
+isotopes, n=107519
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/C1.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.253
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.994
+          deisotope time: _ days __:__:41.266
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.801
+              write time: _ days __:__:_1.200
+
+         deiso edge time: _ days __:__:18.745
+          deiso rip time: _ days __:__:__.173
+       deiso deconv time: _ days __:__:22.347
+
+total time: _ days __:_1:27.757
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C2.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: C2
+
+.                              .
+[==============================]all hills, n=887877
+hill checkSum = 286477511521871
+peaky hills, n=875064
+peaky hill checkSum = 278831435079772
+  nScans    nHills
+         2        0
+         3   235486
+         4   130287
+      5-10   268124
+     10-20   151802
+     20-50    77426
+    50-100    10609
+   100-200     1330
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=115376
+clusters deconvolved
+deisotoping complete
+isotopes, n=106956
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/C2.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:21.049
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.042
+          deisotope time: _ days __:__:43.972
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.934
+              write time: _ days __:__:_1.241
+
+         deiso edge time: _ days __:__:19.266
+          deiso rip time: _ days __:__:__.464
+       deiso deconv time: _ days __:__:24.241
+
+total time: _ days __:_1:30.476
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C3.mzML
+    out dir: Quandenser_output/dinosaur
+   out name: C3
+
+.                              .
+[==============================]all hills, n=899367
+hill checkSum = 294190552644442
+peaky hills, n=885902
+peaky hill checkSum = 286054384271045
+  nScans    nHills
+         2        0
+         3   238218
+         4   131029
+      5-10   271676
+     10-20   154615
+     20-50    78496
+    50-100    10591
+   100-200     1277
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+edges assembled
+clusters ripped, n=116527
+clusters deconvolved
+deisotoping complete
+isotopes, n=107462
+writing isotope pattern reports...
+isotope pattern reports written
+
+=== OUTPUT ===
+  writing global isotope pattern file Quandenser_output/dinosaur/C3.features.tsv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.606
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:26.350
+          deisotope time: _ days __:__:38.859
+ iso pattern report time: _ days __:__:__.__2
+         mass calib time: _ days __:__:__.684
+              write time: _ days __:__:_1.080
+
+         deiso edge time: _ days __:__:18.502
+          deiso rip time: _ days __:__:__.156
+       deiso deconv time: _ days __:__:20.199
+
+total time: _ days __:_1:27.823
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_6_to_7.psms.pout_dinosaur
+   out name: C2
+
+.                              .
+[==============================]all hills, n=887877
+hill checkSum = 286477512744487
+peaky hills, n=875064
+peaky hill checkSum = 278831436309370
+  nScans    nHills
+         2        0
+         3   235486
+         4   130287
+      5-10   268124
+     10-20   151802
+     20-50    77426
+    50-100    10609
+   100-200     1330
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=356913
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_6_to_7.psms.pout_dinosaur/C2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.026
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.769
+          deisotope time: _ days __:__:37.363
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:11.399
+              write time: _ days __:__:_2.193
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_1:41.084
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_5_to_4.psms.pout_dinosaur
+   out name: B2
+
+.                              .
+[==============================]all hills, n=915504
+hill checkSum = 316368480863624
+peaky hills, n=904930
+peaky hill checkSum = 309604266989190
+  nScans    nHills
+         2        0
+         3   263343
+         4   141140
+      5-10   274138
+     10-20   145578
+     20-50    71272
+    50-100     8541
+   100-200      918
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=396755
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_5_to_4.psms.pout_dinosaur/B2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.326
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:22.093
+          deisotope time: _ days __:__:40.961
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:12.389
+              write time: _ days __:__:_2.463
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_1:46.252
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_7_to_8.psms.pout_dinosaur
+   out name: C3
+
+.                              .
+[==============================]all hills, n=899367
+hill checkSum = 294190553639573
+peaky hills, n=885902
+peaky hill checkSum = 286054385261370
+  nScans    nHills
+         2        0
+         3   238218
+         4   131029
+      5-10   271676
+     10-20   154615
+     20-50    78496
+    50-100    10591
+   100-200     1277
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=436668
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_7_to_8.psms.pout_dinosaur/C3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.454
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.898
+          deisotope time: _ days __:__:44.398
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:11.316
+              write time: _ days __:__:_2.378
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_1:49.269
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_4_to_1.psms.pout_dinosaur
+   out name: A2
+
+.                              .
+[==============================]all hills, n=914241
+hill checkSum = 314638611714221
+peaky hills, n=903370
+peaky hill checkSum = 307732242104668
+  nScans    nHills
+         2        0
+         3   253940
+         4   139200
+      5-10   273312
+     10-20   149872
+     20-50    76236
+    50-100     9775
+   100-200     1035
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=450923
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_4_to_1.psms.pout_dinosaur/A2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.392
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.969
+          deisotope time: _ days __:__:51.368
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:14.424
+              write time: _ days __:__:_3.217
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:03.737
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_8_to_2.psms.pout_dinosaur
+   out name: A3
+
+.                              .
+[==============================]all hills, n=921343
+hill checkSum = 319167464026771
+peaky hills, n=910008
+peaky hill checkSum = 311926348199173
+  nScans    nHills
+         2        0
+         3   255804
+         4   139758
+      5-10   277015
+     10-20   150079
+     20-50    76530
+    50-100     9730
+   100-200     1092
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=519931
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_8_to_2.psms.pout_dinosaur/A3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.139
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:26.318
+          deisotope time: _ days __:_1:08.170
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:12.402
+              write time: _ days __:__:_2.862
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:21.432
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_1_to_0.psms.pout_dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631374359545
+peaky hills, n=916241
+peaky hill checkSum = 317221605885653
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=553736
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_1_to_0.psms.pout_dinosaur/A1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.583
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.012
+          deisotope time: _ days __:_1:39.403
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:16.400
+              write time: _ days __:__:_4.862
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:00.781
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_2_to_0.psms.pout_dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631373683122
+peaky hills, n=916241
+peaky hill checkSum = 317221605227833
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=534478
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_2_to_0.psms.pout_dinosaur/A1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.287
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.420
+          deisotope time: _ days __:_1:06.163
+ iso pattern report time: _ days __:__:__.__1
+         mass calib time: _ days __:__:12.543
+              write time: _ days __:__:_3.361
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_2:18.393
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_3_to_0.psms.pout_dinosaur
+   out name: A1
+
+.                              .
+[==============================]all hills, n=927733
+hill checkSum = 324631368880665
+peaky hills, n=916241
+peaky hill checkSum = 317221600522927
+  nScans    nHills
+         2        0
+         3   257503
+         4   140685
+      5-10   279192
+     10-20   151649
+     20-50    76478
+    50-100     9668
+   100-200     1066
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=386340
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_3_to_0.psms.pout_dinosaur/A1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.987
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.744
+          deisotope time: _ days __:__:29.021
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:11.570
+              write time: _ days __:__:_1.505
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_1:34.977
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_0_to_1.psms.pout_dinosaur
+   out name: A2
+
+.                              .
+[==============================]all hills, n=914241
+hill checkSum = 314638610712667
+peaky hills, n=903370
+peaky hill checkSum = 307732241501702
+  nScans    nHills
+         2        0
+         3   253940
+         4   139200
+      5-10   273312
+     10-20   149872
+     20-50    76236
+    50-100     9775
+   100-200     1035
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=610276
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_0_to_1.psms.pout_dinosaur/A2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.513
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:26.661
+          deisotope time: _ days __:_2:40.697
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:14.968
+              write time: _ days __:__:_7.032
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_4:15.562
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/A3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_0_to_2.psms.pout_dinosaur
+   out name: A3
+
+.                              .
+[==============================]all hills, n=921343
+hill checkSum = 319167466576426
+peaky hills, n=910008
+peaky hill checkSum = 311926350742114
+  nScans    nHills
+         2        0
+         3   255804
+         4   139758
+      5-10   277015
+     10-20   150079
+     20-50    76530
+    50-100     9730
+   100-200     1092
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=594850
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_0_to_2.psms.pout_dinosaur/A3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.622
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.743
+          deisotope time: _ days __:_1:55.931
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:13.639
+              write time: _ days __:__:_6.249
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:20.307
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_0_to_3.psms.pout_dinosaur
+   out name: B1
+
+.                              .
+[==============================]all hills, n=909707
+hill checkSum = 312186324379522
+peaky hills, n=899333
+peaky hill checkSum = 305617098961873
+  nScans    nHills
+         2        0
+         3   260432
+         4   140996
+      5-10   272303
+     10-20   145050
+     20-50    71151
+    50-100     8444
+   100-200      957
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=579661
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_0_to_3.psms.pout_dinosaur/B1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.966
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:20.962
+          deisotope time: _ days __:_1:39.983
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:16.870
+              write time: _ days __:__:_5.811
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:02.214
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_1_to_4.psms.pout_dinosaur
+   out name: B2
+
+.                              .
+[==============================]all hills, n=915504
+hill checkSum = 316368482691174
+peaky hills, n=904930
+peaky hill checkSum = 309604268798704
+  nScans    nHills
+         2        0
+         3   263343
+         4   141140
+      5-10   274138
+     10-20   145578
+     20-50    71272
+    50-100     8541
+   100-200      918
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=585183
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_1_to_4.psms.pout_dinosaur/B2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.340
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.553
+          deisotope time: _ days __:_2:28.174
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:21.914
+              write time: _ days __:__:10.335
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_4:06.631
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_2_to_8.psms.pout_dinosaur
+   out name: C3
+
+.                              .
+[==============================]all hills, n=899367
+hill checkSum = 294190553463369
+peaky hills, n=885902
+peaky hill checkSum = 286054385084750
+  nScans    nHills
+         2        0
+         3   238218
+         4   131029
+      5-10   271676
+     10-20   154615
+     20-50    78496
+    50-100    10591
+   100-200     1277
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=546847
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_2_to_8.psms.pout_dinosaur/C3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:21.408
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.387
+          deisotope time: _ days __:_2:44.002
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:17.748
+              write time: _ days __:__:_6.832
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_4:17.862
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/B3.mzML
+    out dir: Quandenser_output/percolator/search_and_link_4_to_5.psms.pout_dinosaur
+   out name: B3
+
+.                              .
+[==============================]all hills, n=908824
+hill checkSum = 311174245595448
+peaky hills, n=898266
+peaky hill checkSum = 304500420639882
+  nScans    nHills
+         2        0
+         3   261057
+         4   140241
+      5-10   270961
+     10-20   144985
+     20-50    71581
+    50-100     8506
+   100-200      935
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=584713
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_4_to_5.psms.pout_dinosaur/B3.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:23.020
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:23.476
+          deisotope time: _ days __:_1:50.108
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:14.296
+              write time: _ days __:__:_6.117
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:13.632
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C2.mzML
+    out dir: Quandenser_output/percolator/search_and_link_8_to_7.psms.pout_dinosaur
+   out name: C2
+
+.                              .
+[==============================]all hills, n=887877
+hill checkSum = 286477511717010
+peaky hills, n=875064
+peaky hill checkSum = 278831435252743
+  nScans    nHills
+         2        0
+         3   235486
+         4   130287
+      5-10   268124
+     10-20   151802
+     20-50    77426
+    50-100    10609
+   100-200     1330
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=525962
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_8_to_7.psms.pout_dinosaur/C2.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:22.728
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:25.119
+          deisotope time: _ days __:_1:55.364
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:10.910
+              write time: _ days __:__:_6.874
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:18.807
+Dinosaur 1.1.3    built:${maven.build.timestamp}
+  mzML file: mzML/C1.mzML
+    out dir: Quandenser_output/percolator/search_and_link_7_to_6.psms.pout_dinosaur
+   out name: C1
+
+.                              .
+[==============================]all hills, n=885425
+hill checkSum = 285307874138500
+peaky hills, n=872610
+peaky hill checkSum = 277653446342368
+  nScans    nHills
+         2        0
+         3   236122
+         4   130068
+      5-10   267832
+     10-20   150404
+     20-50    76122
+    50-100    10760
+   100-200     1302
+   200-500        0
+  500-1000        0
+ 1000-2000        0
+ 2000-5000        0
+5000-10000        0
+    >10000        0
+writing hill reports...
+hill reports written
+=== IN TARGETED MODE - BEWARE!!! ===
+deisotoping complete
+isotopes, n=522872
+
+=== OUTPUT ===
+  writing targeted isotope pattern file Quandenser_output/percolator/search_and_link_7_to_6.psms.pout_dinosaur/C1.targets.csv
+
+=== PROFILING ===
+         mzml parse time: _ days __:__:20.972
+           centroid time: _ days __:__:__.___
+        hill report time: _ days __:__:24.575
+          deisotope time: _ days __:_1:44.099
+ iso pattern report time: _ days __:__:__.___
+         mass calib time: _ days __:__:13.388
+              write time: _ days __:__:_6.597
+
+         deiso edge time: _ days __:__:__.___
+          deiso rip time: _ days __:__:__.___
+       deiso deconv time: _ days __:__:__.___
+
+total time: _ days __:_3:05.446
+Processing cluster 10000
+Processing cluster 20000
+Processing cluster 30000
+Processing cluster 40000
+Processing cluster 50000
+Calculating factor array 1
+Calculating factor array 2
+Calculating factor array 3
+Calculating factor array 4
+Calculating factor array 5
+Calculating factor array 6
+Calculating factor array 7
+Calculating factor array 8
+Calculating factor array 9
+Writing Quandenser_output/Quandenser.feature_groups.normalized.tsv
+Writing cluster 10000
+Writing cluster 20000
+Writing cluster 30000
+Writing cluster 40000
+Writing cluster 50000
+Parsing cluster quant file
+Processing feature group 1
+Processing feature group 10001
+Processing feature group 20001
+Processing feature group 30001
+Processing feature group 40001
+Processing feature group 50001
+Triqler version 0.1.2
+Copyright (c) 2018 Matthew The. All rights reserved.
+Written by Matthew The (matthew.the@scilifelab.se) in the
+School of Engineering Sciences in Chemistry, Biotechnology and Health at the 
+Royal Institute of Technology in Stockholm.
+  
+Parsing triqler input file
+Reading row 0
+Calculating identification PEPs
+[-3.71815063 -3.24439501 -3.05979966 -2.92547602 -2.83892222 -2.76503334
+ -2.69675721 -2.63520354 -2.57481838 -2.52187732 -2.47286129 -2.43172541
+ -2.40466824 -2.37500135 -2.34427943 -2.31578553 -2.28812602 -2.26404719
+ -2.23599147 -2.21345812 -2.19292095 -2.17451795 -2.1567279  -2.13308573
+ -2.11338085 -2.09571434 -2.07602061 -2.05870954 -2.04437176 -2.02681445
+ -2.00878674 -1.99221081 -1.9751783  -1.961845   -1.94764777 -1.93493176
+ -1.92106863 -1.90811735 -1.89684882 -1.8847234  -1.87201587 -1.8612211
+ -1.85060407 -1.83745603 -1.8247112  -1.81630244 -1.80774891 -1.79773734
+ -1.78781511 -1.77907047 -1.76966256 -1.76008349 -1.75077747 -1.74311725
+ -1.73585193 -1.72740146 -1.71824109 -1.71001257 -1.70235346 -1.69430536
+ -1.68611255 -1.67657247 -1.66787802 -1.65992089 -1.65346725 -1.64653686
+ -1.63915721 -1.6313283  -1.62469165 -1.61822598 -1.61076951 -1.60383462
+ -1.59636356 -1.58980039 -1.58328159 -1.57741231 -1.57021176 -1.56359501
+ -1.55770898 -1.55112932 -1.54366987 -1.53815896 -1.53135863 -1.5253464
+ -1.51941528 -1.51248878 -1.50714172 -1.50214698 -1.49708341 -1.49072064
+ -1.4852993  -1.47947502 -1.47367783 -1.46876303 -1.46448948 -1.46009822
+ -1.45444257 -1.44918609 -1.44381091 -1.43873231 -1.43437917 -1.42890612
+ -1.42427396 -1.41950925 -1.41353557 -1.4087559  -1.4038024  -1.39886565
+ -1.39427068 -1.3899331  -1.38517119 -1.38107939 -1.37612584 -1.37149887
+ -1.36566152 -1.36107146 -1.35688508 -1.3521242  -1.34828561 -1.34326317
+ -1.33868296 -1.33473718 -1.33014005 -1.32619782 -1.32160727 -1.31811041
+ -1.31382895 -1.30998404 -1.30603141 -1.30209204 -1.29791653 -1.2939373
+ -1.29005196 -1.28602621 -1.28162982 -1.27826179 -1.2741952  -1.27068215
+ -1.26731716 -1.26409007 -1.26051831 -1.2572507  -1.25304026 -1.24983289
+ -1.24640441 -1.24286097 -1.23956371 -1.2363702  -1.23333239 -1.2299194
+ -1.22593051 -1.22291186 -1.21983054 -1.216425   -1.21304791 -1.21010078
+ -1.20641703 -1.20236074 -1.1988777  -1.19501459 -1.19112127 -1.18749019
+ -1.18426636 -1.18121051 -1.17794621 -1.17448918 -1.1705024  -1.16742874
+ -1.16372929 -1.16030845 -1.1572866  -1.15412848 -1.15104268 -1.14760562
+ -1.14411199 -1.14145684 -1.13822712 -1.13514331 -1.13119715 -1.12807217
+ -1.12481681 -1.12174298 -1.1191658  -1.11536652 -1.11243253 -1.10959779
+ -1.10673739 -1.10436277 -1.10105321 -1.09783936 -1.09474431 -1.09157543
+ -1.08877796 -1.08612243 -1.08365041 -1.08062832 -1.0782089  -1.07521902
+ -1.07169823 -1.06883574 -1.06661353 -1.06402382 -1.06172755 -1.05917743
+ -1.05606086 -1.05350661 -1.05037514 -1.04784316 -1.04499476 -1.04230581
+ -1.03931649 -1.03651631 -1.03357611 -1.03070129 -1.02790358 -1.02486813
+ -1.02235552 -1.0191882  -1.0162099  -1.01346211 -1.01069248 -1.00820276
+ -1.00561988 -1.00321964 -1.00076365 -0.99865468 -0.99635153 -0.99351638
+ -0.99078393 -0.98780843 -0.98526866 -0.9831627  -0.98035679 -0.9779648
+ -0.97500344 -0.97239753 -0.96992771 -0.96686011 -0.96440963 -0.96188099
+ -0.95938565 -0.95659737 -0.95413056 -0.95157092 -0.94851176 -0.945979
+ -0.94294408 -0.94043858 -0.93774108 -0.93463317 -0.93183929 -0.92958716
+ -0.92689815 -0.92422384 -0.92199816 -0.91945776 -0.9172063  -0.91481263
+ -0.91247439 -0.90993506 -0.90737662 -0.9046995  -0.90235874 -0.89999604
+ -0.89710325 -0.89505889 -0.89197708 -0.88948589 -0.88679009 -0.88438509
+ -0.88180768 -0.87917098 -0.87662512 -0.87396977 -0.87135593 -0.86880535
+ -0.86633059 -0.86397013 -0.86142677 -0.85914244 -0.85682081 -0.85471621
+ -0.85214148 -0.85013211 -0.84743268 -0.84476968 -0.84258431 -0.84006363
+ -0.83787941 -0.83546732 -0.83323016 -0.83111823 -0.82853181 -0.82585228
+ -0.82413272 -0.82205755 -0.81962461 -0.81779121 -0.81536395 -0.81283255
+ -0.81032535 -0.80797208 -0.80559396 -0.80273266 -0.80032709 -0.7975278
+ -0.79505944 -0.79251954 -0.79015707 -0.78815006 -0.78574138 -0.78370939
+ -0.78102396 -0.77857694 -0.77625555 -0.77360851 -0.77111688 -0.76860844
+ -0.76604474 -0.76357045 -0.76110556 -0.75872322 -0.75608895 -0.7536653
+ -0.75098585 -0.74887806 -0.74644804 -0.74363974 -0.74153163 -0.73873877
+ -0.73655448 -0.73402651 -0.73188677 -0.72945713 -0.7274923  -0.72483261
+ -0.72235155 -0.71958975 -0.71707437 -0.71418876 -0.71180084 -0.70926688
+ -0.70691324 -0.70452885 -0.70175226 -0.69879541 -0.69637415 -0.69399055
+ -0.69090517 -0.68867471 -0.68571843 -0.68351586 -0.68073604 -0.67846867
+ -0.67563607 -0.67296611 -0.67041692 -0.66777957 -0.66567575 -0.66331694
+ -0.66074566 -0.65836495 -0.65576558 -0.65311049 -0.65068865 -0.64797769
+ -0.64597114 -0.64308663 -0.64073689 -0.63803794 -0.63527175 -0.63255347
+ -0.63028857 -0.62786793 -0.62533998 -0.62271328 -0.61922129 -0.61675846
+ -0.61358277 -0.61053676 -0.60774344 -0.60504445 -0.60233147 -0.59984593
+ -0.59675204 -0.5936879  -0.5909392  -0.58798396 -0.58504927 -0.58179803
+ -0.57836189 -0.57505516 -0.57229464 -0.56883955 -0.56620487 -0.56309753
+ -0.55941082 -0.55638167 -0.55349281 -0.55068022 -0.54786616 -0.54440068
+ -0.54103779 -0.53788052 -0.53385287 -0.52976504 -0.5263636  -0.52206601
+ -0.5191248  -0.51573347 -0.5119622  -0.5090925  -0.50542101 -0.50199502
+ -0.49816076 -0.49456855 -0.49119096 -0.48661776 -0.48294826 -0.47865143
+ -0.4751929  -0.47124138 -0.46772113 -0.46349159 -0.45926668 -0.45476115
+ -0.45137256 -0.44677606 -0.44257378 -0.43792721 -0.43342532 -0.42777477
+ -0.42275206 -0.41718106 -0.41228242 -0.40699679 -0.40232242 -0.39512018
+ -0.38920805 -0.38363891 -0.3772223  -0.37010727 -0.36312663 -0.35651797
+ -0.34962915 -0.34123604 -0.33331965 -0.32391592 -0.31583149 -0.30628285
+ -0.29468924 -0.28553061 -0.27284664 -0.26160057 -0.24854468 -0.23629734
+ -0.21964551 -0.20138256 -0.18468723 -0.16750327 -0.14941804 -0.13021851
+ -0.10256551 -0.073292   -0.04493838 -0.01411105  0.01821403  0.0469028
+  0.07878374  0.1100332   0.13938644  0.1736559   0.20501134  0.2450637
+  0.27656679  0.31016472  0.33981864  0.37554909  0.40882209  0.44475722
+  0.48165558  0.52024206  0.55028638  0.59180344  0.63354537  0.66789263
+  0.70487461  0.74216829  0.78009836  0.82913845  0.87298563  0.92366068
+  0.98403116  1.04168103  1.11056353  1.17515338  1.24646372  1.36529332
+  1.52360466  1.84811233] [43 56 40 44 52 41 46 40 45 44 39 48 44 52 51 41 36 38 55 53 50 45 44 46 48
+ 45 43 56 40 40 44 52 42 46 51 41 51 46 39 52 46 47 57 39 52 48 46 51 46 44
+ 53 50 38 48 49 54 51 48 47 52 49 54 46 46 47 45 59 45 40 41 46 52 48 51 53
+ 54 54 49 43 57 49 52 51 48 51 45 52 54 42 46 51 49 45 50 53 45 41 44 44 57
+ 48 50 48 41 49 41 47 47 51 48 46 45 45 55 47 54 41 46 37 43 40 57 40 57 51
+ 44 50 49 49 47 47 44 57 46 51 43 47 52 51 51 52 42 49 51 48 48 46 58 47 47
+ 44 51 32 56 55 44 55 45 45 49 51 50 49 50 45 49 49 42 39 44 42 47 44 54 46
+ 50 42 47 37 45 35 43 46 47 55 40 58 50 51 43 46 55 45 42 53 45 49 52 45 44
+ 47 47 53 43 48 48 49 43 48 49 45 52 45 52 58 47 58 39 48 48 43 52 48 51 48
+ 45 55 55 54 40 54 43 41 48 45 45 50 47 48 48 52 44 49 53 46 50 42 47 36 44
+ 46 42 46 39 54 52 49 48 39 45 43 38 51 47 40 43 46 41 41 57 48 47 37 53 45
+ 44 43 51 48 41 43 56 37 39 39 42 43 59 40 45 45 44 48 46 37 51 51 45 43 36
+ 47 39 38 50 46 45 46 44 53 44 44 52 44 54 50 47 43 46 51 54 41 47 40 50 49
+ 45 46 49 58 50 36 38 47 43 43 51 47 47 39 48 48 52 46 42 46 51 46 39 44 38
+ 46 37 43 49 53 48 42 49 54 43 45 52 48 49 49 43 46 46 47 52 47 51 37 45 41
+ 38 42 55 49 46 48 49 47 40 42 52 48 40 44 47 41 51 42 45 46 44 45 46 37 37
+ 47 50 37 44 54 45 42 38 41 49 50 44 49 44 56 43 38 47 46 43 40 49 42 45 42
+ 43 45 34 43 47 53 48 39 37 49 49 49 38 53 38 46 38 33 37 45 28 35 38 35 42
+ 39 37 36 40 36 36 33 32 26 19 27 26 16 14 16 15  6  4  7  1  3  2  0  2  0
+  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0] [95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95
+ 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95
+ 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96
+ 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95
+ 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95
+ 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95
+ 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95
+ 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95
+ 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95
+ 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96
+ 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95
+ 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 96
+ 94 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96
+ 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95
+ 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95
+ 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95
+ 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95
+ 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95
+ 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95
+ 95 95 95 96 95 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96 95 95 95 95 96]
+featureClusterIdx: 0
+featureClusterIdx: 10000
+featureClusterIdx: 20000
+featureClusterIdx: 30000
+featureClusterIdx: 40000
+featureClusterIdx: 50000
+Dividing intensities by 10000 for increased readability
+Surviving spectrumIdxs: 18847
+Converting to peptide quant rows
+Calculating peptide-level identification PEPs
+[-1.21961735 -1.21569324 -1.21306382 -1.21027658 -1.20761004 -1.20436219
+ -1.20064249 -1.19824406 -1.19495178 -1.19083341 -1.18766642 -1.18480975
+ -1.18267064 -1.18049496 -1.17699847 -1.17436087 -1.17136719 -1.16871104
+ -1.16566233 -1.16276845 -1.16002633 -1.15753645 -1.15470816 -1.15182969
+ -1.14967508 -1.14585427 -1.14316926 -1.14096302 -1.13729865 -1.13430717
+ -1.13023147 -1.12723453 -1.12487839 -1.12230097 -1.11944078 -1.11694811
+ -1.11349429 -1.11109555 -1.10869659 -1.106666   -1.10491051 -1.10241209
+ -1.10033907 -1.09747258 -1.09552757 -1.09312955 -1.09005129 -1.08799573
+ -1.08571146 -1.08308449 -1.08053241 -1.07874701 -1.07642247 -1.07310284
+ -1.0705885  -1.06793735 -1.06610793 -1.0638892  -1.06204911 -1.05967951
+ -1.05735789 -1.05492451 -1.05262031 -1.0505107  -1.04816731 -1.04609992
+ -1.04367849 -1.04113172 -1.0389459  -1.03702943 -1.03532986 -1.03293859
+ -1.0310905  -1.02859268 -1.02685735 -1.02408866 -1.02219826 -1.0194298
+ -1.016643   -1.01463623 -1.01203363 -1.00975933 -1.00743695 -1.00574697
+ -1.00375018 -1.00166512 -0.99993109 -0.99782196 -0.99574572 -0.99337753
+ -0.9914895  -0.9889622  -0.98664499 -0.98450098 -0.98282383 -0.9807064
+ -0.97878866 -0.97695091 -0.97486639 -0.97312423 -0.97144473 -0.96974976
+ -0.96716188 -0.96527389 -0.96379128 -0.96155908 -0.95949799 -0.95784934
+ -0.9558316  -0.95403755 -0.95220047 -0.95029381 -0.94804696 -0.94621104
+ -0.94412101 -0.94224509 -0.94038234 -0.93821921 -0.93638193 -0.93357738
+ -0.93166218 -0.92992216 -0.92776214 -0.92592041 -0.92405864 -0.92242305
+ -0.92035137 -0.91854117 -0.91720725 -0.91560734 -0.91358273 -0.91196921
+ -0.90999597 -0.90808982 -0.90625237 -0.90449277 -0.90240931 -0.90108061
+ -0.89898803 -0.89687717 -0.89518075 -0.89274756 -0.89088232 -0.88890949
+ -0.8870082  -0.88505794 -0.88319872 -0.88161329 -0.87930633 -0.87758559
+ -0.87591483 -0.87390153 -0.87163759 -0.86956303 -0.8681162  -0.86633059
+ -0.86449517 -0.8625994  -0.8613998  -0.8595864  -0.85801612 -0.85653563
+ -0.85525791 -0.85331328 -0.85131526 -0.85014729 -0.84851269 -0.84686596
+ -0.84524644 -0.8435892  -0.84119039 -0.83960545 -0.83753804 -0.83579312
+ -0.83412446 -0.83222991 -0.83053222 -0.8286924  -0.82696143 -0.82540798
+ -0.82417198 -0.8226057  -0.82126489 -0.81957477 -0.81845625 -0.81730851
+ -0.81573133 -0.81429659 -0.8119763  -0.8096412  -0.808295   -0.80663021
+ -0.80456418 -0.80262515 -0.80075019 -0.79847149 -0.79620902 -0.79401287
+ -0.79245209 -0.79061602 -0.78947623 -0.78776303 -0.78617035 -0.78443008
+ -0.78286601 -0.78098938 -0.77911058 -0.77779356 -0.77583372 -0.77386768
+ -0.771957   -0.77059867 -0.76889783 -0.7672472  -0.76537635 -0.76338737
+ -0.7614212  -0.75993144 -0.75818437 -0.75633287 -0.7541637  -0.75210143
+ -0.75047818 -0.74886545 -0.74739949 -0.74475395 -0.74320998 -0.74155918
+ -0.73935439 -0.73755953 -0.7361755  -0.73430823 -0.73237823 -0.73054358
+ -0.72860807 -0.7274923  -0.72561226 -0.72426138 -0.72251267 -0.72084361
+ -0.71878931 -0.71705847 -0.71479726 -0.71284019 -0.71082886 -0.70921007
+ -0.70736366 -0.70566201 -0.70385788 -0.70196353 -0.69974911 -0.69765714
+ -0.69602703 -0.69414716 -0.69169437 -0.6899587  -0.68849573 -0.68626323
+ -0.68462076 -0.68274937 -0.68081414 -0.6791936  -0.6770121  -0.67521264
+ -0.67328389 -0.67159277 -0.66949429 -0.66785002 -0.66639365 -0.66471285
+ -0.66301523 -0.66120878 -0.65954369 -0.65803743 -0.65639358 -0.65442767
+ -0.65293543 -0.65091072 -0.64907033 -0.64717947 -0.64580301 -0.64408296
+ -0.64226622 -0.64057445 -0.63853903 -0.63657668 -0.63440722 -0.63257766
+ -0.63098298 -0.62926454 -0.6276398  -0.62572312 -0.62421437 -0.62250053
+ -0.62037785 -0.61851003 -0.61688908 -0.61488427 -0.61306437 -0.61059432
+ -0.60833391 -0.60631085 -0.60461221 -0.60289265 -0.60083945 -0.59952314
+ -0.59777007 -0.59561963 -0.59388043 -0.59204504 -0.58977105 -0.58778618
+ -0.58584976 -0.5838949  -0.58179058 -0.57946986 -0.57753517 -0.57566047
+ -0.57394524 -0.57187731 -0.56949593 -0.56776322 -0.5661226  -0.56377435
+ -0.56183468 -0.55977195 -0.55777938 -0.55581042 -0.55346281 -0.55140544
+ -0.54964907 -0.54743217 -0.54548574 -0.54353962 -0.54165772 -0.53944053
+ -0.5371974  -0.53493094 -0.53265405 -0.53007296 -0.52775499 -0.52525254
+ -0.5229356  -0.52070044 -0.51896908 -0.51692249 -0.51500691 -0.512497
+ -0.51045427 -0.50887241 -0.50616574 -0.50374021 -0.50148549 -0.49882278
+ -0.49679367 -0.4944404  -0.49220714 -0.49013096 -0.48683076 -0.48457868
+ -0.48210217 -0.4790871  -0.47705882 -0.47510097 -0.47219477 -0.47002698
+ -0.46751996 -0.46504348 -0.46302637 -0.46027538 -0.45713616 -0.45481277
+ -0.45281984 -0.45073887 -0.44832474 -0.44581806 -0.44333253 -0.4399497
+ -0.43755145 -0.43521307 -0.43202015 -0.42938561 -0.42624834 -0.42293658
+ -0.42016586 -0.41639586 -0.41319309 -0.41118585 -0.40726069 -0.405027
+ -0.40220169 -0.39822177 -0.39441715 -0.39065994 -0.38811046 -0.38441671
+ -0.38076298 -0.37722517 -0.37282155 -0.36952957 -0.36489396 -0.36178694
+ -0.35825986 -0.35424426 -0.3500281  -0.34530313 -0.34069414 -0.33506941
+ -0.33147446 -0.32598641 -0.32038472 -0.31440471 -0.30895431 -0.3036328
+ -0.29659355 -0.29058628 -0.28526323 -0.27770661 -0.27190305 -0.26510771
+ -0.25900815 -0.25071916 -0.24451842 -0.23684289 -0.22617987 -0.213106
+ -0.20349007 -0.19274159 -0.18021128 -0.16996039 -0.1547883  -0.14067741
+ -0.12382497 -0.09934197 -0.07458246 -0.05022353 -0.02547098  0.01579797
+  0.04307495  0.07224544  0.10517001  0.13123166  0.15521472  0.18240481
+  0.20214636  0.23328091  0.25342944  0.27063253  0.29809506  0.31962054
+  0.33814049  0.36141278  0.38138948  0.40241356  0.41807252  0.4363817
+  0.45456175  0.47508731  0.49606808  0.51850179  0.5376133   0.55298907
+  0.57594017  0.59346334  0.60816588  0.63557117  0.65214751  0.66721867
+  0.68375892  0.70362168  0.72240775  0.74136051  0.75956086  0.77792729
+  0.79951961  0.82196209  0.84168506  0.86204345  0.88869296  0.91096654
+  0.93035512  0.95718214  0.98335294  1.00519769  1.03541927  1.06071511
+  1.10000584  1.12444778  1.15179623  1.18122159  1.21102867  1.24523938
+  1.28245252  1.33597498  1.39335344  1.46491203  1.53515512  1.65184148
+  1.80457835  2.10640306] [12 22 15 18 22 19 17 16 20 23 19 19 16 24 14 19 19 13 16 17 19 20 16 16 20
+ 20 17 24 18 16 18 15 13 23 17 14 21 24 17 22 22 21 18 20 20 19 22 21 23 20
+ 21 18 24 17 18 17 22 21 21 22 17 17 18 17 20 15 16 20 19 18 18 16 23 22 22
+ 16 24 10 18 19 21 20 22 19 24 19 11 27 18 24 29 14 17 20 21 16 21 18 15 21
+ 19 18 20 17 14 19 20 17 20 20 18 20 18 22 17 19 19 12 18 21 17 18 16 21 12
+ 21 16 21 21 19 18 17 18 16 19 13 20 20 15 13 16 13 18 16 17 16 26 24 17 17
+ 23 20 21 18 17 17 19 22 20 18 15 15 22 22 14 12 18 13 18 14 25 22 15 21 21
+ 20 17 18 19 14 13 19 20 25 21 18 12 23 12 21 15 12 20 22 13 22 20 21 13 19
+ 22 23 20 18 18 19 20 22 20 22 19 14 18 23 18 25 12 17 17 13 16 26 20 14 17
+ 16 23 20 23 19 11 19  9 22 20 13 21 18 17 23 16 14 24 18 14 23 20 17 17 20
+ 22 14 18 14 21 18 17 15 22 15 16 14 24 23 25 14 19 19 21 19 17 18 17 18 19
+ 20 18 19 16 22 14 22 16 18 22 20 21 20 13 17 18 22 12 17 17 21 24 19 24 16
+ 17 19 17 14 22 15 16 15 27 22 20 16 19 19 22 10 21 16 26 14 21 15 23 14 20
+ 24 18 21 12 18 12 19 21 18 12 14 21 26 27 20 15 19 18 16 18 19 20 22 17 17
+ 19 21 22 26 19 19 17 17 24 17 18 18 19 20 24 17 14 20 19 15 20 19 21 15 17
+ 13 19 22 20 19 22 18 20 18 15 16 19 25 21 20 23 15 12 18 27 17 21 19 20 15
+ 14 13 16 15 18 17 12 15 15 16 18 20 19 23 18 21 18 12 17 21 15 19 13 18 17
+ 20 15 18 16 13 13 16 14 13 12 11 14  6  6  6  2  1  3  1  0  2  0  0  0  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0] [37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38
+ 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 38 37
+ 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38
+ 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 38 37 38
+ 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37
+ 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38
+ 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38
+ 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37
+ 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38
+ 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38
+ 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37
+ 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38
+ 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38
+ 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37
+ 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38
+ 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38
+ 38 37 38 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37
+ 38 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38
+ 37 38 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 37 38
+ 38 38 37 38 38 37 38 38 37 38 38 37 38 38 38 37 38 38 37 38 38 37 38 38 38]
+Writing peptide quant rows to file
+Calculating protein-level identification PEPs
+[ -5.35764572e+00  -5.35615984e+00  -5.30843972e+00  -4.99245533e+00
+  -4.66449854e+00  -4.66416319e+00  -4.64329956e+00  -4.34705336e+00
+  -4.25903343e+00  -4.25387011e+00  -4.20292692e+00  -4.12273821e+00
+  -4.09317030e+00  -4.00724133e+00  -3.97135136e+00  -3.92801753e+00
+  -3.87786630e+00  -3.84438421e+00  -3.76497320e+00  -3.74820781e+00
+  -3.73687984e+00  -3.72517597e+00  -3.69126733e+00  -3.65069473e+00
+  -3.57205684e+00  -3.54554120e+00  -3.52956752e+00  -3.48076522e+00
+  -3.44857456e+00  -3.41173557e+00  -3.39607408e+00  -3.37200347e+00
+  -3.36338002e+00  -3.34456142e+00  -3.32223149e+00  -3.28300261e+00
+  -3.23529535e+00  -3.20211030e+00  -3.16537564e+00  -3.15477747e+00
+  -3.12808247e+00  -3.11344596e+00  -3.10083565e+00  -3.03437097e+00
+  -3.00861835e+00  -2.98770582e+00  -2.95874044e+00  -2.94703405e+00
+  -2.91329637e+00  -2.90427300e+00  -2.87142092e+00  -2.83914048e+00
+  -2.79160170e+00  -2.76565524e+00  -2.75098481e+00  -2.73573239e+00
+  -2.72489181e+00  -2.69130882e+00  -2.66960037e+00  -2.63949679e+00
+  -2.62286799e+00  -2.60779325e+00  -2.58681767e+00  -2.57092409e+00
+  -2.54364446e+00  -2.53681451e+00  -2.52062667e+00  -2.47076532e+00
+  -2.46567408e+00  -2.40660846e+00  -2.38263494e+00  -2.36989568e+00
+  -2.36405260e+00  -2.34863671e+00  -2.33095672e+00  -2.31640956e+00
+  -2.28915220e+00  -2.28165494e+00  -2.26090945e+00  -2.25487397e+00
+  -2.22807507e+00  -2.22463531e+00  -2.20760302e+00  -2.18049942e+00
+  -2.16240426e+00  -2.14777720e+00  -2.13374000e+00  -2.12081219e+00
+  -2.11332164e+00  -2.09566750e+00  -2.04516117e+00  -2.02661955e+00
+  -2.02108835e+00  -2.01439108e+00  -1.99557753e+00  -1.98687646e+00
+  -1.98425800e+00  -1.97059728e+00  -1.95393180e+00  -1.94641352e+00
+  -1.92184930e+00  -1.90867785e+00  -1.90542198e+00  -1.89305806e+00
+  -1.87438721e+00  -1.85884736e+00  -1.84234948e+00  -1.82675612e+00
+  -1.81576149e+00  -1.80030469e+00  -1.78643586e+00  -1.78169264e+00
+  -1.77475054e+00  -1.75910149e+00  -1.73529365e+00  -1.72319063e+00
+  -1.71066723e+00  -1.69881466e+00  -1.68420832e+00  -1.68027978e+00
+  -1.67343870e+00  -1.65942894e+00  -1.65469697e+00  -1.64833169e+00
+  -1.63495618e+00  -1.62031033e+00  -1.60430988e+00  -1.59605127e+00
+  -1.59048230e+00  -1.58384734e+00  -1.55358201e+00  -1.54010857e+00
+  -1.52128172e+00  -1.51668578e+00  -1.51407149e+00  -1.49978389e+00
+  -1.48765952e+00  -1.47785633e+00  -1.47153585e+00  -1.45871470e+00
+  -1.45485503e+00  -1.44786233e+00  -1.43068349e+00  -1.42336696e+00
+  -1.41845270e+00  -1.41590114e+00  -1.39251531e+00  -1.38487603e+00
+  -1.37748366e+00  -1.35442944e+00  -1.34430636e+00  -1.32739716e+00
+  -1.32215233e+00  -1.31685169e+00  -1.30341038e+00  -1.29544924e+00
+  -1.27596387e+00  -1.25723834e+00  -1.24730243e+00  -1.24020935e+00
+  -1.22571909e+00  -1.21261110e+00  -1.20183569e+00  -1.17268164e+00
+  -1.16699911e+00  -1.15967233e+00  -1.15775515e+00  -1.15313250e+00
+  -1.14445168e+00  -1.13449788e+00  -1.12264759e+00  -1.11582794e+00
+  -1.11205180e+00  -1.10372730e+00  -1.09817355e+00  -1.09231984e+00
+  -1.08984416e+00  -1.08534691e+00  -1.07656930e+00  -1.05099519e+00
+  -1.03960935e+00  -1.03100906e+00  -1.02005736e+00  -1.00572233e+00
+  -9.97603278e-01  -9.89941523e-01  -9.74297958e-01  -9.64493195e-01
+  -9.55690913e-01  -9.41047361e-01  -9.36564522e-01  -9.29350391e-01
+  -9.02878682e-01  -8.94354593e-01  -8.90941226e-01  -8.78434651e-01
+  -8.66183946e-01  -8.58919520e-01  -8.54787725e-01  -8.40055605e-01
+  -8.31341431e-01  -8.20866075e-01  -7.90343425e-01  -7.70146604e-01
+  -7.50976158e-01  -7.39849019e-01  -7.29304108e-01  -7.21299334e-01
+  -6.99558693e-01  -6.79457685e-01  -6.67091175e-01  -6.45814286e-01
+  -6.38902459e-01  -6.23244382e-01  -6.17792311e-01  -6.06172864e-01
+  -5.93802411e-01  -5.79341503e-01  -5.71359659e-01  -5.70054010e-01
+  -5.58616487e-01  -5.52979334e-01  -5.40690269e-01  -5.28361706e-01
+  -5.17751828e-01  -5.06079424e-01  -4.98587746e-01  -4.90441038e-01
+  -4.81142222e-01  -4.56067394e-01  -4.53464136e-01  -4.47059441e-01
+  -4.39967454e-01  -4.37483168e-01  -4.33124459e-01  -4.29516890e-01
+  -4.17886704e-01  -4.04734342e-01  -4.00416035e-01  -3.93852605e-01
+  -3.85715949e-01  -3.70467703e-01  -3.53183251e-01  -3.44748507e-01
+  -3.26960473e-01  -3.12748506e-01  -3.02957336e-01  -2.99395137e-01
+  -2.90644855e-01  -2.84947308e-01  -2.79179199e-01  -2.55995504e-01
+  -2.43204618e-01  -2.25702460e-01  -2.17778034e-01  -2.14290846e-01
+  -2.11216036e-01  -1.94994004e-01  -1.71134950e-01  -1.49959311e-01
+  -1.30708900e-01  -1.08994954e-01  -1.00077041e-01  -9.41554235e-02
+  -7.27768144e-02  -5.33373962e-02  -4.52502323e-02  -3.80117410e-02
+  -3.39069376e-02  -2.73813721e-02  -1.15457286e-03   3.07756995e-03
+   6.25235998e-03   2.57532446e-02   4.26298597e-02   4.68367964e-02
+   5.46549385e-02   7.13387615e-02   8.93683733e-02   1.06389108e-01
+   1.18652405e-01   1.23680822e-01   1.29662638e-01   1.45287225e-01
+   1.64607900e-01   1.70681681e-01   2.00346530e-01   2.39436088e-01
+   2.54874329e-01   2.87447972e-01   3.09289790e-01   3.29517822e-01
+   3.52364469e-01   3.63005320e-01   3.73474674e-01   3.81827696e-01
+   3.93939159e-01   4.21677768e-01   4.32704000e-01   4.45205998e-01
+   4.64580958e-01   4.97696145e-01   5.14433016e-01   5.30417471e-01
+   5.48054046e-01   5.56584725e-01   5.82659422e-01   5.98837140e-01
+   6.32616616e-01   6.47918447e-01   6.65601393e-01   6.92347091e-01
+   7.22673406e-01   7.44370524e-01   7.68195845e-01   7.86193462e-01
+   8.05359346e-01   8.42521996e-01   8.65481484e-01   8.95541963e-01
+   9.13784624e-01   1.00517071e+00   1.10333951e+00   1.14976238e+00
+   1.17264275e+00   1.23153061e+00   1.24934460e+00   1.28311783e+00
+   1.31866656e+00   1.33875231e+00   1.38455508e+00   1.48657980e+00
+   1.50510771e+00   1.53702303e+00   1.61619265e+00   1.70824538e+00
+   1.74437975e+00   1.79091761e+00   1.85033038e+00   1.87134397e+00
+   1.91138810e+00   1.96520550e+00   2.00859696e+00   2.01275248e+00
+   2.06752686e+00   2.15193841e+00   2.17317152e+00   2.18629112e+00
+   2.22284456e+00   2.23750290e+00   2.25049983e+00   2.27767270e+00
+   2.31604729e+00   2.32485319e+00   2.34519182e+00   2.37510307e+00
+   2.41175202e+00   2.41718257e+00   2.43395373e+00   2.47272501e+00
+   2.48122336e+00   2.50251600e+00   2.52441736e+00   2.55241227e+00
+   2.57089556e+00   2.58029457e+00   2.58784828e+00   2.59717001e+00
+   2.61632129e+00   2.62453220e+00   2.63306689e+00   2.64421361e+00
+   2.66398863e+00   2.67558056e+00   2.70158754e+00   2.71649969e+00
+   2.75125442e+00   2.76521983e+00   2.77163712e+00   2.78543484e+00
+   2.80924102e+00   2.82298049e+00   2.84425814e+00   2.86369288e+00
+   2.87475492e+00   2.88498983e+00   2.91224626e+00   2.91699566e+00
+   2.92188012e+00   2.93416423e+00   2.96398037e+00   2.98128201e+00
+   3.00253062e+00   3.02302798e+00   3.03303652e+00   3.03981098e+00
+   3.04615234e+00   3.05323938e+00   3.06509299e+00   3.07535441e+00
+   3.08857709e+00   3.11608235e+00   3.13554338e+00   3.14331943e+00
+   3.15505480e+00   3.17411435e+00   3.19084239e+00   3.19906036e+00
+   3.21162493e+00   3.23554358e+00   3.24323881e+00   3.26219485e+00
+   3.28537350e+00   3.31388897e+00   3.35973227e+00   3.37984899e+00
+   3.38479791e+00   3.40808733e+00   3.41730617e+00   3.42346721e+00
+   3.43660057e+00   3.47664344e+00   3.49028274e+00   3.50782191e+00
+   3.52301991e+00   3.54074341e+00   3.55416732e+00   3.55874583e+00
+   3.57047885e+00   3.58839956e+00   3.60192037e+00   3.60743762e+00
+   3.61068241e+00   3.63392473e+00   3.65848452e+00   3.66963415e+00
+   3.70607828e+00   3.77441333e+00   3.78678772e+00   3.79993700e+00
+   3.81136718e+00   3.81977918e+00   3.85306482e+00   3.86837240e+00
+   3.87564500e+00   3.91354045e+00   3.95789236e+00   3.99950583e+00
+   4.03807844e+00   4.06595975e+00   4.11267607e+00   4.16857911e+00
+   4.33505334e+00   4.57677156e+00] [19  1  2  2 22  0  2  1 10  0  1  2  2  1  3  1  1  1  2  2  1  1  1  2  1
+  1  3  1  1  2  1  2  1  2  2  3  1  1  2  1  1  2  1  2  2  2  0  1  2  0
+  1  3  2  1  1  2  2  2  0  0  2  1  2  2  2  2  2  1  2  0  1  1  1  1  1
+  2  3  2  2  2  3  0  0  0  2  2  1  1  1  1  1  2  1  3  2  1  1  0  3  0
+  1  1  2  0  2  2  2  2  1  1  2  0  1  2  2  0  0  1  2  2  2  1  2  1  1
+  0  1  2  1  2  1  2  0  1  0  1  2  1  2  1  3  1  2  1  0  1  0  2  1  1
+  1  2  0  1  3  1  2  1  1  1  1  1  1  2  2  1  2  1  2  0  0  2  1  0  2
+  1  1  2  1  1  2  1  0  0  1  3  2  1  1  0  1  1  2  2  1  1  2  0  0  1
+  1  1  2  1  3  0  2  2  2  0  2  3  1  1  1  2  0  2  2  2  1  1  2  2  1
+  2  2  1  2  3  1  0  1  1  2  2  2  1  2  1  1  0  1  1  1  2  0  2  3  1
+  0  1  2  2  1  2  1  2  1  1  2  2  2  0  2  2  1  1  2  2  0  1  1  0  0
+  3  1  1  1  1  1  1  1  1  2  1  2  1  1  3  2  1  1  0  0  2  1  1  2  0
+  1  1  1  2  2  1  2  1  3  0  1  0  1  1  1  2  0  1  0  1  0  0  0  2  1
+  0  1  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0] [62  1  2  3 48  2  3  2 18  1  3  2  3  3  8  2  3  2  3  3  2  3  3  2  3
+  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3
+  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3
+  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3
+  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3
+  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3
+  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2
+  3  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2
+  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2
+  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2
+  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2
+  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2
+  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2
+  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  3  2
+  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3
+  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3
+  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3
+  3  2  3  3  2  3  2  3  3  2  3  3  2  3  3  2  3  2  3  3  2  3  3  2  3
+  3  2  3  3]
+Fitting hyperparameters
+params["muDetect"], params["sigmaDetect"] = 1.477876, 0.512312
+params["muXIC"], params["sigmaXIC"] = 3.111805, 0.831440
+params["muProtein"], params["sigmaProtein"] = 0.018093, 0.142074
+params["muFeatureDiff"], params["sigmaFeatureDiff"] = -0.012329, 0.172687
+params["shapeInGroupStdevs"], params["scaleInGroupStdevs"] = 1.054180, 0.078205
+Calculating protein posteriors
+50 / 478 10.46%
+100 / 478 20.92%
+150 / 478 31.38%
+200 / 478 41.84%
+250 / 478 52.30%
+300 / 478 62.76%
+350 / 478 73.22%
+400 / 478 83.68%
+450 / 478 94.14%
+proteins.1vs2.tsv
+proteins.1vs3.tsv
+proteins.2vs3.tsv
