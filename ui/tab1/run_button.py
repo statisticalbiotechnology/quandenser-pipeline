@@ -86,8 +86,6 @@ class run_button(QPushButton):
                 file.write(line)
 
         # Run quandenser
-        start_dir = os.getcwd()
-        os.chdir("../WIP")
         process = subprocess.Popen(['./run_quandenser.sh & echo "PID is $!"'],
                                     stdout=subprocess.PIPE,
                                     shell=True)
@@ -103,7 +101,6 @@ class run_button(QPushButton):
             if line_counter > 20:
                 pid = "ERROR"
                 break
-        os.chdir(start_dir)
 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
