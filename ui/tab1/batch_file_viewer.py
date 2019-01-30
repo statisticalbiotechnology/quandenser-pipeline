@@ -27,7 +27,7 @@ class batch_file_viewer(QTableWidget):
         if event.key() == 16777223:
             for item in self.selectedItems():
                 item.setText('')
-        elif event.key() == 16777221:
+        elif event.key() == 16777221 or event.key() == 16777220:  # *.221 is right enter
             if len(self.selectedIndexes()) == 0:  # Quick check if anything is selected
                 pass
             else:
