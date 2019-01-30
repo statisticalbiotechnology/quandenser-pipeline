@@ -2,7 +2,7 @@ import sys
 import os
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
-from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit
+from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget
 from PySide2.QtWebEngineWidgets import QWebEngineView
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
@@ -88,9 +88,9 @@ class Main(QMainWindow):
         self.batch_file_viewer = batch_file_viewer()
         self.run_button = run_button()
 
-        self.tab1_layout.addWidget(self.fasta_chooser)
+        self.tab1_layout.addWidget(self.fasta_chooser, 0, QtCore.Qt.AlignCenter)
         self.tab1_layout.addWidget(self.database_viewer)
-        self.tab1_layout.addWidget(self.ms_chooser)
+        self.tab1_layout.addWidget(self.ms_chooser, 0, QtCore.Qt.AlignCenter)
         self.tab1_layout.addWidget(self.batch_file_viewer)
         self.tab1_layout.addWidget(self.run_button)
 
@@ -99,14 +99,26 @@ class Main(QMainWindow):
         self.tab2_layout = QHBoxLayout()
         self.tab2.setLayout(self.tab2_layout)
 
+        # Left box
+        self.leftbox = QWidget()
+        self.leftbox_layout = QFormLayout()
+        self.leftbox.setLayout(self.leftbox_layout)
         self.workflow_choose = workflow_choose()
+        self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.workflow_choose)
+
+        # Right box
+        self.rightbox = QWidget()
+        self.rightbox_layout = QHBoxLayout()
+        self.rightbox.setLayout(self.rightbox_layout)
 
         self.workflow = QWebEngineView()
-        html_file = open("tab2/flowchart.html")
+        html_file = open("tab2/full.html")
         self.workflow.setHtml(html_file.read())
+        self.rightbox_layout.addWidget(self.workflow)
 
-        self.tab2_layout.addWidget(self.workflow_choose)
-        self.tab2_layout.addWidget(self.workflow)
+        # Combine
+        self.tab2_layout.addWidget(self.leftbox)
+        self.tab2_layout.addWidget(self.rightbox)
 
     def inittab3(self):
         self.tab3 = QWidget()
@@ -129,6 +141,7 @@ class Main(QMainWindow):
         for child in children:
             self.recurse_children(child)
 
+
     def recurse_children(self, parent, save=True):
         children = parent.children()
         if children == []:
@@ -142,11 +155,47 @@ class Main(QMainWindow):
             pass
         elif isinstance(child, QTextEdit):
             if save:
-                self.settings_obj.setValue(f"State_{child.__class__.__name__}", child.toPlainText())
+                self.settings_obj.setValue(f"State_{child.__class__.__name__}",
+                                           child.toPlainText())
             else:
-                child.setPlainText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
-
-
+                if self.settings_obj.value(f"State_{child.__class__.__name__}") is None:
+                    return
+                else:
+                    child.setPlainText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
+        elif isinstance(child, QLineEdit):
+            if save:
+                self.settings_obj.setValue(f"State_{child.__class__.__name__}",
+                                           child.text())
+            else:
+                if self.settings_obj.value(f"State_{child.__class__.__name__}") is None:
+                    return
+                else:
+                    child.setText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
+        elif isinstance(child, QTableWidget):
+            if save:
+                full_table = []
+                for row in range(child.rowCount()):
+                    for column in range(child.columnCount()):
+                        full_table.append(child.item(row, column).text())
+                        if not column == child.columnCount() - 1:
+                            full_table.append(',')
+                    full_table.append(';')
+                full_table = ''.join(full_table)
+                self.settings_obj.setValue(f"State_{child.__class__.__name__}",
+                                           full_table)
+            else:
+                if self.settings_obj.value(f"State_{child.__class__.__name__}") is None:
+                    return
+                full_table = self.settings_obj.value(f"State_{child.__class__.__name__}")
+                full_table = full_table.split(';')
+                amount_of_rows = len(full_table) - 1
+                amount_of_columns = len(full_table[0].split(','))
+                child.setRowCount(amount_of_rows)
+                child.setColumnCount(amount_of_columns)
+                for row in range(amount_of_rows):
+                    row_contents = full_table[row].split(',')
+                    for column in range(amount_of_columns):
+                        child.item(row, column).setText(row_contents[column])
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
