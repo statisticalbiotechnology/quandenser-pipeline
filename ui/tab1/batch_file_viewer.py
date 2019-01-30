@@ -1,75 +1,93 @@
 import sys
-from PySide2.QtWidgets import QTextEdit
-from PySide2.QtGui import QColor
+from PySide2.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem
+from PySide2.QtGui import QColor, QKeySequence, QClipboard
 import os
 from difflib import SequenceMatcher
 
 
-class batch_file_viewer(QTextEdit):
+class batch_file_viewer(QTableWidget):
     def __init__(self):
         super(batch_file_viewer,self).__init__(parent = None)
-        self.textChanged.connect(self.check_text)
-        self.setLineWrapMode(QTextEdit.NoWrap)
-        self.append("/media/storage/timothy/MSfiles/mzML/A1.mzML\ttab")
-        self.append("/media/storage/timothy/MSfiles/mzML/A1.mzML")
-        self.append("/media/storage/timothy/MSfiles/mzML/A1.mzML blankspace")
-        self.append("/notafile/test.txt\tnotafile")
+        self.setRowCount(20)
+        self.setColumnCount(2)
+        # Fill all places so there are no "None" types in the table
+        for row in range(self.rowCount()):
+            for column in range(self.columnCount()):
+                item = QTableWidgetItem()
+                item.setText('')
+                self.setItem(row, column, item)
 
-    def check_text(self):
+        self.cellChanged.connect(self.check_cell)  # Needs to be after "filling for loop" above
+        self.header = self.horizontalHeader()
+        self.header.setSectionResizeMode(0, QHeaderView.Stretch)
+        self.setHorizontalHeaderLabels(["MS files", "Label"])
+
+    def keyPressEvent(self, event):
+        """Add functionallity to keyboard"""
+        if event.key() == 16777223:
+            for item in self.selectedItems():
+                item.setText('')
+        elif event.key() == 16777221:
+            if len(self.selectedIndexes()) == 0:  # Quick check if anything is selected
+                pass
+            else:
+                index = self.selectedIndexes()[0]  # Take last
+                self.setCurrentCell(index.row() + 1, index.column())
+        super().keyPressEvent(event)  # Propagate to built in methods
+
+    def check_cell(self, row, column):
+        """Triggered when cell is changed"""
         self.blockSignals(True)
-        all_txt = str(self.toPlainText())  # Copy, dont use
-        all_txt = all_txt.split('\n')
-        self.clear()
-        for txt in all_txt:
-            self.pick_color(txt)
-            self.append(txt)
+        self.pick_color(row, column)
         self.blockSignals(False)
 
-    def pick_color(self, txt):
-        txt = txt.split('\t')
-        if len(txt) == 1:
-            self.setTextColor(QColor("red"))
-        elif len(txt) == 2:
-            if not os.path.isfile(txt[0]):
-                self.setTextColor(QColor("red"))
-            elif len(txt[1]) == 0:
-                self.setTextColor(QColor("red"))
-            elif txt[0].split('.')[-1] != "mzML":  # If extension != mzML
-                self.setTextColor(QColor("blue"))
-            else:
-                self.setTextColor(QColor("green"))  # Check if path
-        else:
-            self.setTextColor(QColor("red"))
+    def pick_color(self, row, column):
+        """Triggered by check_cell"""
+        item = self.item(row, column)
+        if column == 0:
+            if item is None:  # NOTE: item == None will give NotImplementedError. Must use "is"
+                return  # This might remove some weird errors in the future
+            elif not os.path.isfile(item.text()):
+                item.setForeground(QColor('red'))
+            elif item.text().split('.')[-1] == "mzML":
+                item.setForeground(QColor('green'))
+            elif item.text().split('.')[-1] != "mzML":
+                item.setForeground(QColor('blue'))
 
-    def auto_assign(self, txt):
-        clean_txt = self.clean_path(txt)
-        print(clean_txt)
-        all_txt = str(self.toPlainText())  # Copy, dont use
-        all_txt = all_txt.split('\n')
-        assigned_labels = [i[-1] for i in all_txt if len(i.split('\t'))==2]
-        if len(all_txt) == 0:
-            self.append(txt + '\t' + 'A')
-            return
-        for line in all_txt:
-            clean_line = self.clean_path(line)
-            similarity = SequenceMatcher(None, clean_line, clean_txt).ratio()
-            if similarity > 0.8 and len(line.split('\t')) == 2:  # Prevent error if assigned yourself
-                label = line.split('\t')[-1]
-                self.append(txt + '\t' + label)
+            label = self.item(row, column + 1)
+            if self.item(row, column).text() == '':
+                label.setBackground(QColor('white'))
+                label.setForeground(QColor('black'))
+            elif label.text() == '':
+                label.setBackground(QColor('red'))
+        elif column == 1:
+            label = self.item(row, column)
+            if label.text() == '':
+                label.setBackground(QColor('red'))
+            elif self.item(row, column - 1).text() == '':
+                label.setBackground(QColor('white'))
+                label.setForeground(QColor('black'))
+            elif self.item(row, column - 1).text() != '':
+                label.setBackground(QColor('white'))
+                label.setForeground(QColor('green'))
+
+    def auto_assign(self, file):
+        """Triggered when using file chooser button"""
+        for row in range(self.rowCount()):
+            item = self.item(row, 0)
+            if item.text() == '':
+                self.item(row, 0).setText(file)
                 return
-        # If we get here, the script has not found a similar match
-        char_index = 65
-        while True:
-            if chr(char_index) in assigned_labels:
-                char_index += 1
-            else:
-                label = chr(char_index)  # Make as chr
-                break
-        self.append(txt + '\t' + label)
 
-    def clean_path(self, txt):
-        txt = txt.split('\t')[0]  # Get path
-        txt = txt.split(os.sep)[-1]  # Get filename
-        txt = txt.split('.')[0]  # Ignore extension
-        txt = ''.join([i for i in txt if 65<=ord(i)<=122])  # Remove all non-letter chars + digits
-        return txt
+        # If we get here, add more rows
+        self.blockSignals(True)
+        item = QTableWidgetItem()
+        item.setText(file)
+        self.setRowCount(self.rowCount() + 1)
+        self.setItem(row + 1, 0, item)    # Note: new rowcount here
+        label = QTableWidgetItem()
+        label.setText('')
+        self.setItem(row + 1, 1, label)
+        self.pick_color(row + 1, 0)
+        self.pick_color(row + 1, 1)
+        self.blockSignals(False)
