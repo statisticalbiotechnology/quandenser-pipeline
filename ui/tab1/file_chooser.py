@@ -6,14 +6,16 @@ class file_chooser(QPushButton):
 
     def __init__(self, type='ms'):
         super(file_chooser,self).__init__(parent = None)
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.setSizePolicy(sizePolicy)
+        self.setStyleSheet("background-color:grey")
         self.setFixedWidth(200)
         self.type = type
+        self.id = id
         if self.type=='ms':
             self.setText('Choose MS files')
         elif self.type=='fasta':
             self.setText('Choose fasta file')
+        elif self.type=='directory':
+            self.setText('Choose output directory')
         self.clicked.connect(self.open_window)
 
     def open_window(self):
@@ -28,26 +30,31 @@ class file_chooser(QPushButton):
                              "*.WIFF",
                              "*.raw | *.RAW"]
             choose_string = " | ".join(ms_file_types)
-            files, _ = QFileDialog.getOpenFileNames(self,
+            output, _ = QFileDialog.getOpenFileNames(self,
                                                     "Choose MS files",
                                                     "",
                                                     f"MS files ({choose_string});;All Files (*)",
                                                     options=options)
         elif self.type=='fasta':
-            files, _ = QFileDialog.getOpenFileName(self,
+            output, _ = QFileDialog.getOpenFileName(self,
                                                    "Choose fasta files",
                                                    "",
                                                    "Fasta files (.*fasta | *.Fasta | *.FASTA);;All Files (*)",
                                                    options=options)
-        if files:
-            self.display_in_file_viewer(files)
+        elif self.type=='directory':
+            output = QFileDialog.getExistingDirectory()
+        if output:
+            self.display_in_file_viewer(output)
 
-    def display_in_file_viewer(self, files):
+    def display_in_file_viewer(self, output):
         parent = self.parentWidget()
         if self.type=='ms':
             batch_file_viewer = parent.findChildren(QTableWidget)[0]
-            for file in files:
+            for file in output:
                 batch_file_viewer.auto_assign(file)
         elif self.type=='fasta':
             database_file_viewer = parent.findChildren(QLineEdit)[0]
-            database_file_viewer.setText(files)
+            database_file_viewer.setText(output)
+        elif self.type=='directory':
+            output_viewer = parent.findChildren(QLineEdit)[1]
+            output_viewer.setText(output)
