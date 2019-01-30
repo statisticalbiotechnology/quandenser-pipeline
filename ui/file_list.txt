@@ -1,0 +1,21 @@
+/media/storage/timothy/MSfiles/mzML/A1.mzML	A
+/media/storage/timothy/MSfiles/mzML/A2.mzML	A
+/media/storage/timothy/MSfiles/mzML/A3.mzML	A
+/media/storage/timothy/MSfiles/mzML/B1.mzML	B
+/media/storage/timothy/MSfiles/mzML/B2.mzML	B
+/media/storage/timothy/MSfiles/mzML/B3.mzML	B
+/media/storage/timothy/MSfiles/mzML/C1.mzML	C
+/media/storage/timothy/MSfiles/mzML/C2.mzML	C
+/media/storage/timothy/MSfiles/mzML/C3.mzML	C
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
