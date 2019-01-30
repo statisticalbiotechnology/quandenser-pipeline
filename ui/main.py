@@ -3,16 +3,13 @@ import os
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
 from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget
-from PySide2.QtWebEngineWidgets import QWebEngineView
+from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
 
-# Remember config
-import configparser
-
 # Widgets
 from tab1.file_chooser import file_chooser
-from tab1.database_viewer import database_viewer
+from tab1.file_viewer import file_viewer
 from tab1.batch_file_viewer import batch_file_viewer
 from tab1.run_button import run_button
 from tab2.workflow_choose import workflow_choose
@@ -29,14 +26,16 @@ class Main(QMainWindow):
         self.top = 10
         self.WIDTH = 600
         self.HEIGHT = 400
-        self.settings_path = '../config/ui.config'
-        self.settings_obj = QtCore.QSettings(self.settings_path, QtCore.QSettings.IniFormat)
+        self.ui_settings_path = "../config/ui.config"
+        self.nf_settings_path = "../config/nf.config"
+        self.sh_script_path = "../run_quandenser.sh"  # CHANGE IN FUTURE
+        self.settings_obj = QtCore.QSettings(self.ui_settings_path, QtCore.QSettings.IniFormat)
         # Restore window's previous geometry from file
         self.setMinimumWidth(300)
         self.setMinimumHeight(200)
         self.initUI()
 
-        if os.path.exists(self.settings_path):
+        if os.path.exists(self.ui_settings_path):
             self.restoreGeometry(self.settings_obj.value("windowGeometry"))
             self.restoreState(self.settings_obj.value("State_main"))
             children = self.children()
@@ -83,15 +82,19 @@ class Main(QMainWindow):
 
         # Widgets in leftbox
         self.fasta_chooser = file_chooser(type='fasta')
-        self.database_viewer = database_viewer()
+        self.database_viewer = file_viewer(type='file')
         self.ms_chooser = file_chooser(type='ms')
         self.batch_file_viewer = batch_file_viewer()
-        self.run_button = run_button()
+        self.output_chooser = file_chooser(type='directory')
+        self.output_viewer = file_viewer(type='directory')
+        self.run_button = run_button(self.nf_settings_path, self.sh_script_path)
 
         self.tab1_layout.addWidget(self.fasta_chooser, 0, QtCore.Qt.AlignCenter)
         self.tab1_layout.addWidget(self.database_viewer)
         self.tab1_layout.addWidget(self.ms_chooser, 0, QtCore.Qt.AlignCenter)
         self.tab1_layout.addWidget(self.batch_file_viewer)
+        self.tab1_layout.addWidget(self.output_chooser, 0, QtCore.Qt.AlignCenter)
+        self.tab1_layout.addWidget(self.output_viewer)
         self.tab1_layout.addWidget(self.run_button)
 
     def inittab2(self):
@@ -112,6 +115,7 @@ class Main(QMainWindow):
         self.rightbox.setLayout(self.rightbox_layout)
 
         self.workflow = QWebEngineView()
+        self.workflow.settings().setAttribute(QWebEngineSettings.ErrorPageEnabled, False)
         html_file = open("tab2/full.html")
         self.workflow.setHtml(html_file.read())
         self.rightbox_layout.addWidget(self.workflow)
@@ -142,6 +146,9 @@ class Main(QMainWindow):
             self.recurse_children(child)
 
 
+
+    """This is for loading and saving state of child widgets"""
+
     def recurse_children(self, parent, save=True):
         children = parent.children()
         if children == []:
@@ -163,14 +170,19 @@ class Main(QMainWindow):
                 else:
                     child.setPlainText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
         elif isinstance(child, QLineEdit):
+            state_name = ''   # This is so you can have multiple of same type of widget
+            if hasattr(child, 'type'):
+                state_name += "_" + str(child.type)
+            if hasattr(child, 'id'):
+                state_name += "_" + str(child.id)
+            child_name = f"State_{child.__class__.__name__}" + state_name
             if save:
-                self.settings_obj.setValue(f"State_{child.__class__.__name__}",
-                                           child.text())
+                self.settings_obj.setValue(child_name, child.text())
             else:
-                if self.settings_obj.value(f"State_{child.__class__.__name__}") is None:
+                if self.settings_obj.value(child_name) is None:
                     return
                 else:
-                    child.setText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
+                    child.setText(self.settings_obj.value(child_name))
         elif isinstance(child, QTableWidget):
             if save:
                 full_table = []
