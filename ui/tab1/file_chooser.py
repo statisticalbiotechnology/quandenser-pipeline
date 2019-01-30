@@ -1,11 +1,14 @@
 import sys
-from PySide2.QtWidgets import QFileDialog, QPushButton, QTextEdit, QLineEdit
+from PySide2.QtWidgets import QFileDialog, QPushButton, QTextEdit, QLineEdit, QTableWidget, QSizePolicy
 from PySide2.QtGui import QIcon
 
 class file_chooser(QPushButton):
 
     def __init__(self, type='ms'):
         super(file_chooser,self).__init__(parent = None)
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.setSizePolicy(sizePolicy)
+        self.setFixedWidth(200)
         self.type = type
         if self.type=='ms':
             self.setText('Choose MS files')
@@ -42,7 +45,7 @@ class file_chooser(QPushButton):
     def display_in_file_viewer(self, files):
         parent = self.parentWidget()
         if self.type=='ms':
-            batch_file_viewer = parent.findChildren(QTextEdit)[0]
+            batch_file_viewer = parent.findChildren(QTableWidget)[0]
             for file in files:
                 batch_file_viewer.auto_assign(file)
         elif self.type=='fasta':
