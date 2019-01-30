@@ -4,8 +4,6 @@ echo true
 /* Important:
 change the path to where the database is and the batch file is
 */
-params.db = "/media/storage/timothy/MSfiles/iprg2016_with_labels.fasta"
-params.batch_file = "/media/storage/timothy/MSfiles/file_list.txt"
 db = file(params.db)  // Sets "db" as the file defined above
 file_def = file(params.batch_file)  // batch_file
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
