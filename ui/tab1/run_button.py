@@ -32,20 +32,13 @@ class run_button(QPushButton):
         child = parent.findChildren(QTableWidget)[0]
         full_table = []
         for row in range(child.rowCount()):
-            for column in range(child.columnCount()):
-                if child.item(row, column).text() == '':
-                    pass
-                else:
-                    full_table.append(child.item(row, column).text())
-                if not column == child.columnCount() - 1:
-                    full_table.append('\t')
-            full_table.append('\n')
-        full_table = ''.join(full_table)  # Make to long string
-        full_table = full_table.split('\n')  # Split by \n, will be added when writing file
+            if not child.item(row, 0).text() == '' and not child.item(row, 1).text() == '':
+                input_string = child.item(row, 0).text() + '\t' + child.item(row, 1).text() + '\n'
+                full_table.append(input_string)
 
         with open("file_list.txt", 'w') as file:
             for line in full_table:
-                file.write(line + '\n')
+                file.write(line)
 
         index = [setting_contents.index(i) for i in setting_contents if i.startswith("params.batch_file")][0]
         batch_file_path = os.path.abspath("file_list.txt")
@@ -86,6 +79,7 @@ class run_button(QPushButton):
                 file.write(line)
 
         # Run quandenser
+        """
         process = subprocess.Popen(['./run_quandenser.sh & echo "PID is $!"'],
                                     stdout=subprocess.PIPE,
                                     shell=True)
@@ -101,7 +95,7 @@ class run_button(QPushButton):
             if line_counter > 20:
                 pid = "ERROR"
                 break
-
+        """
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Successful start")

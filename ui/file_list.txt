@@ -7,15 +7,3 @@
 /media/storage/timothy/MSfiles/mzML/C1.mzML	C
 /media/storage/timothy/MSfiles/mzML/C2.mzML	C
 /media/storage/timothy/MSfiles/mzML/C3.mzML	C
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
