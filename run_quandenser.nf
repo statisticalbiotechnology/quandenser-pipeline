@@ -25,7 +25,8 @@ process quandenser {
 	file "Quandenser_output/*" into quandenser_out
   script:
 	"""
-	quandenser --batch list.txt --max-missing 3 --dinosaur-memory 16G
+  #--dinosaur-memory 16G
+	quandenser --batch list.txt --max-missing 3
 	"""
 }
 
