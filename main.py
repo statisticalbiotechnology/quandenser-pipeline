@@ -12,6 +12,7 @@ from ui.tab1.file_chooser import file_chooser
 from ui.tab1.file_viewer import file_viewer
 from ui.tab1.batch_file_viewer import batch_file_viewer
 from ui.tab1.run_button import run_button
+from ui.tab2.workflow import workflow
 from ui.tab2.workflow_choose import workflow_choose
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab5.about import about
@@ -114,10 +115,7 @@ class Main(QMainWindow):
         self.rightbox_layout = QHBoxLayout()
         self.rightbox.setLayout(self.rightbox_layout)
 
-        self.workflow = QWebEngineView()
-        self.workflow.settings().setAttribute(QWebEngineSettings.ErrorPageEnabled, False)
-        html_file = open("ui/tab2/full.html")
-        self.workflow.setHtml(html_file.read())
+        self.workflow = workflow()
         self.rightbox_layout.addWidget(self.workflow)
 
         # Combine
