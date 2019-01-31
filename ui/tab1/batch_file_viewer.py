@@ -62,14 +62,14 @@ class batch_file_viewer(QTableWidget):
                 label.setBackground(QColor('red'))
         elif column == 1:
             label = self.item(row, column)
-            if label.text() == '':
-                label.setBackground(QColor('red'))
-            elif self.item(row, column - 1).text() == '':
+            if self.item(row, column - 1).text() == '':
                 label.setBackground(QColor('white'))
                 label.setForeground(QColor('black'))
-            elif self.item(row, column - 1).text() != '':
+            elif self.item(row, column - 1).text() != '' and label.text() != '':
                 label.setBackground(QColor('white'))
                 label.setForeground(QColor('green'))
+            else:
+                label.setBackground(QColor('red'))
 
     def auto_assign(self, file):
         """Triggered when using file chooser button"""
