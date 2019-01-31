@@ -16,7 +16,7 @@ Channel
   .into{ spectra_in; spectra_in_q }
 
 process quandenser {
-  publishDir ".", mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   input:
 	file 'list.txt' from file_def
 	file('mzML/*') from spectra_in.collect()   // spectra_in_q for parallel run
@@ -44,7 +44,7 @@ process test {
 */
 
 process tide_perc_search {
-  publishDir ".", mode: 'copy', pattern: "crux-output/*", overwrite: true
+  publishDir params.output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
   input:
 	file 'seqdb.fa' from db
 	file ms2_files from spectra.collect()  // PS: Sentistive to nameing (no blankspace, paranthesis and such)
@@ -61,7 +61,7 @@ process tide_perc_search {
 
 
 process triqler {
-  publishDir ".", mode: 'copy', pattern: "proteins.*",overwrite: true
+  publishDir params.output_path, mode: 'copy', pattern: "proteins.*",overwrite: true
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
 	file("crux-output/*") from id_files.collect()
