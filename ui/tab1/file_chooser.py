@@ -6,7 +6,6 @@ class file_chooser(QPushButton):
 
     def __init__(self, type='ms'):
         super(file_chooser,self).__init__(parent = None)
-        self.setStyleSheet("background-color:grey")
         self.setFixedWidth(200)
         self.type = type
         self.id = id
