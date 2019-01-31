@@ -11,7 +11,7 @@ class run_button(QPushButton):
         self.setText('RUN')
         self.nf_settings_path = nf_settings_path
         self.sh_script_path = sh_script_path
-        self.setStyleSheet("background-color:blue")  # Change color depending on if you can run or not
+        self.setStyleSheet("background-color:grey")  # Change color depending on if you can run or not
         self.clicked.connect(self.run)
 
     def run(self):
