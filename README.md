@@ -23,12 +23,14 @@ DONE
 Install Python 3.6+ with pip(Should be on recent linux versions)
 
 Install the following modules:
+
     Pyinstaller (pip install pyinstaller)
     PySide2 (pip install PySide2)
     StaticX (pip install staticx)
     Numpy (pip install numpy)
 
 Run these commands:
+
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/PySide2/Qt/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/PySide2/Qt
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/shiboken2
