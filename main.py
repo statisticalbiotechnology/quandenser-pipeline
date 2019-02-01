@@ -3,7 +3,7 @@ import os
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
 from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget
-from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+#from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
 
@@ -12,7 +12,7 @@ from ui.tab1.file_chooser import file_chooser
 from ui.tab1.file_viewer import file_viewer
 from ui.tab1.batch_file_viewer import batch_file_viewer
 from ui.tab1.run_button import run_button
-from ui.tab2.workflow import workflow
+#from ui.tab2.workflow import workflow
 from ui.tab2.workflow_choose import workflow_choose
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab5.about import about
@@ -115,8 +115,8 @@ class Main(QMainWindow):
         self.rightbox_layout = QHBoxLayout()
         self.rightbox.setLayout(self.rightbox_layout)
 
-        self.workflow = workflow()
-        self.rightbox_layout.addWidget(self.workflow)
+        #self.workflow = workflow()
+        #self.rightbox_layout.addWidget(self.workflow)
 
         # Combine
         self.tab2_layout.addWidget(self.leftbox)
