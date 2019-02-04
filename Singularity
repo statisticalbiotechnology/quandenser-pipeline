@@ -51,6 +51,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     unzip -uq crux-3.2.Linux.x86_64.zip
     cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
 
+    echo "Cleaning image"
+    apt-get clean
+
     echo "IMAGE BUILT SUCCESSFULLY"
 
 %runscript
