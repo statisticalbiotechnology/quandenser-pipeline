@@ -46,7 +46,7 @@ Run the following commands:
 
 If you somehow do not have access to the .spec file, do the following:
 
-  pyinstaller main.py
+    pyinstaller main.py
 
 Open main.spec and paste in this above a = Analysis(...)
 
