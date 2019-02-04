@@ -1,0 +1,32 @@
+Bootstrap:docker
+From:chambm/wine-dotnet:4.7-x64
+
+%environment
+    export LC_ALL=C
+    export WINEPREFIX=/wineprefix64  # Get a clean prefix
+    export WINEDISTRO=devel
+    export WINEPATH="C:\pwiz"
+    #export WINEDEBUG=-all,err+all
+
+%labels
+   AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
+
+%files
+   pwiz-bin-windows-* /tmp
+
+%post
+    export WINEPREFIX=/wineprefix64  # Get a clean prefix
+    export WINEDISTRO=devel
+    export WORKDIR=/wine
+    export WINEPATH="C:\pwiz"
+
+    apt-get update
+    apt-get install -y bzip2
+
+    echo "INSTALLING PROTEOWIZARD 32 BIT (FULL VENDOR CAPABILITIES)"
+    mkdir -p $WINEPREFIX/drive_c/pwiz
+    tar xjvf /tmp/pwiz-bin-windows-* -C $WINEPREFIX/drive_c/pwiz
+    rm /tmp/pwiz-bin-windows-*
+
+%runscript
+    echo "Test"

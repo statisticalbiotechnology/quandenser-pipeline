@@ -1,0 +1,64 @@
+Bootstrap:docker
+From:ubuntu:bionic-20180526
+
+%environment
+    export LC_ALL=C
+    #export WINEARCH="win32"  # Set wine to handle 32 bit
+    export WINEPREFIX=/wine  # Get a clean prefix
+    export WINEDISTRO=devel
+    export WORKDIR=/wine
+    export WINEPATH="C:\pwiz"
+    #export WINEDEBUG=-all,err+all
+
+%labels
+   AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
+
+%files
+   pwiz-bin-windows-* /tmp
+
+%post
+    export WINEPREFIX=/wine  # Get a clean prefix
+    export WINEDISTRO=devel
+    export WORKDIR=/wine
+    export WINEPATH="C:\pwiz"
+
+    echo "INSTALLING UTILS"
+    dpkg --add-architecture i386  # Add 32 bit compability
+    apt-get update  # Update to install needed utils
+    apt-get install -y software-properties-common winbind cabextract p7zip unzip wget zenity xvfb # Utils
+    apt-get install -y nano
+    rm -rf /var/lib/apt/lists/*
+
+    echo "INSTALLING WINE"
+    wget -nc https://dl.winehq.org/wine-builds/winehq.key  # Get key for newest version
+    apt-key add winehq.key  # Add the key
+    apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'  # Main repo for ubuntu 18.04 LTS
+    apt-get update  # Update once again to be able to install wine
+    apt-get install -y --install-recommends winehq-$WINEDISTRO wine-$WINEDISTRO wine-$WINEDISTRO-i386 wine-$WINEDISTRO-amd64
+    apt-get -y clean
+
+    echo "INSTALLING WINETRICKS"
+    wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+    chmod +x winetricks
+    cp winetricks /usr/bin/winetricks
+    wineboot -u  # Update the prefix
+
+    echo "INSTALLING .NET and VC"
+    DEBIAN_FRONTEND=noninteractive winetricks -q dotnet35sp1
+    DEBIAN_FRONTEND=noninteractive winetricks -q dotnet472
+    wineserver -w
+    winetricks -q win7
+    xvfb-run winetricks -q vcrun2008 vcrun2017 corefonts
+    wineserver -w
+
+    echo "ENABLE X11 forwarding"
+    #xhost +
+    #xhost local:root
+
+    echo "INSTALLING PROTEOWIZARD 32 BIT (FULL VENDOR CAPABILITIES)"
+    mkdir -p $WINEPREFIX/drive_c/pwiz
+    tar xjvf /tmp/pwiz-bin-windows-* -C $WINEPREFIX/drive_c/pwiz
+    rm /tmp/pwiz-bin-windows-*
+
+%runscript
+    echo "Test"
