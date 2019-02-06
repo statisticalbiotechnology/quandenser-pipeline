@@ -4,6 +4,11 @@ import subprocess
 from shutil import copyfile
 import time
 
+
+# Custom parser for both sh files and nf configs
+from ..custom_config_parser import custom_config_parser
+
+
 class run_button(QPushButton):
 
     def __init__(self, nf_settings_path, sh_script_path):
@@ -16,14 +21,11 @@ class run_button(QPushButton):
 
     def run(self):
         # Load settings
-        setting_contents = []
-        for line in open(self.nf_settings_path, 'r'):
-            setting_contents.append(line)
+        self.nf_settings_parser = custom_config_parser()
+        self.nf_settings_parser.load(self.nf_settings_path)
 
-        # Load sh file
-        sh_contents = []
-        for line in open(self.sh_script_path, 'r'):
-            sh_contents.append(line)
+        self.sh_parser = custom_config_parser()
+        self.sh_parser.load(self.sh_script_path)
 
         # Read parent
         parent = self.parentWidget()
@@ -40,43 +42,28 @@ class run_button(QPushButton):
             for line in full_table:
                 file.write(line)
 
-        index = [setting_contents.index(i) for i in setting_contents if i.startswith("params.batch_file")][0]
         batch_file_path = os.path.abspath("file_list.txt")
-        setting_contents[index] = f'params.batch_file = "{batch_file_path}"\n'  # Need \n
+        self.nf_settings_parser.write("params.batch_file", batch_file_path)
 
         # database file
         children = parent.findChildren(QLineEdit)
         for child in children:  # This is so I can have whatever order in widgets I want
             if child.type == 'file':
                 break  # Will keep child
+
         database_path = child.text()
-        index = [setting_contents.index(i) for i in setting_contents if i.startswith("params.db")][0]
-        setting_contents[index] = f'params.db = "{database_path}"\n'  # Need to add \n here
+        self.nf_settings_parser.write("params.db", database_path)
 
         # output directory
         children = parent.findChildren(QLineEdit)
         for child in children:  # This is so I can have whatever order in widgets I want
             if child.type == 'directory':
                 break  # Will keep child
+
+        # Change output parameters
         output_path = child.text()
-
-        # Change sh
-        index = [sh_contents.index(i) for i in sh_contents if i.startswith("OUTPUT_PATH")][0]
-        sh_contents[index] = f'OUTPUT_PATH="{output_path}"\n'  # Need to add \n here
-
-        # Change .config
-        index = [setting_contents.index(i) for i in setting_contents if i.startswith("params.output_path")][0]
-        setting_contents[index] = f'params.output_path = "{output_path}"\n'  # Need to add \n here
-
-        # Rewrite settings
-        with open(self.nf_settings_path, 'w') as file:
-            for line in setting_contents:
-                file.write(line)
-
-        # Rewrite sh file
-        with open(self.sh_script_path, 'w') as file:
-            for line in sh_contents:
-                file.write(line)
+        self.sh_parser.write("OUTPUT_PATH", output_path)  # In sh
+        self.nf_settings_parser.write("params.output_path", output_path)  # In sh
 
         # Run quandenser
         process = subprocess.Popen(['./run_quandenser.sh & echo "PID is $!"'],
