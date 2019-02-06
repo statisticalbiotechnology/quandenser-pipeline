@@ -17,6 +17,9 @@ from ui.tab2.workflow_choose import workflow_choose
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab5.about import about
 
+# Custom parser
+from ui.custom_config_parser import custom_config_parser
+
 class Main(QMainWindow):
 
     def __init__(self):
@@ -68,8 +71,8 @@ class Main(QMainWindow):
         # Add the tabs
         self.tabs.addTab(self.tab1, "MS files")
         self.tabs.addTab(self.tab2, "Edit workflow")
-        self.tabs.addTab(self.tab3, "MSconvert")
-        self.tabs.addTab(self.tab4, "Advanced Settings")
+        self.tabs.addTab(self.tab3, "Advanced Settings")
+        self.tabs.addTab(self.tab4, "MSconvert")
         self.tabs.addTab(self.tab5, "About")
 
         self.setCentralWidget(self.tabs)
@@ -107,7 +110,7 @@ class Main(QMainWindow):
         self.leftbox = QWidget()
         self.leftbox_layout = QFormLayout()
         self.leftbox.setLayout(self.leftbox_layout)
-        self.workflow_choose = workflow_choose()
+        self.workflow_choose = workflow_choose(self.nf_settings_path)
         self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.workflow_choose)
 
         # Right box
