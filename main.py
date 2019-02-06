@@ -69,7 +69,7 @@ class Main(QMainWindow):
         self.tabs.addTab(self.tab1, "MS files")
         self.tabs.addTab(self.tab2, "Edit workflow")
         self.tabs.addTab(self.tab3, "MSconvert")
-        self.tabs.addTab(self.tab4, "How to use")
+        self.tabs.addTab(self.tab4, "Advanced Settings")
         self.tabs.addTab(self.tab5, "About")
 
         self.setCentralWidget(self.tabs)
