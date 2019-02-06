@@ -9,7 +9,7 @@ file_def = file(params.batch_file)  // batch_file
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 
 // Preprocessing file_list
-Channel  // Files to run
+Channel  // mzML files with proper labeling
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
   .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
@@ -17,7 +17,7 @@ Channel  // Files to run
   .map { it -> file(it[0]) }
   .into{ spectra_in; spectra_in_q }  // Puts the files into spectra_in
 
-Channel  // Files to convert
+Channel  // non-mzML files with proper labeling which will be converted
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
   .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
@@ -25,7 +25,7 @@ Channel  // Files to convert
   .map { it -> file(it[0]) }
   .into{ spectra_convert; spectra_convert_bool }
 
-// Replaces the lines in the batchfile with the new paths
+// Replaces the lines in the file_list with the new paths (will only change file if non-mzML)
 count = 0
 amount_of_non_mzML = 0
 all_lines = file_def.readLines()
@@ -35,7 +35,7 @@ for( line in all_lines ){
   file_name = (file_path.tokenize('/')[-1]).tokenize('.')[0]  // Split '/', take last. Split '.', take first
   file_extension = file_path.tokenize('.')[-1]
   if( file_extension != "mzML" ){
-    all_lines[count] = params.output_path + "/converted/" + file_name + ".mzML" + '\t' + file_label
+    all_lines[count] = params.output_path + "/work/converted/" + file_name + ".mzML" + '\t' + file_label
     count++
     amount_of_non_mzML++
   } else {
@@ -43,7 +43,7 @@ for( line in all_lines ){
     count++
   }
 }
-file_def.text = ''  // clear file
+file_def = file("$params.output_path/work/file_list.txt")  // Create new file for in work directory
 total_spectras = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
@@ -59,6 +59,14 @@ if( params.parallell_msconvert == true ) {
 }
 
 process msconvert {
+  /* Note: quandenser needs the file_list with paths to the files.
+  Problem: We do not know the mzML file location during work and writing large files to publishDir is slow,
+  so there might be a possibility that some strange issues with incomplete mzML files being inputted to quandenser.
+  The solution is to have two publishdirs, one where the true files are being inserted for future use,
+  while we point in the file_list to the files in the work directory with symlinks.
+  The symlinks are fast to write + they point to complete files + we know the symlinks location --> fixed :)
+  */
+  publishDir "$params.output_path/work/converted", mode: 'symlink', overwrite: true, pattern: "*"
   publishDir "$params.output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
   input:
     file f from spectra_convert_channel
@@ -72,8 +80,7 @@ process msconvert {
 
 c1 = spectra_in
 c2 = spectra_converted
-
-combined_channel = c1.concat(c2)
+combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 
 process quandenser {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
@@ -81,8 +88,6 @@ process quandenser {
 	//
   file 'list.txt' from file_def
   file('mzML/*') from combined_channel.collect()
-	//file('mzML/*') from spectra_in.collect()
-  //file('mzML/*') from spectra_converted.collect()
   output:
 	file("Quandenser_output/consensus_spectra/**") into spectra
 	file "Quandenser_output/*" into quandenser_out
