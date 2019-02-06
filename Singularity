@@ -8,9 +8,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEPATH="C:\pwiz"  # Location where the pwiz files will be
     export WINEDEBUG=-all,err+all  # Hide all wine related output
 
-    mkdir -p /home/$USER/wineprefix64  # Create new dir in image if it does not exist
-    link_wine.sh  # This script will link all files in $WINEPREFIX and input them in your directory
-    export WINEPREFIX=/home/$USER/wineprefix64  # Change prefix, so wine will know you are the owner
+    mkdir -p /var/local/shared_wine/wineprefix64  # Create folder, so you are owner
+    link_wine.sh  # This script will link all files in $WINEPREFIX and input them in /var/local/wineprefix64
+    export WINEPREFIX=/var/local/shared_wine/wineprefix64  # Change prefix, so wine will know you are the owner
 
 %labels
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
@@ -57,11 +57,10 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     mkdir -p $WINEPREFIX/drive_c/pwiz
     tar xjvf /tmp/pwiz-bin-windows-* -C $WINEPREFIX/drive_c/pwiz  # Unpack all pwiz files in the created directory
     rm /tmp/pwiz-bin-windows-*  # Clean up file
-    chmod -R 777 $WINEPREFIX  # ALL USERS NEED ACCESS TO THIS DIRECORY TO CREATE SYMLINKS
-    chmod 777 /home  # Set so you can create a directory in home if required
-    chmod 777 /*  # Perhaps not needed
-    chmod 777 /  # Perhaps not needed
-    chmod 777 /usr/local/bin/link_wine.sh  # also set so everybody can link
+    mkdir -p /var/local/shared_wine  # Create new dir in image if it does not exist
+    chmod a+rwx /var/local/shared_wine   # ALL USERS NEED ACCESS TO THIS DIRECORY TO CREATE SYMLINKS
+    chmod -R a+rx $WINEPREFIX  # Access to wine directory
+    chmod a+x /usr/local/bin/link_wine.sh  # also set so everybody can link with the script
 
     echo "IMAGE BUILT SUCCESSFULLY"
 
