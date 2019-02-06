@@ -8,18 +8,81 @@ db = file(params.db)  // Sets "db" as the file defined above
 file_def = file(params.batch_file)  // batch_file
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 
-Channel
+// Preprocessing file_list
+Channel  // Files to run
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
   .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
+  .filter{ it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
   .map { it -> file(it[0]) }
-  .into{ spectra_in; spectra_in_q }
+  .into{ spectra_in; spectra_in_q }  // Puts the files into spectra_in
+
+Channel  // Files to convert
+  .from(file_def.readLines())
+  .map { it -> it.tokenize('\t') }
+  .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
+  .filter{ it[0].tokenize('.')[-1] != "mzML" }  // filters any input that is .mzML
+  .map { it -> file(it[0]) }
+  .into{ spectra_convert; spectra_convert_bool }
+
+// Replaces the lines in the batchfile with the new paths
+count = 0
+amount_of_non_mzML = 0
+all_lines = file_def.readLines()
+for( line in all_lines ){
+  file_path = line.tokenize('\t')[0]
+  file_label = line.tokenize('\t')[-1]
+  file_name = (file_path.tokenize('/')[-1]).tokenize('.')[0]  // Split '/', take last. Split '.', take first
+  file_extension = file_path.tokenize('.')[-1]
+  if( file_extension != "mzML" ){
+    all_lines[count] = params.output_path + "/converted/" + file_name + ".mzML" + '\t' + file_label
+    count++
+    amount_of_non_mzML++
+  } else {
+    // add as is, no change
+    count++
+  }
+}
+file_def.text = ''  // clear file
+total_spectras = 0
+for( line in all_lines ){
+  file_def << line + '\n'  // need to add \n
+  total_spectras++
+}
+println("Total spectras = " + total_spectras)
+println("Spectras that will be converted = " + amount_of_non_mzML)
+
+if( params.parallell_msconvert == true ) {
+  spectra_convert_channel = spectra_convert  // No collect = parallell processing
+} else {
+  spectra_convert_channel = spectra_convert.collect()
+}
+
+process msconvert {
+  publishDir "$params.output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
+  input:
+    file f from spectra_convert_channel
+  output:
+    file("*mzML") into spectra_converted
+  script:
+	"""
+  wine msconvert ${f} --mzML --zlib
+  """
+}
+
+c1 = spectra_in
+c2 = spectra_converted
+
+combined_channel = c1.concat(c2)
 
 process quandenser {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   input:
-	file 'list.txt' from file_def
-	file('mzML/*') from spectra_in.collect()   // spectra_in_q for parallel run
+	//
+  file 'list.txt' from file_def
+  file('mzML/*') from combined_channel.collect()
+	//file('mzML/*') from spectra_in.collect()
+  //file('mzML/*') from spectra_converted.collect()
   output:
 	file("Quandenser_output/consensus_spectra/**") into spectra
 	file "Quandenser_output/*" into quandenser_out
@@ -29,20 +92,6 @@ process quandenser {
 	quandenser --batch list.txt --max-missing 3
 	"""
 }
-
-/*
-process test {
-  input:
-  file ms2_files from Channel.fromPath("/media/storage/timothy/quandenser-pipeline/WIP/Quandenser_output/consensus_spectra/*")
-  file q_out from Channel.fromPath("/media/storage/timothy/quandenser-pipeline/WIP/Quandenser_output/*")
-  output:
-  file ms2_files into spectra
-  file q_out into quandenser_out
-  """
-  echo Done
-  """
-}
-*/
 
 process tide_perc_search {
   publishDir params.output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
