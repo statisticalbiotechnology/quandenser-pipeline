@@ -5,22 +5,22 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export LC_ALL=C
     export WINEPREFIX=/wineprefix64  # Get a clean prefix
     export WINEDISTRO=devel
-    export WINEPATH="C:\pwiz"
-    export WINEDEBUG=-all,err+all
+    export WINEPATH="C:\pwiz"  # Location where the pwiz files will be
+    export WINEDEBUG=-all,err+all  # Hide all wine related output
 
-    mkdir -p /home/$USER/wineprefix64
-    link_wine.sh
-    export WINEPREFIX=/home/$USER/wineprefix64
+    mkdir -p /home/$USER/wineprefix64  # Create new dir in image if it does not exist
+    link_wine.sh  # This script will link all files in $WINEPREFIX and input them in your directory
+    export WINEPREFIX=/home/$USER/wineprefix64  # Change prefix, so wine will know you are the owner
 
 %labels
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
 
 %files
-   dependencies/percolator.py /usr/local/bin
-   dependencies/prepare_input.py /usr/local/bin
-   dependencies/normalize_intensities.py /usr/local/bin
-   dependencies/pwiz-bin-windows-* /tmp
-   dependencies/link_wine.sh /usr/local/bin
+   dependencies/percolator.py /usr/local/bin  # Needed for triqler preprocess
+   dependencies/prepare_input.py /usr/local/bin  # Needed for triqler preprocess
+   dependencies/normalize_intensities.py /usr/local/bin  # Needed for triqler preprocess
+   dependencies/pwiz-bin-windows-* /tmp  # The pwiz files used for msconvert
+   dependencies/link_wine.sh /usr/local/bin  # A script that links all file in wineprefix64 to a directory owned by you --> anybody can use wine
 
 %post
     echo "Installling packages with apt-get"
@@ -55,12 +55,13 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEPATH="C:\pwiz"
 
     mkdir -p $WINEPREFIX/drive_c/pwiz
-    tar xjvf /tmp/pwiz-bin-windows-* -C $WINEPREFIX/drive_c/pwiz
-    rm /tmp/pwiz-bin-windows-*
-    chmod -R 777 $WINEPREFIX
-    chmod 777 /*
-    chmod 777 /
-    chmod 777 /usr/local/bin/link_wine.sh
+    tar xjvf /tmp/pwiz-bin-windows-* -C $WINEPREFIX/drive_c/pwiz  # Unpack all pwiz files in the created directory
+    rm /tmp/pwiz-bin-windows-*  # Clean up file
+    chmod -R 777 $WINEPREFIX  # ALL USERS NEED ACCESS TO THIS DIRECORY TO CREATE SYMLINKS
+    chmod 777 /home  # Set so you can create a directory in home if required
+    chmod 777 /*  # Perhaps not needed
+    chmod 777 /  # Perhaps not needed
+    chmod 777 /usr/local/bin/link_wine.sh  # also set so everybody can link
 
     echo "IMAGE BUILT SUCCESSFULLY"
 
