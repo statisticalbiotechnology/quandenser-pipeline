@@ -1,5 +1,9 @@
+# System
 import sys
 import os
+import shutil
+
+# PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
 from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget
@@ -20,6 +24,22 @@ from ui.tab5.about import about
 # Custom parser
 from ui.custom_config_parser import custom_config_parser
 
+def check_corrupt(user):
+    # Check for corrupt files
+    if not os.path.isdir(f"/var/tmp/quandenser_pipeline_{user}"):
+        print("""Missing config directory in /var/tmp. Initalizing directory""")
+        os.makedirs(f"/var/tmp/quandenser_pipeline_{user}")
+        print(f"/var/tmp/quandenser_pipeline_{user} created")
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/ui.config"):
+        shutil.copyfile("config/ui.config", f"/var/tmp/quandenser_pipeline_{user}/ui.config")
+        print("Missing UI config. Creating file")
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/nf.config"):
+        shutil.copyfile("config/nf.config", f"/var/tmp/quandenser_pipeline_{user}/nf.config")
+        print("Missing NF config. Creating file")
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/PIPE"):
+        shutil.copyfile("config/PIPE", f"/var/tmp/quandenser_pipeline_{user}/PIPE")
+        print("Missing PIPE. Creating file")
+
 class Main(QMainWindow):
 
     def __init__(self):
@@ -30,8 +50,10 @@ class Main(QMainWindow):
         self.top = 10
         self.WIDTH = 600
         self.HEIGHT = 400
-        self.ui_settings_path = "config/ui.config"
-        self.nf_settings_path = "config/nf.config"
+        self.user = os.environ.get('USER')
+        check_corrupt(self.user)
+        self.ui_settings_path = f"/var/tmp/quandenser_pipeline_{self.user}/ui.config"
+        self.nf_settings_path = f"/var/tmp/quandenser_pipeline_{self.user}/nf.config"
         self.sh_script_path = "run_quandenser.sh"
         self.settings_obj = QtCore.QSettings(self.ui_settings_path, QtCore.QSettings.IniFormat)
         # Restore window's previous geometry from file
