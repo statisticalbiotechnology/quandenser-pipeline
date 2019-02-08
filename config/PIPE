@@ -1,0 +1,8 @@
+# Exit codes: 0 = clean exit, run the nextflow pipeline, 1 = hard exit, closed window. Do not run
+
+# CONTAINER TO HOST
+exit_code=1
+OUTPUT_PATH="/media/storage/timothy/quandenser-pipeline/output"
+
+# HOST TO CONTAINER
+IMAGE_LOCATION=""
