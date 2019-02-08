@@ -33,6 +33,7 @@ Run these commands:
 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/PySide2/Qt/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/PySide2/Qt
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/PySide2
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/shiboken2
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib/python3.6/site-packages/numpy/.libs
 
@@ -57,7 +58,7 @@ Open main.spec and paste in this above a = Analysis(...)
 Then in a = Analysis(...) replace datas=[] with datas=datas. Then do
 
     cd dist
-    staticx main main_static
+    staticx --no-compress main main_static
 
 The static executable opens up on rackham in uppmax, but does not work on older versions of linux.
 
