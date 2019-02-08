@@ -16,7 +16,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
     export WINEPREFIX="/tmp/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
 
-    export XDG_RUNTIME_DIR=/tmp  # defaults to tmp
+    # defaults to tmp
+    export XDG_RUNTIME_DIR=
 
 %labels
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
