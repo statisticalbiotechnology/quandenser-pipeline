@@ -9,7 +9,3 @@ class workflow(QWebEngineView):
         self.settings().setAttribute(QWebEngineSettings.PluginsEnabled, False)
         html_file = open("ui/tab2/full.html")
         self.setHtml(html_file.read())
-
-
-    def nativeEvent(self,event):
-        pass
