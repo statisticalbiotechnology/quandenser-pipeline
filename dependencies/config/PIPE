@@ -4,7 +4,7 @@
 # 2 = hard exit, python crashed --> Rerun 3 times and stop if not working
 
 # CONTAINER TO HOST
-exit_code=1
+exit_code=2
 
 # HOST TO CONTAINER
 pid=
