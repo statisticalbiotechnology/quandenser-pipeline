@@ -49,6 +49,9 @@ def check_corrupt(user):
     if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.nf"):
         print("Missing NF pipeline. Adding file")
         shutil.copyfile("config/run_quandenser.nf", f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.nf")
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/nextflow"):
+        print("Nextflow executable is missing. Adding prepackaged nextflow")
+        shutil.copyfile("config/nextflow", f"/var/tmp/quandenser_pipeline_{user}/nextflow")
 
 def check_running(user, exit_code):
     pipe_parser = custom_config_parser()
