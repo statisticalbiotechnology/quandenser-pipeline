@@ -29,7 +29,7 @@ function read_command() {
 
 declare -i crash_count=0
 while true; do
-  singularity run --app quandenser_ui --bind $(pwd):$(pwd) --bind $1:$1 --nv SingulQuand.SIF
+  singularity run --app quandenser_ui --bind $(pwd):$(pwd) --bind $1:$1 SingulQuand.SIF
   wait
   result=$(read_command)
   if [ "$result" = "0" ]; then
