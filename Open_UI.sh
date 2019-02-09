@@ -16,7 +16,7 @@ function PIPE_write() {
 
 function read_command() {
   exit_code=$(PIPE_read "exit_code")
-  echo $exit_code
+  echo "Exit code $exit_code"
   # Exit codes:
   # 0 = run button pressed --> run the nextflow pipeline
   # 1 = soft exit, closed window --> Do not run anything
@@ -36,3 +36,4 @@ while true; do
   read_command
   break
 done
+cd -  # Go back to prev folder. Will work if you are using link
