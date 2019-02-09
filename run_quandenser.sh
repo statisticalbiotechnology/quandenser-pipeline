@@ -4,8 +4,8 @@ NEXTFLOW_OUTPUTS="-with-trace $OUTPUT_PATH/Nextflow_output/trace.txt -with-repor
 NEXTFLOW_PIPELINE="run_quandenser.nf"
 WORK_DIRECTORY="$OUTPUT_PATH/work"
 STDOUT_FILE="$OUTPUT_PATH/stdout.txt"
-CONFIG_LOCATION="config/nf.config"
-SINGULARITY_IMAGE="SingulQuand.SIF"
+CONFIG_LOCATION="/var/tmp/quandenser_pipeline_$USER/nf.config"
+SINGULARITY_IMAGE="SingulQuand.SIF"  # Note: This means that the pipe reader needs to be in same directory as image!!
 SINGULARITY_ENABLE="-with-singularity"
 
 mkdir -p "$OUTPUT_PATH/Nextflow_output"  # Will also create output folder if it does not exist
