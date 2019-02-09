@@ -28,8 +28,14 @@ function read_command() {
 }
 
 declare -i crash_count=0
+mount_point=""
+for var in "$@"
+do
+  mount_point+=" --bind $var:$var"
+done
+
 while true; do
-  singularity run --app quandenser_ui --bind $(pwd):$(pwd) --bind $1:$1 SingulQuand.SIF
+  singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point SingulQuand.SIF
   wait
   result=$(read_command)
   if [ "$result" = "0" ]; then
