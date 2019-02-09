@@ -2,8 +2,8 @@
 cd "$(dirname "$0")"  # Go to dir where the script lies, this allows for links to work
 
 function PIPE_read() {
-  # grep: -o, only get match, cut: -d'=' deliminter and get second column
-  value=$(grep -o "$1=.*" "/var/tmp/quandenser_pipeline_$USER/PIPE" | cut -d'=' -f2)
+  # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
+  value=$(grep -o "$1=.*" "/var/tmp/quandenser_pipeline_$USER/PIPE" | cut -d'=' -f2 | tr -d '\r')
   echo $value
 }
 
@@ -16,25 +16,33 @@ function PIPE_write() {
 
 function read_command() {
   exit_code=$(PIPE_read "exit_code")
-  echo "Exit code $exit_code"
   # Exit codes:
   # 0 = run button pressed --> run the nextflow pipeline
   # 1 = soft exit, closed window --> Do not run anything
   # 2 = hard exit, python crashed --> Rerun 3 times and stop if not working
-  if [ $exit_code == 0 ]; then
+  if [ "$exit_code" = "0" ]; then
     ./var/tmp/quandenser_pipeline_$USER/run_quandenser.sh &
     PIPE_write "pid" $!  # Write pid to pipe
-  elif [ $exit_code == 1 ]; then
-    echo "Soft exit"
-  elif [ $exit_code == 2 ]; then
-    echo "Hard exit"
   fi
+  echo $exit_code
 }
 
+declare -i crash_count=0
 while true; do
   singularity run --app quandenser_ui --bind $(pwd):$(pwd) --bind $1:$1 --nv SingulQuand.SIF
   wait
-  read_command
-  break
+  result=$(read_command)
+  if [ "$result" = "0" ]; then
+    crash_count=0  # Reset
+  elif [ "$result" = "1" ]; then
+    break
+  elif [ "$result" = "2" ]; then
+    crash_count=$crash_count+1
+    echo $crash_count
+    if [ $crash_count -gt 3 ]; then
+      echo "The GUI crashed 3 times. Aborting"
+      break
+    fi
+  fi
 done
 cd -  # Go back to prev folder. Will work if you are using link
