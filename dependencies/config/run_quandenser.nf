@@ -91,6 +91,8 @@ process quandenser {
   output:
 	file("Quandenser_output/consensus_spectra/**") into spectra
 	file "Quandenser_output/*" into quandenser_out
+  when:
+    params.workflow == "Full"
   script:
 	"""
   #--dinosaur-memory 16G
