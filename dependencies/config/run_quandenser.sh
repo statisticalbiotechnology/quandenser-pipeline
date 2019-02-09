@@ -10,7 +10,7 @@ SINGULARITY_ENABLE="-with-singularity"
 
 mkdir -p "$OUTPUT_PATH/Nextflow_output"  # Will also create output folder if it does not exist
 
-./nextflow $NEXTFLOW_PIPELINE $SINGULARITY_ENABLE $SINGULARITY_IMAGE \
+/var/tmp/quandenser_pipeline_$USER/nextflow $NEXTFLOW_PIPELINE $SINGULARITY_ENABLE $SINGULARITY_IMAGE \
 -c $CONFIG_LOCATION $NEXTFLOW_OUTPUTS -w $WORK_DIRECTORY | tee $STDOUT_FILE
 
 # Notes: by using "-with-weblog", you could send the output to a url (HTTP POST request)
