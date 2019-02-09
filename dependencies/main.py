@@ -167,17 +167,19 @@ class Main(QMainWindow):
         self.leftbox = QWidget()
         self.leftbox_layout = QFormLayout()
         self.leftbox.setLayout(self.leftbox_layout)
-        self.workflow_choose = workflow_choose(self.nf_settings_path)
-        self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.workflow_choose)
-        self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.workflow_choose)
+        self.choose_option_workflow = choose_option(self.nf_settings_path, 'workflow')
+        self.choose_option_parallell_msconvert = choose_option(self.nf_settings_path, 'parallell_msconvert')
+
+        self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.choose_option_workflow)
+        self.leftbox_layout.addRow(QLabel('Enable parallell MSconvert'), self.choose_option_parallell_msconvert)
 
         # Right box
         self.rightbox = QWidget()
         self.rightbox_layout = QHBoxLayout()
         self.rightbox.setLayout(self.rightbox_layout)
 
-        #self.workflow = workflow()
-        #self.rightbox_layout.addWidget(self.workflow)
+        self.workflow = workflow()
+        self.rightbox_layout.addWidget(self.workflow)
 
         # Combine
         self.tab2_layout.addWidget(self.leftbox)
