@@ -33,9 +33,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/pwiz.tar.bz2 /pwiz.tar.bz2
    # A script that links all file in wineprefix64 to a directory owned by you --> anybody can use wine
    dependencies/link_wine.sh /usr/local/bin/link_wine.sh
-   main.py /
-   ui /
-   config /
+   dependencies/main.py /
+   dependencies/ui /
+   dependencies/config /
 
 %post
     echo "Installling packages with apt-get"
