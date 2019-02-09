@@ -52,10 +52,11 @@ class run_button(QPushButton):
             if not child.item(row, 0).text() == '' and not child.item(row, 1).text() == '':
                 input_string = child.item(row, 0).text() + '\t' + child.item(row, 1).text() + '\n'
                 full_table.append(input_string)
+            print(child.item(row, 0).text())
         with open(f"{output_path}/file_list.txt", 'w') as file:
             for line in full_table:
                 file.write(line)
-        batch_file_path = os.path.abspath("file_list.txt")
+        batch_file_path = f"{output_path}/file_list.txt"
         self.nf_settings_parser.write("params.batch_file", batch_file_path)
 
         # Fix database file
