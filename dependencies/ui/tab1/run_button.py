@@ -1,6 +1,7 @@
 import os
 import sys
 from PySide2.QtWidgets import QPushButton, QTableWidget, QLineEdit, QMessageBox
+from PySide2.QtCore import QCoreApplication
 import subprocess
 from shutil import copyfile
 import time
@@ -67,4 +68,4 @@ class run_button(QPushButton):
 
         # Set pipe to launch nextflow pipeline
         self.pipe_parser.write('exit_code', '0', isString=False)
-        sys.exit()
+        QCoreApplication.quit()
