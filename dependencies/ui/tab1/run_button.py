@@ -42,6 +42,9 @@ class run_button(QPushButton):
 
         # Change output parameters
         output_path = child.text()
+        if not os.path.isdir(output_path):
+            print("ERROR, you must choose an output path")
+            return 1
         self.sh_parser.write("OUTPUT_PATH", output_path)  # In sh
         self.nf_settings_parser.write("params.output_path", output_path)  # In sh
 
@@ -52,7 +55,6 @@ class run_button(QPushButton):
             if not child.item(row, 0).text() == '' and not child.item(row, 1).text() == '':
                 input_string = child.item(row, 0).text() + '\t' + child.item(row, 1).text() + '\n'
                 full_table.append(input_string)
-            print(child.item(row, 0).text())
         with open(f"{output_path}/file_list.txt", 'w') as file:
             for line in full_table:
                 file.write(line)
@@ -69,4 +71,4 @@ class run_button(QPushButton):
 
         # Set pipe to launch nextflow pipeline
         self.pipe_parser.write('exit_code', '0', isString=False)
-        QCoreApplication.quit()
+        self.window().close()
