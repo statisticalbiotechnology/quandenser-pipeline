@@ -1,0 +1,7 @@
+# Exit codes:
+# 0 = run button pressed --> run the nextflow pipeline
+# 1 = soft exit, closed window --> Do not run anything
+# 2 = hard exit, python crashed --> Rerun 3 times and stop if not working
+
+# CONTAINER TO HOST
+exit_code=1
