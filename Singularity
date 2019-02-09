@@ -16,8 +16,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
     export WINEPREFIX="/tmp/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
 
-    # defaults to tmp
-    export XDG_RUNTIME_DIR=
+    export XDG_RUNTIME_DIR=/tmp/runtime-$USER
 
 %labels
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
@@ -64,7 +63,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     tar xjvf /pwiz.tar.bz2 -C $WINEPREFIX/drive_c/pwiz  # Unpack all pwiz files in the created directory
     rm /pwiz.tar.bz2  # Clean the tar file
     chmod -R a+rx $WINEPREFIX   # ALL USERS NEED ACCESS TO THIS DIRECORY AND FILES TO CREATE SYMLINKS
-    chmod a+x /usr/local/bin/link_wine.sh  # also set so everybody can link with the script
+    chmod a+rx /usr/local/bin/link_wine.sh  # also set so everybody can link with the script
 
     echo "Installing python 3.6"
     add-apt-repository ppa:jonathonf/python-3.6  # Add repo for python 3.6
@@ -108,6 +107,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
 %appenv quandenser_ui
     export LC_ALL=C
+    export XDG_RUNTIME_DIR=/tmp/runtime-$USER
     cd /var/local/quandenser_ui
 
 %apprun quandenser_ui
