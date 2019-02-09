@@ -5,3 +5,6 @@
 
 # CONTAINER TO HOST
 exit_code=1
+
+# HOST TO CONTAINER
+pid=
