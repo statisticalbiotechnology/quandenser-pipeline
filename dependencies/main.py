@@ -16,7 +16,7 @@ from ui.tab1.file_chooser import file_chooser
 from ui.tab1.file_viewer import file_viewer
 from ui.tab1.batch_file_viewer import batch_file_viewer
 from ui.tab1.run_button import run_button
-#from ui.tab2.workflow import workflow
+from ui.tab2.workflow import workflow
 from ui.tab2.choose_option import choose_option
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab5.about import about
