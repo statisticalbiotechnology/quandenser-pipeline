@@ -21,7 +21,8 @@ function read_command() {
   # 1 = soft exit, closed window --> Do not run anything
   # 2 = hard exit, python crashed --> Rerun 3 times and stop if not working
   if [ "$exit_code" = "0" ]; then
-    ./var/tmp/quandenser_pipeline_$USER/run_quandenser.sh &
+    chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
+    /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh &
     PIPE_write "pid" $!  # Write pid to pipe
   fi
   echo $exit_code
