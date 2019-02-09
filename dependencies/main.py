@@ -6,7 +6,7 @@ import shutil
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
-from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget
+from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox
 #from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
@@ -17,7 +17,7 @@ from ui.tab1.file_viewer import file_viewer
 from ui.tab1.batch_file_viewer import batch_file_viewer
 from ui.tab1.run_button import run_button
 #from ui.tab2.workflow import workflow
-from ui.tab2.workflow_choose import workflow_choose
+from ui.tab2.choose_option import choose_option
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab5.about import about
 
@@ -31,14 +31,47 @@ def check_corrupt(user):
         os.makedirs(f"/var/tmp/quandenser_pipeline_{user}")
         print(f"/var/tmp/quandenser_pipeline_{user} created")
     if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/ui.config"):
-        shutil.copyfile("config/ui.config", f"/var/tmp/quandenser_pipeline_{user}/ui.config")
         print("Missing UI config. Creating file")
+        shutil.copyfile("config/ui.config", f"/var/tmp/quandenser_pipeline_{user}/ui.config")
     if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/nf.config"):
-        shutil.copyfile("config/nf.config", f"/var/tmp/quandenser_pipeline_{user}/nf.config")
         print("Missing NF config. Creating file")
+        shutil.copyfile("config/nf.config", f"/var/tmp/quandenser_pipeline_{user}/nf.config")
     if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/PIPE"):
-        shutil.copyfile("config/PIPE", f"/var/tmp/quandenser_pipeline_{user}/PIPE")
         print("Missing PIPE. Creating file")
+        shutil.copyfile("config/PIPE", f"/var/tmp/quandenser_pipeline_{user}/PIPE")
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/jobs.txt"):
+        print("Missing running jobs file. Adding file")
+        job_file = open(f"/var/tmp/quandenser_pipeline_{user}/jobs.txt", 'w')
+        job_file.close()
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.sh"):
+        print("Missing run script. Adding file")
+        shutil.copyfile("config/run_quandenser.sh", f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.sh")
+    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.nf"):
+        print("Missing NF pipeline. Adding file")
+        shutil.copyfile("config/run_quandenser.nf", f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.nf")
+
+def check_running(user, exit_code):
+    pipe_parser = custom_config_parser()
+    pipe_parser.load(f"/var/tmp/quandenser_pipeline_{user}/PIPE")
+    pid = pipe_parser.get("pid")
+    if exit_code != 0:  # If not started process
+        return
+    if pid != "":
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setWindowTitle("Critical fail")
+        msg.setText("Unable to start quandenser. Check console output for more information")
+        msg.exec_()
+    else:
+        with open(f"/var/tmp/quandenser_pipeline_{user}/jobs.txt", 'a') as job_file:
+            job_file.write(pid)
+        pipe_parser.write('pid', '', isString=False)  # Reset pid
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Successful start")
+        msg.setText("Quandenser successfully started")
+        msg.setDetailedText(f"PID of the process is: {pid}")
+        msg.exec_()
 
 class Main(QMainWindow):
 
@@ -50,17 +83,30 @@ class Main(QMainWindow):
         self.top = 10
         self.WIDTH = 600
         self.HEIGHT = 400
+
+        # Read user
         self.user = os.environ.get('USER')
+
+        # Check file integrety
         check_corrupt(self.user)
         self.ui_settings_path = f"/var/tmp/quandenser_pipeline_{self.user}/ui.config"
         self.nf_settings_path = f"/var/tmp/quandenser_pipeline_{self.user}/nf.config"
-        self.sh_script_path = "run_quandenser.sh"
+        self.sh_script_path = f"/var/tmp/quandenser_pipeline_{self.user}/run_quandenser.sh"
+        self.pipe_path = f"/var/tmp/quandenser_pipeline_{self.user}/PIPE"
+
+        # Open pipe and read
+        self.pipe_parser = custom_config_parser()
+        self.pipe_parser.load(self.pipe_path)
+        self.exit_code = int(self.pipe_parser.get('exit_code'))
+        self.pipe_parser.write('exit_code', '2', isString=False)  # Add error code 2. If we manage to load, change to 1
+        check_running(self.user, self.exit_code)
+
+        # To restore settings of window
         self.settings_obj = QtCore.QSettings(self.ui_settings_path, QtCore.QSettings.IniFormat)
         # Restore window's previous geometry from file
         self.setMinimumWidth(300)
         self.setMinimumHeight(200)
         self.initUI()
-
         if os.path.exists(self.ui_settings_path):
             self.restoreGeometry(self.settings_obj.value("windowGeometry"))
             self.restoreState(self.settings_obj.value("State_main"))
@@ -75,20 +121,11 @@ class Main(QMainWindow):
         # Central widget
         self.tabs = QTabWidget()  # Multiple tabs, slow to load
 
-        # Init tab1
-        self.inittab1()
-
-        # Tab 2
-        self.inittab2()
-
-        # Tab 3
-        self.inittab3()
-
-        # Tab 4
-        self.inittab4()
-
-        # Tab 5
-        self.inittab5()
+        self.inittab1()  # Init tab1
+        self.inittab2()  # Tab 2
+        self.inittab3()  # Tab 3
+        self.inittab4()  # Tab 4
+        self.inittab5()  # Tab 5
 
         # Add the tabs
         self.tabs.addTab(self.tab1, "MS files")
@@ -96,9 +133,7 @@ class Main(QMainWindow):
         self.tabs.addTab(self.tab3, "Advanced Settings")
         self.tabs.addTab(self.tab4, "MSconvert")
         self.tabs.addTab(self.tab5, "About")
-
         self.setCentralWidget(self.tabs)
-
         self.show()
 
     def inittab1(self):
@@ -113,7 +148,7 @@ class Main(QMainWindow):
         self.batch_file_viewer = batch_file_viewer()
         self.output_chooser = file_chooser(type='directory')
         self.output_viewer = file_viewer(type='directory')
-        self.run_button = run_button(self.nf_settings_path, self.sh_script_path)
+        self.run_button = run_button(self.nf_settings_path, self.sh_script_path, self.pipe_path)
 
         self.tab1_layout.addWidget(self.fasta_chooser, 0, QtCore.Qt.AlignCenter)
         self.tab1_layout.addWidget(self.database_viewer)
@@ -133,6 +168,7 @@ class Main(QMainWindow):
         self.leftbox_layout = QFormLayout()
         self.leftbox.setLayout(self.leftbox_layout)
         self.workflow_choose = workflow_choose(self.nf_settings_path)
+        self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.workflow_choose)
         self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.workflow_choose)
 
         # Right box
@@ -168,6 +204,12 @@ class Main(QMainWindow):
         for child in children:
             self.recurse_children(child)
 
+        # Clean exit
+        exit_code = int(self.pipe_parser.get('exit_code'))
+        if exit_code == 0:  # This means that it had been modified during runtime --> run button has been pressed
+            pass
+        else:
+            self.pipe_parser.write('exit_code', '1', isString=False)
 
 
     """This is for loading and saving state of child widgets"""
@@ -231,6 +273,7 @@ class Main(QMainWindow):
                     row_contents = full_table[row].split(',')
                     for column in range(amount_of_columns):
                         child.item(row, column).setText(row_contents[column])
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
