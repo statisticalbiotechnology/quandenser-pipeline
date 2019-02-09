@@ -4,9 +4,11 @@ echo true
 /* Important:
 change the path to where the database is and the batch file is
 */
-db = file(params.db)  // Sets "db" as the file defined above
 file_def = file(params.batch_file)  // batch_file
-seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
+if( params.workflow == "Full" ){
+  db = file(params.db)  // Sets "db" as the file defined above
+  seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
+}
 
 // Preprocessing file_list
 Channel  // mzML files with proper labeling
