@@ -22,7 +22,8 @@ function read_command() {
   # 1 = soft exit, closed window --> Do not run anything
   # 2 = hard exit, python crashed --> Rerun 3 times and stop if not working
   if [ $exit_code == 0 ]; then
-    echo "Run"
+    ./var/tmp/quandenser_pipeline_$USER/run_quandenser.sh &
+    PIPE_write "pid" $!  # Write pid to pipe
   elif [ $exit_code == 1 ]; then
     echo "Soft exit"
   elif [ $exit_code == 2 ]; then
@@ -31,8 +32,8 @@ function read_command() {
 }
 
 while true; do
-  #singularity run --app quandenser_ui --bind $(pwd):$(pwd) --nv SingulQuand.SIF
-  #wait
+  singularity run --app quandenser_ui --bind $(pwd):$(pwd) --bind $1:$1 --nv SingulQuand.SIF
+  wait
   read_command
   break
 done
