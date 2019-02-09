@@ -2,10 +2,10 @@ from PySide2.QtWidgets import QComboBox, QVBoxLayout
 
 from ..custom_config_parser import custom_config_parser
 
-class workflow_choose(QComboBox):
+class choose_option(QComboBox):
 
     def __init__(self, settings_file):
-        super(workflow_choose,self).__init__(parent = None)
+        super(choose_option,self).__init__(parent = None)
         self.addItems(["Full", "Triqler", "MSconvert"])
         self.parser = custom_config_parser()
         self.parser.load(settings_file)
