@@ -20,12 +20,6 @@ function read_command() {
   # 0 = run button pressed --> run the nextflow pipeline
   # 1 = soft exit, closed window --> Do not run anything
   # 2 = hard exit, python crashed --> Rerun 3 times and stop if not working
-  if [ "$exit_code" = "0" ]; then
-    chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
-    /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & pid=$!
-    PIPE_write "pid" $pid  # Write pid to pipe
-    wait
-  fi
   echo $exit_code
 }
 
@@ -47,6 +41,10 @@ while true; do
   result=$(read_command)
   if [ "$result" = "0" ]; then
     crash_count=0  # Reset
+    chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow.sh  # Fix permission
+    chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
+    nohup /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & pid=$!
+    PIPE_write "pid" $pid  # Write pid to pipe
   elif [ "$result" = "1" ]; then
     break
   elif [ "$result" = "2" ]; then
