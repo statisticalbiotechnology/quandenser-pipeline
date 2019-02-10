@@ -8,7 +8,7 @@ class custom_config_parser():
     def load(self, file):
         self.settings_file = file
 
-    def read_lines():
+    def read_lines(self):
         settings = []
         for line in open(self.settings_file, 'r'):
             settings.append(line)
@@ -33,7 +33,7 @@ class custom_config_parser():
         if isString:  # Need "
             value = '"' + value + '"'
         settings[index] = f'{parameter}={value}\n'  # Need to add \n here
-        with open(settings_file, 'w') as file:
+        with open(self.settings_file, 'w') as file:
             for line in settings:
                 file.write(line)
         return True
