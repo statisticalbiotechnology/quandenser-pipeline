@@ -35,6 +35,11 @@ for var in "$@"
 do
   mount_point+=" --bind $var:$var"
 done
+if [ -f /var/tmp/quandenser_pipeline_$USER/PIPE ]; then
+  PIPE_write "custom_mounts" "$mount_point"
+else
+  echo "PIPE not found. It will be created when running the GUI"
+fi
 
 while true; do
   singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point SingulQuand.SIF
