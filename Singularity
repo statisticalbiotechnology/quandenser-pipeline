@@ -53,6 +53,12 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     mv /ui /var/local/quandenser_ui
     chmod -R a+rwx /var/local/quandenser_ui/*  # So everybody can access the files
 
+    echo "Updating nextflow"
+    curl -s https://get.nextflow.io | bash
+    rm -f /var/local/quandenser_ui/config/nextflow
+    mv nextflow /var/local/quandenser_ui/config
+    chmod a+rx /var/local/quandenser_ui/config/nextflow
+
     echo "Installing proteowizard 32 BIT (FULL VENDOR CAPABILITIES)"
     export LC_ALL=C
     export WINEPREFIX=/wineprefix64  # Get a clean prefix
