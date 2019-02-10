@@ -69,6 +69,10 @@ class run_button(QPushButton):
         database_path = child.text()
         self.nf_settings_parser.write("params.db", database_path)
 
+        # Custom mounts
+        custom_mounts = self.pipe_parser.get('custom_mounts')
+        self.nf_settings_parser.write('params.custom_mounts', custom_mounts)
+
         # Set pipe to launch nextflow pipeline
         self.pipe_parser.write('exit_code', '0', isString=False)
         self.window().close()
