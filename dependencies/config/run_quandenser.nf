@@ -5,10 +5,13 @@ echo true
 change the path to where the database is and the batch file is
 */
 file_def = file(params.batch_file)  // batch_file
-if( params.workflow == "Full" ){
-  db = file(params.db)  // Sets "db" as the file defined above
-  seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
+if( params.workflow == "MSconvert" ) {
+  db_file = params.batch_file  // Will not be used, so junk name
+} else {
+  db_file = params.db
 }
+db = file(db_file)  // Sets "db" as the file defined above
+seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 
 // Preprocessing file_list
 Channel  // mzML files with proper labeling
@@ -70,6 +73,7 @@ process msconvert {
   */
   publishDir "$params.output_path/work/converted", mode: 'symlink', overwrite: true, pattern: "*"
   publishDir "$params.output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
+  containerOptions "$params.custom_mounts"
   input:
     file f from spectra_convert_channel
   output:
@@ -86,6 +90,7 @@ combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 
 process quandenser {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  containerOptions "$params.custom_mounts"
   input:
 	//
   file 'list.txt' from file_def
@@ -104,12 +109,15 @@ process quandenser {
 
 process tide_perc_search {
   publishDir params.output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
+  containerOptions "$params.custom_mounts"
   input:
 	file 'seqdb.fa' from db
 	file ms2_files from spectra.collect()  // PS: Sentistive to nameing (no blankspace, paranthesis and such)
   output:
 	file("crux-output/*") into id_files
   file("${seq_index_name}") into index_files
+  when:
+    params.workflow == "Full"
   script:
 	"""
   crux tide-index --missed-cleavages 2 --mods-spec 2M+15.9949 --decoy-format protein-reverse seqdb.fa ${seq_index_name}
@@ -121,12 +129,15 @@ process tide_perc_search {
 
 process triqler {
   publishDir params.output_path, mode: 'copy', pattern: "proteins.*",overwrite: true
+  containerOptions "$params.custom_mounts"
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
 	file("crux-output/*") from id_files.collect()
 	file 'list.txt' from file_def
   output:
 	file("proteins.*") into triqler_output
+  when:
+    params.workflow == "Full"
   script:
 	"""
 	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
