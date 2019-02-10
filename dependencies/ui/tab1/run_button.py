@@ -70,7 +70,7 @@ class run_button(QPushButton):
         self.nf_settings_parser.write("params.db", database_path)
 
         # Custom mounts
-        custom_mounts = self.pipe_parser.get('custom_mounts')
+        custom_mounts = self.pipe_parser.get('custom_mounts').replace('\r', '').replace('\n', '')
         self.nf_settings_parser.write('params.custom_mounts', custom_mounts)
 
         # Set pipe to launch nextflow pipeline
