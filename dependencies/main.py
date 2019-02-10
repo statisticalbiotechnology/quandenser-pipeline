@@ -2,12 +2,12 @@
 import sys
 import os
 import shutil
+import pdb
 
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
 from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox
-#from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
 
@@ -101,8 +101,8 @@ class Main(QMainWindow):
         self.pipe_parser = custom_config_parser()
         self.pipe_parser.load(self.pipe_path)
         self.exit_code = int(self.pipe_parser.get('exit_code'))
-        self.pipe_parser.write('exit_code', '2', isString=False)  # Add error code 2. If we manage to load, change to 1
         check_running(self.user, self.exit_code)
+        self.pipe_parser.write('exit_code', '2', isString=False)  # Add error code 2. If we manage to load, change to 1
 
         # To restore settings of window
         self.settings_obj = QtCore.QSettings(self.ui_settings_path, QtCore.QSettings.IniFormat)
