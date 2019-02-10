@@ -1,23 +1,15 @@
 # Quandenser-pipeline
 A nextflow/singularity pipeline for Quandenser
 
+KNOWN ISSUES:
+
+--nv bug, no ui
+working with files on custom mount crashes nextflow
+
+
 
 ## Building image from scratch
-Install singularity by using these commands:
 
-    VERSION=2.5.2
-    wget https://github.com/singularityware/singularity/releases/download/$VERSION/singularity-$VERSION.tar.gz
-    tar xvf singularity-$VERSION.tar.gz
-    cd singularity-$VERSION
-    ./configure --prefix=/usr/local
-    make
-    sudo make install
-
-then run with the Singularity receipe
-
-    sudo singularity build singulqand.simg Singularity
-
-DONE
 
 ## Building the ui executable from scratch
 Install Python 3.6+ with pip(Should be on recent linux versions)
