@@ -3,6 +3,8 @@ import sys
 import os
 import shutil
 import pdb
+import filecmp
+from colorama import Fore, Back, Style
 
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
@@ -29,35 +31,43 @@ user = os.environ.get('USER')
 config_location = f"/var/tmp/quandenser_pipeline_{user}"
 
 def check_corrupt():
-    # Check for corrupt files
+    # Check for corrupt files/old/missing
+    installed_parser = custom_config_parser()
+    packed_parser = custom_config_parser()
+
     if not os.path.isdir(f"{config_location}"):
         print("""Missing config directory in /var/tmp. Initalizing directory""")
         os.makedirs(config_location)
         print(f"{config_location} created")
-    if not os.path.isfile(f"{config_location}/ui.config"):
-        print("Missing UI config. Creating file")
-        shutil.copyfile("config/ui.config", f"{config_location}/ui.config")
-    if not os.path.isfile(f"{config_location}/nf.config"):
-        print("Missing NF config. Creating file")
-        shutil.copyfile("config/nf.config", f"{config_location}/nf.config")
-    if not os.path.isfile(f"{config_location}/PIPE"):
-        print("Missing PIPE. Creating file")
-        shutil.copyfile("config/PIPE", f"{config_location}/PIPE")
-    if not os.path.isfile(f"{config_location}/jobs.txt"):
-        print("Missing running jobs file. Adding file")
-        job_file = open(f"{config_location}/jobs.txt", 'w')
-        job_file.close()
-    if not os.path.isfile(f"{config_location}/run_quandenser.nf"):
-        print("Missing NF pipeline. Adding file")
-        shutil.copyfile("config/run_quandenser.nf", f"{config_location}/run_quandenser.nf")
-    if not os.path.isfile(f"{config_location}/nextflow"):
-        print("Nextflow executable is missing. Adding prepackaged nextflow")
-        shutil.copyfile("config/nextflow", f"{config_location}/nextflow")
-        os.chmod(f"{config_location}/nextflow", 0o700)
-    if not os.path.isfile(f"{config_location}/run_quandenser.sh"):
-        print("Missing run script. Adding file")
-        shutil.copyfile("config/run_quandenser.sh", f"{config_location}/run_quandenser.sh")
-        os.chmod(f"{config_location}/run_quandenser.sh", 0o700)
+    files = ["ui.config",
+             "nf.config",
+             "PIPE",
+             "jobs.txt",
+             "run_quandenser.nf",
+             "run_quandenser.sh",
+             "nextflow"]
+    for file in files:
+        corrupted = False
+        if not os.path.isfile(f"{config_location}/{file}"):
+            print(Fore.YELLOW + f"Missing file {file}. Installing file" + Fore.RESET)
+            shutil.copyfile(f"config/{file}", f"{config_location}/{file}")
+            os.chmod(f"{config_location}/{file}", 0o700)  # Only user will get access
+        else:  # check corrupt/old versions of config
+            if (file.split('.')[-1] in ['config', 'sh'] or file == 'PIPE') and file != 'ui.config':
+                installed_parser.load(f"{config_location}/{file}")
+                installed_parameters = installed_parser.get_params()
+                packed_parser.load(f"config/{file}")
+                packed_parameters = packed_parser.get_params()
+                if not installed_parameters == packed_parameters:
+                    corrupted = True
+            else:
+                if not filecmp.cmp(f"{config_location}/{file}", f"config/{file}") and file != 'ui.config':  # check if files are the same
+                    corrupted = True
+        if corrupted:
+            print(Fore.RED + f"Detected old or corrupt version of {file}. Replacing file" + Fore.RESET)
+            os.remove(f"{config_location}/{file}")
+            shutil.copyfile(f"config/{file}", f"{config_location}/{file}")
+            os.chmod(f"{config_location}/{file}", 0o700)  # Only user will get access
 
 def check_running():
     pipe_parser = custom_config_parser()
@@ -127,7 +137,8 @@ class Main(QMainWindow):
         # Central widget
         self.tabs = QTabWidget()  # Multiple tabs, slow to load
 
-        self.inittab1()  # Init tab1
+        # Init tabs
+        self.inittab1()  # Tab 1
         self.inittab2()  # Tab 2
         self.inittab3()  # Tab 3
         self.inittab4()  # Tab 4
@@ -193,6 +204,11 @@ class Main(QMainWindow):
 
     def inittab3(self):
         self.tab3 = QWidget()
+        self.tab3_layout = QFormLayout()
+        self.tab3.setLayout(self.tab3_layout)
+
+        self.msconvert_arguments = msconvert_arguments(self.nf_settings_path)
+        self.tab3_layout.addRow(QLabel('MSconvert additional arguments'), self.msconvert_arguments)
 
     def inittab4(self):
         self.tab4 = QWidget()
