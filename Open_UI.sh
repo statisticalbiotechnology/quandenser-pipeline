@@ -1,5 +1,23 @@
 #!/bin/bash
+
+# Check for help
+for var in "$@"
+do
+  if [ "$var" = "-h" ] || [ "$var" = "--help" ]; then
+    printf "\033[1;92mQuandenser-pipeline \033[0m\n"
+    printf "Usage:\n"
+    printf "\033[0;34m./Open_UI.sh <path_to_mount> \033[0m\n"
+    exit 0
+  fi
+done
+
 cd "$(dirname "$0")"  # Go to dir where the script lies, this allows for links to work
+
+{ # try
+  nvidia-smi | grep -q "Driver" && graphics=" --nv"  # Check if nvidia is installed
+} || { # catch
+  graphics=""
+}
 
 function PIPE_read() {
   # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
@@ -36,14 +54,15 @@ else
 fi
 
 while true; do
-  singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point SingulQuand.SIF
+  singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF
   wait
   result=$(read_command)
   if [ "$result" = "0" ]; then
     crash_count=0  # Reset
-    chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow.sh  # Fix permission
+    chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow  # Fix permission
     chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
-    nohup /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & pid=$!
+    nohup /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & disown
+    pid=$!
     PIPE_write "pid" $pid  # Write pid to pipe
   elif [ "$result" = "1" ]; then
     break
