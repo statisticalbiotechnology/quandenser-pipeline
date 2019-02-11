@@ -91,6 +91,7 @@ def check_running():
             msg.setText("Unable to start quandenser. Check console output for more information")
             msg.exec_()
         else:
+            now = datetime.datetime.now()
             with open(f"{config_path}/jobs.txt", 'a') as job_file:
                 job_file.write(pid + '\t' + output_path + '\t' + now.strftime("%Y-%m-%d %H:%M"))
             pipe_parser.write('pid', '', isString=False)  # Reset pid
