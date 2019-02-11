@@ -5,10 +5,11 @@ import shutil
 import pdb
 import filecmp
 from colorama import Fore, Back, Style
+import datetime
 
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
-from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication
+from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication, QDoubleSpinBox, QSpinBox
 from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
@@ -21,6 +22,9 @@ from ui.tab1.run_button import run_button
 #from ui.tab2.workflow import workflow
 from ui.tab2.choose_option import choose_option
 from ui.tab3.msconvert_arguments import msconvert_arguments
+from ui.tab3.parameter_setter import parameter_setter_double, parameter_setter_single
+from ui.tab3.reset_button import reset_button
+from ui.tab4.running_jobs import running_jobs
 from ui.tab5.about import about
 
 # Custom parser
@@ -28,17 +32,17 @@ from ui.custom_config_parser import custom_config_parser
 
 # read user and create config location
 user = os.environ.get('USER')
-config_location = f"/var/tmp/quandenser_pipeline_{user}"
+config_path = f"/var/tmp/quandenser_pipeline_{user}"
 
 def check_corrupt():
     # Check for corrupt files/old/missing
     installed_parser = custom_config_parser()
     packed_parser = custom_config_parser()
 
-    if not os.path.isdir(f"{config_location}"):
+    if not os.path.isdir(f"{config_path}"):
         print("""Missing config directory in /var/tmp. Initalizing directory""")
-        os.makedirs(config_location)
-        print(f"{config_location} created")
+        os.makedirs(config_path)
+        print(f"{config_path} created")
     files = ["ui.config",
              "nf.config",
              "PIPE",
@@ -48,34 +52,38 @@ def check_corrupt():
              "nextflow"]
     for file in files:
         corrupted = False
-        if not os.path.isfile(f"{config_location}/{file}"):
+        if not os.path.isfile(f"{config_path}/{file}"):
             print(Fore.YELLOW + f"Missing file {file}. Installing file" + Fore.RESET)
-            shutil.copyfile(f"config/{file}", f"{config_location}/{file}")
-            os.chmod(f"{config_location}/{file}", 0o700)  # Only user will get access
+            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
+            os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
         else:  # check corrupt/old versions of config
             if (file.split('.')[-1] in ['config', 'sh'] or file == 'PIPE') and file != 'ui.config':
-                installed_parser.load(f"{config_location}/{file}")
+                installed_parser.load(f"{config_path}/{file}")
                 installed_parameters = installed_parser.get_params()
                 packed_parser.load(f"config/{file}")
                 packed_parameters = packed_parser.get_params()
                 if not installed_parameters == packed_parameters:
                     corrupted = True
             else:
-                if not filecmp.cmp(f"{config_location}/{file}", f"config/{file}") and file != 'ui.config':  # check if files are the same
+                if not filecmp.cmp(f"{config_path}/{file}", f"config/{file}") and file not in ['ui.config', 'jobs.txt']:  # check if files are the same
                     corrupted = True
         if corrupted:
             print(Fore.RED + f"Detected old or corrupt version of {file}. Replacing file" + Fore.RESET)
-            os.remove(f"{config_location}/{file}")
-            shutil.copyfile(f"config/{file}", f"{config_location}/{file}")
-            os.chmod(f"{config_location}/{file}", 0o700)  # Only user will get access
+            os.remove(f"{config_path}/{file}")
+            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
+            os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
 
 def check_running():
     pipe_parser = custom_config_parser()
-    pipe_parser.load(f"{config_location}/PIPE")
-    pid = pipe_parser.get("pid")
+    pipe_parser.load(f"{config_path}/PIPE")
+    sh_parser = custom_config_parser()
+    sh_parser.load(f"{config_path}/run_quandenser.sh")
+
     exit_code = int(pipe_parser.get("exit_code"))
     if pipe_parser.get("started") == "true":
-        pipe_parser.write("started", "")
+        pipe_parser.write("started", "")  # Reset
+        pid = pipe_parser.get("pid")
+        output_path = sh_parser.get("OUTPUT_PATH")
         if pid == "":
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
@@ -83,8 +91,8 @@ def check_running():
             msg.setText("Unable to start quandenser. Check console output for more information")
             msg.exec_()
         else:
-            with open(f"{config_location}/jobs.txt", 'a') as job_file:
-                job_file.write(pid)
+            with open(f"{config_path}/jobs.txt", 'a') as job_file:
+                job_file.write(pid + '\t' + output_path + '\t' + now.strftime("%Y-%m-%d %H:%M"))
             pipe_parser.write('pid', '', isString=False)  # Reset pid
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
@@ -106,10 +114,10 @@ class Main(QMainWindow):
 
         # Check file integrety
         check_corrupt()
-        self.ui_settings_path = f"{config_location}/ui.config"
-        self.nf_settings_path = f"{config_location}/nf.config"
-        self.sh_script_path = f"{config_location}/run_quandenser.sh"
-        self.pipe_path = f"{config_location}/PIPE"
+        self.ui_settings_path = f"{config_path}/ui.config"
+        self.nf_settings_path = f"{config_path}/nf.config"
+        self.sh_script_path = f"{config_path}/run_quandenser.sh"
+        self.pipe_path = f"{config_path}/PIPE"
 
         # Open pipe and read
         self.pipe_parser = custom_config_parser()
@@ -136,6 +144,7 @@ class Main(QMainWindow):
 
         # Central widget
         self.tabs = QTabWidget()  # Multiple tabs, slow to load
+        self.tabs.currentChanged.connect(self.tab_changed)
 
         # Init tabs
         self.inittab1()  # Tab 1
@@ -148,7 +157,7 @@ class Main(QMainWindow):
         self.tabs.addTab(self.tab1, "MS files")
         self.tabs.addTab(self.tab2, "Edit workflow")
         self.tabs.addTab(self.tab3, "Advanced Settings")
-        self.tabs.addTab(self.tab4, "MSconvert")
+        self.tabs.addTab(self.tab4, "Running jobs")
         self.tabs.addTab(self.tab5, "About")
         self.setCentralWidget(self.tabs)
         self.show()
@@ -208,10 +217,31 @@ class Main(QMainWindow):
         self.tab3.setLayout(self.tab3_layout)
 
         self.msconvert_arguments = msconvert_arguments(self.nf_settings_path)
+        self.parameter_max_missing = parameter_setter_single("max_missing", self.nf_settings_path)  # Quandenser
+        self.parameter_missed_clevages = parameter_setter_single("missed_clevages", self.nf_settings_path)  # Crux
+        self.parameter_precursor_window = parameter_setter_double("precursor_window", self.nf_settings_path)  # Crux
+        self.parameter_fold_change_eval = parameter_setter_double("fold_change_eval", self.nf_settings_path)  # Triqler
+        self.reset_button = reset_button(config_path)
+
+        self.tab3_layout.addRow(QLabel('<b>MSconvert'), QLabel())
         self.tab3_layout.addRow(QLabel('MSconvert additional arguments'), self.msconvert_arguments)
+        self.tab3_layout.addRow(QLabel('<b>Quandenser'), QLabel())
+        self.tab3_layout.addRow(QLabel('Max missing'), self.parameter_max_missing)
+        self.tab3_layout.addRow(QLabel('<b>Crux'), QLabel())
+        self.tab3_layout.addRow(QLabel('Missed clevages'), self.parameter_missed_clevages)
+        self.tab3_layout.addRow(QLabel('Precursor window'), self.parameter_precursor_window)
+        self.tab3_layout.addRow(QLabel('<b>Triqler'), QLabel())
+        self.tab3_layout.addRow(QLabel('Fold change evaluation'), self.parameter_fold_change_eval)
+        self.tab3_layout.addWidget(self.reset_button)
 
     def inittab4(self):
         self.tab4 = QWidget()
+        self.tab4_layout = QHBoxLayout()
+        self.tab4.setLayout(self.tab4_layout)
+
+        self.running_jobs = running_jobs(config_path + "/jobs.txt")
+
+        self.tab4_layout.addWidget(self.running_jobs)
 
     def inittab5(self):
         self.tab5 = QWidget()
@@ -236,6 +266,11 @@ class Main(QMainWindow):
             self.pipe_parser.write('exit_code', '1', isString=False)
 
 
+    def tab_changed(self, index):
+        if self.tabs.tabText(index) == "Running jobs":
+            self.running_jobs.update()
+
+
     """This is for loading and saving state of child widgets"""
 
     def recurse_children(self, parent, save=True):
@@ -247,24 +282,35 @@ class Main(QMainWindow):
             self.recurse_children(child, save=save)  # WE HAVE TO GO DEEPER!
 
     def child_settings(self, child, save=True):
+        state_name = ''   # This is so you can have multiple of same type of widget
+        if hasattr(child, 'type'):
+            state_name += "_" + str(child.type)
+        if hasattr(child, 'id'):
+            state_name += "_" + str(child.id)
+        if hasattr(child, 'parameter'):
+            state_name += "_" + str(child.parameter)
+        child_name = f"State_{child.__class__.__name__}" + state_name
+
+        """
+        Some modules inherit QLineEdit even though they are something else (ex QDoubleSpinBox)
+        This prevents the inherited module from getting registered and overwriting input.
+        Prevent any module from registering without proper registration
+        """
+        if state_name == '' and child.__class__.__name__ == "QLineEdit":
+            return
+
         if isinstance(child, QPushButton):
             pass
         elif isinstance(child, QTextEdit):
             if save:
-                self.settings_obj.setValue(f"State_{child.__class__.__name__}",
+                self.settings_obj.setValue(child_name,
                                            child.toPlainText())
             else:
-                if self.settings_obj.value(f"State_{child.__class__.__name__}") is None:
+                if self.settings_obj.value(child_name) is None:
                     return
                 else:
-                    child.setPlainText(self.settings_obj.value(f"State_{child.__class__.__name__}"))
+                    child.setPlainText(self.settings_obj.value(child_name))
         elif isinstance(child, QLineEdit):
-            state_name = ''   # This is so you can have multiple of same type of widget
-            if hasattr(child, 'type'):
-                state_name += "_" + str(child.type)
-            if hasattr(child, 'id'):
-                state_name += "_" + str(child.id)
-            child_name = f"State_{child.__class__.__name__}" + state_name
             if save:
                 self.settings_obj.setValue(child_name, child.text())
             else:
@@ -273,10 +319,6 @@ class Main(QMainWindow):
                 else:
                     child.setText(self.settings_obj.value(child_name))
         elif isinstance(child, QComboBox):
-            state_name = ''   # This is so you can have multiple of same type of widget
-            if hasattr(child, 'parameter'):
-                state_name += "_" + str(child.parameter)
-            child_name = f"State_{child.__class__.__name__}" + state_name
             if save:
                 self.settings_obj.setValue(child_name, child.currentText())
             else:
@@ -284,6 +326,14 @@ class Main(QMainWindow):
                     return
                 else:
                     child.setCurrentText(self.settings_obj.value(child_name))
+        elif isinstance(child, QDoubleSpinBox) or isinstance(child, QSpinBox):
+            if save:
+                self.settings_obj.setValue(child_name, child.value())
+            else:
+                if self.settings_obj.value(child_name) is None:
+                    return
+                else:
+                    child.setValue(float(self.settings_obj.value(child_name)))
         elif isinstance(child, QTableWidget):
             if save:
                 full_table = []
@@ -294,12 +344,12 @@ class Main(QMainWindow):
                             full_table.append(',')
                     full_table.append(';')
                 full_table = ''.join(full_table)
-                self.settings_obj.setValue(f"State_{child.__class__.__name__}",
+                self.settings_obj.setValue(child_name,
                                            full_table)
             else:
-                if self.settings_obj.value(f"State_{child.__class__.__name__}") is None:
+                if self.settings_obj.value(child_name) is None:
                     return
-                full_table = self.settings_obj.value(f"State_{child.__class__.__name__}")
+                full_table = self.settings_obj.value(child_name)
                 full_table = full_table.split(';')
                 amount_of_rows = len(full_table) - 1
                 amount_of_columns = len(full_table[0].split(','))
