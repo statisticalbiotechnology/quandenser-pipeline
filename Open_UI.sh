@@ -1,8 +1,10 @@
 #!/bin/bash
 
+config_location="/var/tmp/quandenser_pipeline_$USER"
+
 function PIPE_read() {
   # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
-  value=$(grep -o "$1=.*" "/var/tmp/quandenser_pipeline_$USER/PIPE" | cut -d'=' -f2 | tr -d '\r')
+  value=$(grep -o "$1=.*" "$config_location/PIPE" | cut -d'=' -f2 | tr -d '\r')
   echo $value
 }
 
@@ -10,7 +12,7 @@ function PIPE_write() {
   parameter="$1=.*"
   value="$1=$2"
   # sed: -i overwrite in file, -E = regular expressions
-  sed -i -E "s|${parameter}|${value}|g" "/var/tmp/quandenser_pipeline_$USER/PIPE"
+  sed -i -E "s|${parameter}|${value}|g" "$config_location//PIPE"
 }
 
 function read_command() {
@@ -50,7 +52,7 @@ for var in "$@"
 do
   mount_point+=" --bind $var:$var"
 done
-if [ -f /var/tmp/quandenser_pipeline_$USER/PIPE ]; then
+if [ -f $config_location/PIPE ]; then
   PIPE_write "custom_mounts" "$mount_point"
 else
   echo "PIPE not found. It will be created when running the GUI"
@@ -65,9 +67,9 @@ while true; do
     crash_count=0  # Reset
     PIPE_write "exit_code" "2"  # Write pid to pipe
     PIPE_write "started" "true"
-    chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow  # Fix permission
-    chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
-    nohup /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & disown
+    #chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow  # Fix permission
+    #chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
+    nohup $config_location/run_quandenser.sh & disown
     pid=$!
     PIPE_write "pid" $pid  # Write pid to pipe
   elif [ "$result" = "1" ]; then
