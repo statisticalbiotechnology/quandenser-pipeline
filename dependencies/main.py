@@ -64,24 +64,24 @@ def check_running():
     pipe_parser.load(f"{config_location}/PIPE")
     pid = pipe_parser.get("pid")
     exit_code = int(pipe_parser.get("exit_code"))
-    if exit_code != 0:  # If not started process
-        return
-    if pid == "":
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setWindowTitle("Critical fail")
-        msg.setText("Unable to start quandenser. Check console output for more information")
-        msg.exec_()
-    else:
-        with open(f"{config_location}/jobs.txt", 'a') as job_file:
-            job_file.write(pid)
-        pipe_parser.write('pid', '', isString=False)  # Reset pid
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.setWindowTitle("Started")
-        msg.setText("Quandenser successfully started")
-        msg.setDetailedText(f"PID of the process is: {pid}")
-        msg.exec_()
+    if pipe_parser.get("started") == "true":
+        pipe_parser.write("started", "")
+        if pid == "":
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setWindowTitle("Critical fail")
+            msg.setText("Unable to start quandenser. Check console output for more information")
+            msg.exec_()
+        else:
+            with open(f"{config_location}/jobs.txt", 'a') as job_file:
+                job_file.write(pid)
+            pipe_parser.write('pid', '', isString=False)  # Reset pid
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setWindowTitle("Started")
+            msg.setText("Quandenser successfully started")
+            msg.setDetailedText(f"PID of the process is: {pid}")
+            msg.exec_()
 
 class Main(QMainWindow):
 
