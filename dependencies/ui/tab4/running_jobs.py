@@ -19,7 +19,7 @@ class running_jobs(QTextBrowser):
         jobs = []
         for line in open(self.jobs_path, 'r'):
             job = line.split('\t')  # First is pid
-            jobs.append((pid, output_path))
+            jobs.append(job)
             process = subprocess.Popen([f"ps aux | grep {job[0]}"],
                                         stdout=subprocess.PIPE,
                                         shell=True)
