@@ -1,24 +1,5 @@
 #!/bin/bash
 
-# Check for help
-for var in "$@"
-do
-  if [ "$var" = "-h" ] || [ "$var" = "--help" ]; then
-    printf "\033[1;92mQuandenser-pipeline \033[0m\n"
-    printf "Usage:\n"
-    printf "\033[0;34m./Open_UI.sh <path_to_mount> \033[0m\n"
-    exit 0
-  fi
-done
-
-cd "$(dirname "$0")"  # Go to dir where the script lies, this allows for links to work
-
-{ # try
-  nvidia-smi | grep -q "Driver" && graphics=" --nv"  # Check if nvidia is installed
-} || { # catch
-  graphics=""
-}
-
 function PIPE_read() {
   # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
   value=$(grep -o "$1=.*" "/var/tmp/quandenser_pipeline_$USER/PIPE" | cut -d'=' -f2 | tr -d '\r')
@@ -41,6 +22,28 @@ function read_command() {
   echo $exit_code
 }
 
+
+# Check for help
+for var in "$@"
+do
+  if [ "$var" = "-h" ] || [ "$var" = "--help" ]; then
+    printf "\033[1;92mQuandenser-pipeline \033[0m\n"
+    printf "Usage:\n"
+    printf "\033[0;34m./Open_UI.sh <path_to_mount> \033[0m\n"
+    exit 0
+  fi
+done
+
+# Go to dir where the script lies, this allows for links to work
+cd "$(dirname "$0")"
+
+{ # try
+  nvidia-smi | grep -q "Driver" && graphics=" --nv"  # Check if nvidia is installed
+} || { # catch
+  graphics=""
+}
+
+# Initialize parameters
 declare -i crash_count=0
 mount_point=""
 for var in "$@"
@@ -53,24 +56,25 @@ else
   echo "PIPE not found. It will be created when running the GUI"
 fi
 
+PIPE_write "exit_code" "2"  # Write pid to pipe
 while true; do
   singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF
   wait
   result=$(read_command)
   if [ "$result" = "0" ]; then
     crash_count=0  # Reset
+    PIPE_write "exit_code" "2"  # Write pid to pipe
+    PIPE_write "started" "true"
     chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow  # Fix permission
     chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
     nohup /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & disown
     pid=$!
     PIPE_write "pid" $pid  # Write pid to pipe
-    PIPE_write "exit_code" "2"  # Write pid to pipe
-    PIPE_write "started" "true"
   elif [ "$result" = "1" ]; then
     break
   elif [ "$result" = "2" ]; then
     crash_count=$crash_count+1
-    echo $crash_count
+    echo "Crash count: $crash_count, will continue until 3 crashes"
     if [ $crash_count -gt 3 ]; then
       echo "The GUI crashed 3 times. Aborting"
       break
