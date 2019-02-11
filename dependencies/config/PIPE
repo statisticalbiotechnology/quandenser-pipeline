@@ -9,3 +9,4 @@ exit_code=2
 # HOST TO CONTAINER
 pid=
 custom_mounts=
+started=
