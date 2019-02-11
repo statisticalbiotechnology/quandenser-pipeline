@@ -16,7 +16,7 @@ from ui.tab1.file_chooser import file_chooser
 from ui.tab1.file_viewer import file_viewer
 from ui.tab1.batch_file_viewer import batch_file_viewer
 from ui.tab1.run_button import run_button
-from ui.tab2.workflow import workflow
+#from ui.tab2.workflow import workflow
 from ui.tab2.choose_option import choose_option
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab5.about import about
@@ -24,54 +24,61 @@ from ui.tab5.about import about
 # Custom parser
 from ui.custom_config_parser import custom_config_parser
 
-def check_corrupt(user):
-    # Check for corrupt files
-    if not os.path.isdir(f"/var/tmp/quandenser_pipeline_{user}"):
-        print("""Missing config directory in /var/tmp. Initalizing directory""")
-        os.makedirs(f"/var/tmp/quandenser_pipeline_{user}")
-        print(f"/var/tmp/quandenser_pipeline_{user} created")
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/ui.config"):
-        print("Missing UI config. Creating file")
-        shutil.copyfile("config/ui.config", f"/var/tmp/quandenser_pipeline_{user}/ui.config")
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/nf.config"):
-        print("Missing NF config. Creating file")
-        shutil.copyfile("config/nf.config", f"/var/tmp/quandenser_pipeline_{user}/nf.config")
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/PIPE"):
-        print("Missing PIPE. Creating file")
-        shutil.copyfile("config/PIPE", f"/var/tmp/quandenser_pipeline_{user}/PIPE")
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/jobs.txt"):
-        print("Missing running jobs file. Adding file")
-        job_file = open(f"/var/tmp/quandenser_pipeline_{user}/jobs.txt", 'w')
-        job_file.close()
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.sh"):
-        print("Missing run script. Adding file")
-        shutil.copyfile("config/run_quandenser.sh", f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.sh")
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.nf"):
-        print("Missing NF pipeline. Adding file")
-        shutil.copyfile("config/run_quandenser.nf", f"/var/tmp/quandenser_pipeline_{user}/run_quandenser.nf")
-    if not os.path.isfile(f"/var/tmp/quandenser_pipeline_{user}/nextflow"):
-        print("Nextflow executable is missing. Adding prepackaged nextflow")
-        shutil.copyfile("config/nextflow", f"/var/tmp/quandenser_pipeline_{user}/nextflow")
+# read user and create config location
+user = os.environ.get('USER')
+config_location = f"/var/tmp/quandenser_pipeline_{user}"
 
-def check_running(user, exit_code):
+def check_corrupt():
+    # Check for corrupt files
+    if not os.path.isdir(f"{config_location}"):
+        print("""Missing config directory in /var/tmp. Initalizing directory""")
+        os.makedirs(config_location)
+        print(f"{config_location} created")
+    if not os.path.isfile(f"{config_location}/ui.config"):
+        print("Missing UI config. Creating file")
+        shutil.copyfile("config/ui.config", f"{config_location}/ui.config")
+    if not os.path.isfile(f"{config_location}/nf.config"):
+        print("Missing NF config. Creating file")
+        shutil.copyfile("config/nf.config", f"{config_location}/nf.config")
+    if not os.path.isfile(f"{config_location}/PIPE"):
+        print("Missing PIPE. Creating file")
+        shutil.copyfile("config/PIPE", f"{config_location}/PIPE")
+    if not os.path.isfile(f"{config_location}/jobs.txt"):
+        print("Missing running jobs file. Adding file")
+        job_file = open(f"{config_location}/jobs.txt", 'w')
+        job_file.close()
+    if not os.path.isfile(f"{config_location}/run_quandenser.nf"):
+        print("Missing NF pipeline. Adding file")
+        shutil.copyfile("config/run_quandenser.nf", f"{config_location}/run_quandenser.nf")
+    if not os.path.isfile(f"{config_location}/nextflow"):
+        print("Nextflow executable is missing. Adding prepackaged nextflow")
+        shutil.copyfile("config/nextflow", f"{config_location}/nextflow")
+        os.chmod(f"{config_location}/nextflow", 0o700)
+    if not os.path.isfile(f"{config_location}/run_quandenser.sh"):
+        print("Missing run script. Adding file")
+        shutil.copyfile("config/run_quandenser.sh", f"{config_location}/run_quandenser.sh")
+        os.chmod(f"{config_location}/run_quandenser.sh", 0o700)
+
+def check_running():
     pipe_parser = custom_config_parser()
-    pipe_parser.load(f"/var/tmp/quandenser_pipeline_{user}/PIPE")
+    pipe_parser.load(f"{config_location}/PIPE")
     pid = pipe_parser.get("pid")
+    exit_code = int(pipe_parser.get("exit_code"))
     if exit_code != 0:  # If not started process
         return
-    if pid != "":
+    if pid == "":
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
         msg.setWindowTitle("Critical fail")
         msg.setText("Unable to start quandenser. Check console output for more information")
         msg.exec_()
     else:
-        with open(f"/var/tmp/quandenser_pipeline_{user}/jobs.txt", 'a') as job_file:
+        with open(f"{config_location}/jobs.txt", 'a') as job_file:
             job_file.write(pid)
         pipe_parser.write('pid', '', isString=False)  # Reset pid
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
-        msg.setWindowTitle("Successful start")
+        msg.setWindowTitle("Started")
         msg.setText("Quandenser successfully started")
         msg.setDetailedText(f"PID of the process is: {pid}")
         msg.exec_()
@@ -87,21 +94,17 @@ class Main(QMainWindow):
         self.WIDTH = 600
         self.HEIGHT = 400
 
-        # Read user
-        self.user = os.environ.get('USER')
-
         # Check file integrety
-        check_corrupt(self.user)
-        self.ui_settings_path = f"/var/tmp/quandenser_pipeline_{self.user}/ui.config"
-        self.nf_settings_path = f"/var/tmp/quandenser_pipeline_{self.user}/nf.config"
-        self.sh_script_path = f"/var/tmp/quandenser_pipeline_{self.user}/run_quandenser.sh"
-        self.pipe_path = f"/var/tmp/quandenser_pipeline_{self.user}/PIPE"
+        check_corrupt()
+        self.ui_settings_path = f"{config_location}/ui.config"
+        self.nf_settings_path = f"{config_location}/nf.config"
+        self.sh_script_path = f"{config_location}/run_quandenser.sh"
+        self.pipe_path = f"{config_location}/PIPE"
 
         # Open pipe and read
         self.pipe_parser = custom_config_parser()
         self.pipe_parser.load(self.pipe_path)
-        self.exit_code = int(self.pipe_parser.get('exit_code'))
-        check_running(self.user, self.exit_code)
+        check_running()
         self.pipe_parser.write('exit_code', '2', isString=False)  # Add error code 2. If we manage to load, change to 1
 
         # To restore settings of window
@@ -181,8 +184,8 @@ class Main(QMainWindow):
         self.rightbox_layout = QHBoxLayout()
         self.rightbox.setLayout(self.rightbox_layout)
 
-        self.workflow = workflow()
-        self.rightbox_layout.addWidget(self.workflow)
+        #self.workflow = workflow()
+        #self.rightbox_layout.addWidget(self.workflow)
 
         # Combine
         self.tab2_layout.addWidget(self.leftbox)
@@ -253,6 +256,18 @@ class Main(QMainWindow):
                     return
                 else:
                     child.setText(self.settings_obj.value(child_name))
+        elif isinstance(child, QComboBox):
+            state_name = ''   # This is so you can have multiple of same type of widget
+            if hasattr(child, 'parameter'):
+                state_name += "_" + str(child.parameter)
+            child_name = f"State_{child.__class__.__name__}" + state_name
+            if save:
+                self.settings_obj.setValue(child_name, child.currentText())
+            else:
+                if self.settings_obj.value(child_name) is None:
+                    return
+                else:
+                    child.setCurrentText(self.settings_obj.value(child_name))
         elif isinstance(child, QTableWidget):
             if save:
                 full_table = []
