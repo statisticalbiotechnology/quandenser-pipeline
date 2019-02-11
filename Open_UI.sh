@@ -64,6 +64,8 @@ while true; do
     nohup /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh & disown
     pid=$!
     PIPE_write "pid" $pid  # Write pid to pipe
+    PIPE_write "exit_code" "2"  # Write pid to pipe
+    PIPE_write "started" "true"
   elif [ "$result" = "1" ]; then
     break
   elif [ "$result" = "2" ]; then
