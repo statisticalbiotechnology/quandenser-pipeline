@@ -12,7 +12,7 @@ function PIPE_write() {
   parameter="$1=.*"
   value="$1=$2"
   # sed: -i overwrite in file, -E = regular expressions
-  sed -i -E "s|${parameter}|${value}|g" "$config_location//PIPE"
+  sed -i -E "s|${parameter}|${value}|g" "$config_location/PIPE"
 }
 
 function read_command() {
@@ -57,8 +57,10 @@ if [ -f $config_location/PIPE ]; then
 else
   echo "PIPE not found. It will be created when running the GUI"
 fi
+if [ -f $config_location/PIPE ]; then
+  PIPE_write "exit_code" "2"  # Write pid to pipe
+fi
 
-PIPE_write "exit_code" "2"  # Write pid to pipe
 while true; do
   singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF
   wait
