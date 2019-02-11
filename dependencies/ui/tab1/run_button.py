@@ -10,7 +10,6 @@ import time
 # Custom parser for both sh files and nf configs
 from ..custom_config_parser import custom_config_parser
 
-
 class run_button(QPushButton):
 
     def __init__(self, nf_settings_path, sh_script_path, pipe_path):
@@ -68,6 +67,9 @@ class run_button(QPushButton):
                 break  # Will keep child
         database_path = child.text()
         self.nf_settings_parser.write("params.db", database_path)
+        if nf_settings_parser.get("params.workflow") == "Full" and not os.path.isfile(database_path):
+            print("ERROR, you must choose an database if running the full pipeline")
+            return 1
 
         # Custom mounts
         custom_mounts = self.pipe_parser.get('custom_mounts').replace('\r', '').replace('\n', '')
