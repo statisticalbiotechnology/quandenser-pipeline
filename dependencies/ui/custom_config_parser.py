@@ -23,7 +23,7 @@ class custom_config_parser():
             value = settings[index].split(' = ')[-1]
         else:
             value = value[-1]
-        value = value.replace('"', '')
+        value = value.replace('"', '').replace('\n', '').replace('\r', '')
         return value
 
     def write(self, parameter, value, isString=True):
@@ -38,7 +38,7 @@ class custom_config_parser():
                 file.write(line)
         return True
 
-    def get_params():
+    def get_params(self):
         settings = self.read_lines()
         params = []
         for line in settings:
@@ -46,7 +46,7 @@ class custom_config_parser():
                 params.append(line.split('=')[0])
         return params
 
-    def get_values():
+    def get_values(self):
         settings = self.read_lines()
         values = []
         for line in settings:
