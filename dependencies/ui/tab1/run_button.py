@@ -5,10 +5,14 @@ from PySide2.QtCore import QCoreApplication
 import subprocess
 from shutil import copyfile
 import time
+from colorama import Fore, Back, Style
 
 
 # Custom parser for both sh files and nf configs
 from ..custom_config_parser import custom_config_parser
+
+def ERROR(message):
+    print(Fore.RED + f"ERROR: {message}" + Fore.RESET)
 
 class run_button(QPushButton):
 
@@ -42,8 +46,9 @@ class run_button(QPushButton):
         # Change output parameters
         output_path = child.text()
         if not os.path.isdir(output_path):
-            print("ERROR, you must choose an output path")
+            ERROR('Not a valid output path')
             return 1
+
         self.sh_parser.write("OUTPUT_PATH", output_path)  # In sh
         self.nf_settings_parser.write("params.output_path", output_path)  # In sh
 
@@ -52,8 +57,16 @@ class run_button(QPushButton):
         full_table = []
         for row in range(child.rowCount()):
             if not child.item(row, 0).text() == '' and not child.item(row, 1).text() == '':
+                if not os.path.isfile(child.item(row, 0).text()):
+                    ERROR(f"File in row {row} does not exist")
+                    return 1
                 input_string = child.item(row, 0).text() + '\t' + child.item(row, 1).text() + '\n'
                 full_table.append(input_string)
+
+        if full_table == []:
+            ERROR('No files choosen')
+            return 1
+
         with open(f"{output_path}/file_list.txt", 'w') as file:
             for line in full_table:
                 file.write(line)
@@ -67,8 +80,9 @@ class run_button(QPushButton):
                 break  # Will keep child
         database_path = child.text()
         self.nf_settings_parser.write("params.db", database_path)
-        if nf_settings_parser.get("params.workflow") == "Full" and not os.path.isfile(database_path):
-            print("ERROR, you must choose an database if running the full pipeline")
+        workflow = self.nf_settings_parser.get("params.workflow")
+        if workflow == "Full" and not os.path.isfile(database_path):
+            ERROR("You must choose an database if you are running the full pipeline")
             return 1
 
         # Custom mounts
