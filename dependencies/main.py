@@ -336,6 +336,10 @@ class Main(QMainWindow):
             state_name += "_" + str(child.id)
         if hasattr(child, 'parameter'):
             state_name += "_" + str(child.parameter)
+        if hasattr(child, 'process'):
+            state_name += "_" + str(child.process)
+        if hasattr(child, 'argument'):
+            state_name += "_" + str(child.argument)
         child_name = f"State_{child.__class__.__name__}" + state_name
 
         """
