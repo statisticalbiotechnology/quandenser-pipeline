@@ -19,7 +19,9 @@ class parameter_setter_single(QSpinBox):
 
     def check_value(self):
         self.blockSignals(True)
-        self.nf_settings_parser.write(f"params.{self.parameter}", self.value(), isString=False)
+        self.nf_settings_parser.write(f"params.{self.parameter}",
+                                      self.value(),
+                                      isString=False)
         self.blockSignals(False)
 
 class parameter_setter_double(QDoubleSpinBox):
@@ -39,5 +41,7 @@ class parameter_setter_double(QDoubleSpinBox):
 
     def check_value(self):
         self.blockSignals(True)
-        self.nf_settings_parser.write(f"params.{self.parameter}", self.value(), isString=False)
+        self.nf_settings_parser.write(f"params.{self.parameter}",
+                                      self.value(),
+                                      isString=False)
         self.blockSignals(False)
