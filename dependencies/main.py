@@ -10,7 +10,7 @@ import datetime
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication, QDoubleSpinBox, QSpinBox
-from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox
+from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox, QTableWidgetItem
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
 
@@ -335,7 +335,8 @@ class Main(QMainWindow):
                     return
                 else:
                     child.setValue(float(self.settings_obj.value(child_name)))
-        elif isinstance(child, QTableWidget):
+        # I want running jobs to depend on jobs.txt, not ui saving
+        elif isinstance(child, QTableWidget) and child.__class__.__name__ != "running_jobs":
             if save:
                 full_table = []
                 for row in range(child.rowCount()):
@@ -348,7 +349,7 @@ class Main(QMainWindow):
                 self.settings_obj.setValue(child_name,
                                            full_table)
             else:
-                if self.settings_obj.value(child_name) is None:
+                if self.settings_obj.value(child_name) is None:  # quick check for errors
                     return
                 full_table = self.settings_obj.value(child_name)
                 full_table = full_table.split(';')
@@ -356,10 +357,18 @@ class Main(QMainWindow):
                 amount_of_columns = len(full_table[0].split(','))
                 child.setRowCount(amount_of_rows)
                 child.setColumnCount(amount_of_columns)
+                child.blockSignals(True)
                 for row in range(amount_of_rows):
                     row_contents = full_table[row].split(',')
                     for column in range(amount_of_columns):
+                        if child.item(row, column) is None:
+                            item = QTableWidgetItem()
+                            item.setText('')
+                            child.setItem(row, column, item)
                         child.item(row, column).setText(row_contents[column])
+                if hasattr(child, 'update'):
+                    child.update()
+                child.blockSignals(False)
 
 
 if __name__ == '__main__':
