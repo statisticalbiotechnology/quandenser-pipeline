@@ -17,6 +17,8 @@ class batch_file_viewer(QTableWidget):
                 item.setText('')
                 self.setItem(row, column, item)
 
+        self.original_background = item.background()
+
         self.cellChanged.connect(self.check_cell)  # Needs to be after "filling for loop" above
         self.header = self.horizontalHeader()
         self.header.setSectionResizeMode(0, QHeaderView.Stretch)
@@ -50,24 +52,24 @@ class batch_file_viewer(QTableWidget):
             elif not os.path.isfile(item.text()):
                 item.setForeground(QColor('red'))
             elif item.text().split('.')[-1] == "mzML":
-                item.setForeground(QColor('green'))
+                item.setForeground(QColor(0,255,150))
             elif item.text().split('.')[-1] != "mzML":
-                item.setForeground(QColor('blue'))
-
+                item.setForeground(QColor(30,150,255))
+                #R: 51 G: 65 B: 76
             label = self.item(row, column + 1)
             if self.item(row, column).text() == '':
-                label.setBackground(QColor('white'))
-                label.setForeground(QColor('black'))
+                label.setBackground(self.original_background)
+                label.setForeground(QColor(255,255,255))
             elif label.text() == '':
                 label.setBackground(QColor('red'))
         elif column == 1:
             label = self.item(row, column)
             if self.item(row, column - 1).text() == '':
-                label.setBackground(QColor('white'))
-                label.setForeground(QColor('black'))
+                label.setBackground(self.original_background)
+                label.setForeground(QColor('white'))
             elif self.item(row, column - 1).text() != '' and label.text() != '':
-                label.setBackground(QColor('white'))
-                label.setForeground(QColor('green'))
+                label.setBackground(self.original_background)
+                label.setForeground(QColor(0,255,150))
             else:
                 label.setBackground(QColor('red'))
 
