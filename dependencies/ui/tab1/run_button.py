@@ -6,6 +6,7 @@ import subprocess
 from shutil import copyfile
 import time
 from colorama import Fore, Back, Style
+import secrets
 
 
 # Custom parser for both sh files and nf configs
@@ -88,6 +89,10 @@ class run_button(QPushButton):
         # Custom mounts
         custom_mounts = self.pipe_parser.get('custom_mounts').replace('\r', '').replace('\n', '')
         self.nf_settings_parser.write('params.custom_mounts', custom_mounts)
+
+        # Generate random hash for nextflow
+        random_hash = secrets.token_urlsafe(16)
+        self.nf_settings_parser.write('params.random_hash', random_hash)
 
         # Set pipe to launch nextflow pipeline
         self.pipe_parser.write('exit_code', '0', isString=False)
