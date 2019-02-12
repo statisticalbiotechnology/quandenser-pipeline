@@ -12,7 +12,14 @@ class set_time(QLineEdit):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.process = process
-        self.setText('0:00:00:00')
+        if self.process == 'msconvert_time':
+            self.setText('0:00:15:00')
+        elif self.process == 'quandenser_time':
+            self.setText('0:03:00:00')
+        elif self.process == 'tide_search_time':
+            self.setText('0:00:05:00')
+        elif self.process == 'triqler_time':
+            self.setText('0:00:10:00')
         self.textChanged.connect(self.check_text)
 
     def check_text(self):
@@ -31,6 +38,6 @@ class set_time(QLineEdit):
                 nf_time+=f"{int(parameter)}{suffix}"
             except:
                 pass
-        additional_information = self.process.split('_')  # Very hacky way of doing it, but it should be fine
+        additional_information = self.process.split('_')[0]  # Very hacky way of doing it, but it should be fine
         self.nf_settings_parser.write("time", nf_time, additional_information=additional_information)  # Multiple time
         self.blockSignals(False)
