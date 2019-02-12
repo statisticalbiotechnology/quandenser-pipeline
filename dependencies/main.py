@@ -115,7 +115,7 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Quandenser-pipeline'
-        self.setWindowIcon(QIcon('ui/quandenser_icon.jpg'))
+        self.setWindowIcon(QIcon('ui/logo.png'))
         self.left = 10
         self.top = 10
         self.WIDTH = 600
