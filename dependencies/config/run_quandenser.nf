@@ -80,7 +80,7 @@ process msconvert {
     file("*mzML") into spectra_converted
   script:
 	"""
-  wine msconvert ${f} --mzML --zlib --filter "peakPicking true 1-" ${params.msconvert_additional_arguments}
+  wine msconvert ${f} --mzML --zlib --filter peakPicking true 1- ${params.msconvert_additional_arguments}
   """
 }
 
