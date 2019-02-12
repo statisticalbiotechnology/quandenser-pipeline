@@ -71,7 +71,7 @@ process msconvert {
   while we point in the file_list to the files in the work directory with symlinks.
   The symlinks are fast to write + they point to complete files + we know the symlinks location --> fixed :)
   */
-  publishDir "$params.output_path/work/converted", mode: 'symlink', overwrite: true, pattern: "*"
+  publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "*"
   publishDir "$params.output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
   containerOptions "$params.custom_mounts"
   input:
@@ -80,7 +80,7 @@ process msconvert {
     file("*mzML") into spectra_converted
   script:
 	"""
-  wine msconvert ${f} --mzML --zlib ${params.msconvert_additional_arguments}
+  wine msconvert ${f} --mzML --zlib --filter "peakPicking true 1-" ${params.msconvert_additional_arguments}
   """
 }
 
