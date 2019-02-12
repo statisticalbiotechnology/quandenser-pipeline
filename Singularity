@@ -87,6 +87,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     pip install triqler
     pip install PySide2
     pip install colorama
+    pip install qdarkstyle
 
     echo "Installling dependencies for OpenGL and X11"
     # X11 dependencies
