@@ -1,6 +1,9 @@
 #!/bin/bash
 
 config_location="/var/tmp/quandenser_pipeline_$USER"
+GREEN="\033[1;92m"
+BLUE="\033[0;34m"
+RESET="\033[0m\n"
 
 function PIPE_read() {
   # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
@@ -29,9 +32,9 @@ function read_command() {
 for var in "$@"
 do
   if [ "$var" = "-h" ] || [ "$var" = "--help" ]; then
-    printf "\033[1;92mQuandenser-pipeline \033[0m\n"
+    printf "${GREEN}Quandenser-pipeline HELP$RESET"
     printf "Usage:\n"
-    printf "\033[0;34m./Open_UI.sh <path_to_mount> \033[0m\n"
+    printf "${BLUE}./Open_UI.sh <path_to_mount>$RESET"
     exit 0
   fi
 done
