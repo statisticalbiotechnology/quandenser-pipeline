@@ -11,10 +11,11 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEDEBUG=-all,err+all  # Hide all wine related output
 
     # Making so user who logs into the image can use wine
+    mkdir -p "/tmp/wineprefix64_$USER"
     random_name=$(date +%s | sha256sum | base64 | head -c 32)
-    mkdir -p "/tmp/wineprefix64_$random_name"  # Create folder, so you are owner
+    mkdir -p "/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Create folder, so you are owner
     link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
-    export WINEPREFIX="/tmp/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
+    export WINEPREFIX="/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
 
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
 
