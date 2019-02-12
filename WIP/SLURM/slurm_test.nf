@@ -2,8 +2,6 @@
 echo true
 
 process test1 {
-  cpus 1
-  time '3s'
   output:
 	file("test.txt") into test_file
   script:
@@ -14,8 +12,6 @@ process test1 {
 }
 
 process test2 {
-  cpus 1
-  time '5s'
   input:
 	file("test.txt") from test_file
   output:
@@ -30,7 +26,6 @@ process test2 {
 
 process test3 {
   cpus 1
-  time '7s'
   input:
 	file("test.txt") from test_file_processed
   script:
