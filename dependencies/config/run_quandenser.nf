@@ -40,7 +40,7 @@ for( line in all_lines ){
   file_name = (file_path.tokenize('/')[-1]).tokenize('.')[0]  // Split '/', take last. Split '.', take first
   file_extension = file_path.tokenize('.')[-1]
   if( file_extension != "mzML" ){
-    all_lines[count] = params.output_path + "/work/converted/" + file_name + ".mzML" + '\t' + file_label
+    all_lines[count] = params.output_path + "/work/converted_${params.random_hash}/" + file_name + ".mzML" + '\t' + file_label
     count++
     amount_of_non_mzML++
   } else {
@@ -48,7 +48,7 @@ for( line in all_lines ){
     count++
   }
 }
-file_def = file("$params.output_path/work/file_list.txt")  // Create new file for in work directory
+file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")  // Create new file for in work directory
 total_spectras = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
