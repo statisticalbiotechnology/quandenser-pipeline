@@ -43,9 +43,9 @@ def check_corrupt():
     packed_parser = custom_config_parser()
 
     if not os.path.isdir(f"{config_path}"):
-        print("""Missing config directory in /var/tmp. Initalizing directory""")
+        print(Fore.YELLOW + f"Missing config directory {config_path}. Initalizing directory" + Fore.RESET)
         os.makedirs(config_path)
-        print(f"{config_path} created")
+
     files = ["ui.config",
              "nf.config",
              "PIPE",
