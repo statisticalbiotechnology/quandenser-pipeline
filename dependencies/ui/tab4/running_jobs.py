@@ -19,7 +19,7 @@ class running_jobs(QTableWidget):
             jobs.append(job)
 
         self.setRowCount(len(jobs))
-        self.setColumnCount(4)
+        self.setColumnCount(5)
         # Fill all places so there are no "None" types in the table
         for row in range(self.rowCount()):
             for column in range(self.columnCount()):
@@ -27,8 +27,9 @@ class running_jobs(QTableWidget):
                 item.setText('')
                 self.setItem(row, column, item)
         self.header = self.horizontalHeader()
+        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
         self.header.setSectionResizeMode(2, QHeaderView.Stretch)
-        self.setHorizontalHeaderLabels(["Pid", "Running", "Path", "Kill"])
+        self.setHorizontalHeaderLabels(["Pid", "Output path", "Started", "Running", "Kill"])
 
     def keyPressEvent(self, event):
         """Add functionallity to keyboard"""
@@ -67,16 +68,17 @@ class running_jobs(QTableWidget):
             out = out.split('\t')
             for column in range(self.columnCount()):
                 item = self.item(row, column)
-                if column == 1:
+                if column == self.columnCount() - 2:
                     if any("run_quandenser.sh" in line for line in out):
                         item.setForeground(QColor('red'))
                         item.setText("RUNNING")
                     else:
                         item.setForeground(QColor('green'))
                         item.setText("COMPLETED")
-                elif column == 3:
+                elif column == self.columnCount() - 1:  # last columnt
                     if self.item(row, 1).text() == "RUNNING":
                         self.setCellWidget(row, column, QPushButton('KILL'))
                 else:
                     item.setText(job[column].replace('\n', ''))
+
             row += 1
