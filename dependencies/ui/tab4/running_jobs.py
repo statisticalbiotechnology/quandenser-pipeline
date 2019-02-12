@@ -3,9 +3,9 @@ from PySide2.QtWidgets import QTextBrowser, QTableWidget, QHeaderView, QTableWid
 import subprocess
 from PySide2.QtGui import QColor
 
-
 # Custom parser for both sh files and nf configs
 from ..custom_config_parser import custom_config_parser
+from .kill_button import kill_button
 
 class running_jobs(QTableWidget):
 
@@ -76,8 +76,9 @@ class running_jobs(QTableWidget):
                         item.setForeground(QColor('green'))
                         item.setText("COMPLETED")
                 elif column == self.columnCount() - 1:  # last columnt
-                    if self.item(row, 1).text() == "RUNNING":
-                        self.setCellWidget(row, column, QPushButton('KILL'))
+                    if self.item(row, column - 1).text() == "RUNNING":
+                        button = kill_button(job[0])  # job[0] = pid
+                        self.setCellWidget(row, column, button)
                 else:
                     item.setText(job[column].replace('\n', ''))
 
