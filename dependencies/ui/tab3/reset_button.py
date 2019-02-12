@@ -13,7 +13,7 @@ class reset_button(QPushButton):
         super(reset_button,self).__init__(parent = None)
         self.setText('Restore settings to default')
         self.config_path = config_path
-        self.setStyleSheet("background-color:grey")  # Change color depending on if you can run or not
+        #self.setStyleSheet("background-color:grey")  # Change color depending on if you can run or not
         self.clicked.connect(self.reset)
 
     def reset(self):
