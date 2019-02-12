@@ -29,6 +29,7 @@ class file_chooser(QPushButton):
                              "*.WIFF",
                              "*.raw | *.RAW"]
             choose_string = " | ".join(ms_file_types)
+            choose_string += ";;".join(ms_file_types)
             output, _ = QFileDialog.getOpenFileNames(self,
                                                     "Choose MS files",
                                                     "",
@@ -41,7 +42,8 @@ class file_chooser(QPushButton):
                                                    "Fasta files (.*fasta | *.Fasta | *.FASTA);;All Files (*)",
                                                    options=options)
         elif self.type=='directory':
-            output = QFileDialog.getExistingDirectory()
+            output = QFileDialog.getExistingDirectory(self,
+                                                      options=options)
         if output:
             self.display_in_file_viewer(output)
 
