@@ -43,7 +43,14 @@ class custom_config_parser():
         settings = self.read_lines()
         value = str(value)
         index = self.get_index(parameter, settings, additional_information=additional_information)
-        intendation = settings[index].count(' ') * ' '
+        intendation = 0
+        for char in settings[index]:
+            if char == ' ':
+                intendation += 1
+            else:
+                break
+        intendation = intendation * ' '
+        
         if isString:  # Need "
             value = '"' + value + '"'
         settings[index] = f'{intendation}{parameter}={value}\n'  # Need to add \n here
