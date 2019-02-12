@@ -85,7 +85,7 @@ while true; do
     printf "${RED}Crash count: $crash_count, will continue until 3 crashes${RESET}"
     if [ $crash_count -gt 3 ]; then
       printf "${RED}The GUI crashed 3 times. Aborting${RESET}"
-      printf "${RED}If you are on a cluster, be aware that you need to enable the X11 server${RESET}"
+      printf "${RED}If you are on a cluster, be aware that you need to enable the X11 server ${RESET}"
       printf "${RED}by using the command ssh -X ...${RESET}"
       printf "${RED}Look at the crash log in the console for additonal information${RESET}"
       break
