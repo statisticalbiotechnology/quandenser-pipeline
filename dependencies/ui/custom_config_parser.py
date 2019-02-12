@@ -14,9 +14,22 @@ class custom_config_parser():
             settings.append(line)
         return settings
 
-    def get(self, parameter):
+    def get_index(self, parameter, settings, additional_information=''):
+        index = [settings.index(i) for i in settings if i.lstrip().startswith(parameter)]
+        if len(index) == 0:
+            print("ERROR, not such parameter found")
+            return None
+        elif len(index) == 1:
+            index = index[0]
+        else:  # If multiple, will use additional information to get correct
+            start_search_index = [settings.index(i) for i in settings if additional_information in i][0]
+            settings_slice = settings[start_search_index:]
+            index = [settings.index(i) for i in settings_slice if i.lstrip().startswith(parameter)][0]
+        return index
+
+    def get(self, parameter, additional_information=''):
         settings = self.read_lines()
-        index = [settings.index(i) for i in settings if i.startswith(parameter)][0]
+        index = self.get_index(parameter, settings, additional_information=additional_information)
         # syntax:  <parameter>=<input>
         value = settings[index].split('=')
         if len(value) != 2:  # Check for blank spaces in parameter file
@@ -26,13 +39,14 @@ class custom_config_parser():
         value = value.replace('"', '').replace('\n', '').replace('\r', '')
         return value
 
-    def write(self, parameter, value, isString=True):
+    def write(self, parameter, value, isString=True, additional_information=''):
         settings = self.read_lines()
         value = str(value)
-        index = [settings.index(i) for i in settings if i.startswith(parameter)][0]
+        index = self.get_index(parameter, settings, additional_information=additional_information)
+        intendation = settings[index].count(' ') * ' '
         if isString:  # Need "
             value = '"' + value + '"'
-        settings[index] = f'{parameter}={value}\n'  # Need to add \n here
+        settings[index] = f'{intendation}{parameter}={value}\n'  # Need to add \n here
         with open(self.settings_file, 'w') as file:
             for line in settings:
                 file.write(line)
