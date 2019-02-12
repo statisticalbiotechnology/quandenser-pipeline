@@ -9,7 +9,7 @@ class kill_button(QPushButton):
         super(kill_button,self).__init__(parent = None)
         self.setText('KILL PROCESS')
         self.ppid = pid  # will use pid as ppid
-        self.setStyleSheet("background-color:grey")  # Change color depending on if you can run or not
+        self.setStyleSheet("background-color:red")  # Change color depending on if you can run or not
         self.clicked.connect(self.kill)
 
     def kill(self):
