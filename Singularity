@@ -18,6 +18,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEPREFIX="/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
 
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
+    export XDG_CONFIG_HOME=/tmp/runtime-$USER
 
 %labels
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
@@ -45,6 +46,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     apt-key add winehq.key  # Add the key to prevent update crash
     apt-get update
     apt-get -y install default-jre git unzip bzip2 nano curl
+    apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
 
     echo "Placing ui files in the correct directories"
     rm -rf /var/local/quandenser_ui  # Clear prev folder, if it exist
@@ -116,6 +118,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %appenv quandenser_ui
     export LC_ALL=C
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
+    export XDG_CONFIG_HOME=/tmp/runtime-$USER
     cd /var/local/quandenser_ui
 
 %apprun quandenser_ui
