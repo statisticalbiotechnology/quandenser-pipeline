@@ -20,14 +20,14 @@ class file_viewer(QLineEdit):
     def pick_color(self, txt):
         if self.type == 'file':
             if os.path.isfile(txt) and txt.split('.')[-1] in ["Fasta", "fasta", "FASTA"]:
-                self.setStyleSheet("color: green;") # Check if path
+                self.setStyleSheet("color: rgb(0, 255, 150);") # Check if path
                 self.setText(txt)
             else:
                 self.setStyleSheet("color: red;") # Check if path
                 self.setText(txt)
         elif self.type == 'directory':
             if os.path.isdir(txt):
-                self.setStyleSheet("color: green;") # Check if path
+                self.setStyleSheet("color: rgb(0, 255, 150);") # Check if path
                 self.setText(txt)
             else:
                 self.setStyleSheet("color: red;") # Check if path
