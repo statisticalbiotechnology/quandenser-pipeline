@@ -2,6 +2,7 @@
 
 config_location="/var/tmp/quandenser_pipeline_$USER"
 GREEN="\033[1;92m"
+RED="\033[0;31m"
 BLUE="\033[0;34m"
 RESET="\033[0m\n"
 
@@ -81,9 +82,12 @@ while true; do
     break
   elif [ "$result" = "2" ]; then
     crash_count=$crash_count+1
-    echo "Crash count: $crash_count, will continue until 3 crashes"
+    printf "${RED}Crash count: $crash_count, will continue until 3 crashes${RESET}"
     if [ $crash_count -gt 3 ]; then
-      echo "The GUI crashed 3 times. Aborting"
+      printf "${RED}The GUI crashed 3 times. Aborting${RESET}\n"
+      printf "${RED}If you are on a cluster, be aware that you need to enable the X11 server${RESET}\n"
+      printf "${RED}by using the command ssh -X ...${RESET}\n"
+      printf "${RED}Look at the crash log in the console for additonal information${RESET}\n"
       break
     fi
   fi
