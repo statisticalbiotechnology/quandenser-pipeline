@@ -1,11 +1,11 @@
-from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+from PySide2.QtWidgets import QLabel
+from PySide2.QtGui import QPixmap
 
-class workflow(QWebEngineView):
+
+class workflow(QLabel):
 
     def __init__(self):
         super(workflow,self).__init__(parent = None)
-        self.stderr_backup = None
-        self.settings().setAttribute(QWebEngineSettings.ErrorPageEnabled, False)
-        self.settings().setAttribute(QWebEngineSettings.PluginsEnabled, False)
-        html_file = open("ui/tab2/full.html")
-        self.setHtml(html_file.read())
+        pixmap = QPixmap('ui/tab2/flowchart.png')
+        self.setScaledContents(True)
+        self.setPixmap(pixmap)
