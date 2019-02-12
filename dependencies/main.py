@@ -7,6 +7,11 @@ import filecmp
 from colorama import Fore, Back, Style
 import datetime
 
+# Style for PySide2
+import qdarkstyle
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)  # Bug where futurewarning triggers for pyside2
+
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication, QDoubleSpinBox, QSpinBox
@@ -423,5 +428,6 @@ class Main(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyside())  # Set dark style
     ex = Main()
     sys.exit(app.exec_())
