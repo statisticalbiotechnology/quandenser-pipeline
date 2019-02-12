@@ -10,7 +10,7 @@ import datetime
 # PySide2 imports
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication, QDoubleSpinBox, QSpinBox
-from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox, QTableWidgetItem
+from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox, QTableWidgetItem, QFrame
 from PySide2.QtGui import QIcon
 from PySide2 import QtCore
 
@@ -19,8 +19,11 @@ from ui.tab1.file_chooser import file_chooser
 from ui.tab1.file_viewer import file_viewer
 from ui.tab1.batch_file_viewer import batch_file_viewer
 from ui.tab1.run_button import run_button
-#from ui.tab2.workflow import workflow
+from ui.tab2.workflow import workflow
 from ui.tab2.choose_option import choose_option
+from ui.tab2.cluster_arguments import cluster_arguments
+from ui.tab2.set_time import set_time
+from ui.tab2.set_cpus import set_cpus
 from ui.tab3.msconvert_arguments import msconvert_arguments
 from ui.tab3.parameter_setter import parameter_setter_double, parameter_setter_single
 from ui.tab3.reset_button import reset_button
@@ -169,21 +172,21 @@ class Main(QMainWindow):
         self.tab1.setLayout(self.tab1_layout)
 
         # Widgets in leftbox
-        self.fasta_chooser = file_chooser(type='fasta')
-        self.database_viewer = file_viewer(type='file')
-        self.ms_chooser = file_chooser(type='ms')
-        self.batch_file_viewer = batch_file_viewer()
-        self.output_chooser = file_chooser(type='directory')
-        self.output_viewer = file_viewer(type='directory')
-        self.run_button = run_button(self.nf_settings_path, self.sh_script_path, self.pipe_path)
+        self.tab1_fasta_chooser = file_chooser(type='fasta')
+        self.tab1_database_viewer = file_viewer(type='file')
+        self.tab1_ms_chooser = file_chooser(type='ms')
+        self.tab1_batch_file_viewer = batch_file_viewer()
+        self.tab1_output_chooser = file_chooser(type='directory')
+        self.tab1_output_viewer = file_viewer(type='directory')
+        self.tab1_run_button = run_button(self.nf_settings_path, self.sh_script_path, self.pipe_path)
 
-        self.tab1_layout.addWidget(self.fasta_chooser, 0, QtCore.Qt.AlignCenter)
-        self.tab1_layout.addWidget(self.database_viewer)
-        self.tab1_layout.addWidget(self.ms_chooser, 0, QtCore.Qt.AlignCenter)
-        self.tab1_layout.addWidget(self.batch_file_viewer)
-        self.tab1_layout.addWidget(self.output_chooser, 0, QtCore.Qt.AlignCenter)
-        self.tab1_layout.addWidget(self.output_viewer)
-        self.tab1_layout.addWidget(self.run_button)
+        self.tab1_layout.addWidget(self.tab1_fasta_chooser, 0, QtCore.Qt.AlignCenter)
+        self.tab1_layout.addWidget(self.tab1_database_viewer)
+        self.tab1_layout.addWidget(self.tab1_ms_chooser, 0, QtCore.Qt.AlignCenter)
+        self.tab1_layout.addWidget(self.tab1_batch_file_viewer)
+        self.tab1_layout.addWidget(self.tab1_output_chooser, 0, QtCore.Qt.AlignCenter)
+        self.tab1_layout.addWidget(self.tab1_output_viewer)
+        self.tab1_layout.addWidget(self.tab1_run_button)
 
     def inittab2(self):
         self.tab2 = QWidget()
@@ -191,65 +194,107 @@ class Main(QMainWindow):
         self.tab2.setLayout(self.tab2_layout)
 
         # Left box
-        self.leftbox = QWidget()
-        self.leftbox_layout = QFormLayout()
-        self.leftbox.setLayout(self.leftbox_layout)
-        self.choose_option_workflow = choose_option(self.nf_settings_path, 'workflow')
-        self.choose_option_parallell_msconvert = choose_option(self.nf_settings_path, 'parallell_msconvert')
+        self.tab2_leftbox = QWidget()
+        self.tab2_leftbox_layout = QVBoxLayout()
+        self.tab2_leftbox.setLayout(self.tab2_leftbox_layout)
 
-        self.leftbox_layout.addRow(QLabel('Choose pipeline'), self.choose_option_workflow)
-        self.leftbox_layout.addRow(QLabel('Enable parallell MSconvert'), self.choose_option_parallell_msconvert)
+        # Top
+        self.tab2_leftbox_top = QWidget()
+        self.tab2_leftbox_top_layout = QFormLayout()
+        self.tab2_leftbox_top.setLayout(self.tab2_leftbox_top_layout)
+
+        self.tab2_choose_option_workflow = choose_option(self.nf_settings_path, 'workflow')
+        self.tab2_choose_option_parallell_msconvert = choose_option(self.nf_settings_path, 'parallell_msconvert')
+        self.tab2_choose_option_profile = choose_option(self.sh_script_path, 'profile')
+
+        # Always visible
+        self.tab2_leftbox_top_layout.addRow(QLabel('Choose pipeline'), self.tab2_choose_option_workflow)
+        self.tab2_leftbox_top_layout.addRow(QLabel('Enable parallell MSconvert'), self.tab2_choose_option_parallell_msconvert)
+        self.tab2_leftbox_top_layout.addRow(QLabel('Profile'), self.tab2_choose_option_profile)
+        self.tab2_leftbox_layout.addWidget(self.tab2_leftbox_top)
+
+        # Bottom, these will be hidden or shown depending on profile option
+        self.tab2_hidden = QWidget()
+        self.tab2_hidden.hidden_object = True
+        self.tab2_hidden_layout = QFormLayout()
+        self.tab2_hidden.setLayout(self.tab2_hidden_layout)
+
+        self.tab2_cluster_arguments = cluster_arguments("process.clusterOptions", self.nf_settings_path)
+        self.tab2_cluster_queue = cluster_arguments("process.queue", self.nf_settings_path)
+        self.tab2_parameter_msconvert_cpus = set_cpus("msconvert_cpus", self.nf_settings_path)
+        self.tab2_parameter_msconvert_time = set_time("msconvert_time", self.nf_settings_path)
+        self.tab2_parameter_quandenser_cpus = set_cpus("quandenser_cpus", self.nf_settings_path)
+        self.tab2_parameter_quandenser_time = set_time("quandenser_time", self.nf_settings_path)
+        self.tab2_parameter_tide_search_cpus = set_cpus("tide_search_cpus", self.nf_settings_path)
+        self.tab2_parameter_tide_search_time = set_time("tide_search_time", self.nf_settings_path)
+        self.tab2_parameter_triqler_cpus = set_cpus("triqler_cpus", self.nf_settings_path)
+        self.tab2_parameter_triqler_time = set_time("triqler_time", self.nf_settings_path)
+
+        # Hidden depending on setting
+        self.tab2_hidden_layout.addRow(QLabel('Cluster arguments'), self.tab2_cluster_arguments)
+        self.tab2_hidden_layout.addRow(QLabel('Cluster queue'), self.tab2_cluster_queue)
+        self.tab2_hidden_layout.addRow(QLabel('MSconvert cpus'), self.tab2_parameter_msconvert_cpus)
+        self.tab2_hidden_layout.addRow(QLabel('MSconvert time'), self.tab2_parameter_msconvert_time)
+        self.tab2_hidden_layout.addRow(QLabel('Quandenser cpus'), self.tab2_parameter_quandenser_cpus)
+        self.tab2_hidden_layout.addRow(QLabel('Quandenser time'), self.tab2_parameter_quandenser_time)
+        self.tab2_hidden_layout.addRow(QLabel('Tide search cpus'), self.tab2_parameter_tide_search_cpus)
+        self.tab2_hidden_layout.addRow(QLabel('Tide search time'), self.tab2_parameter_tide_search_time)
+        self.tab2_hidden_layout.addRow(QLabel('Triqler cpus'), self.tab2_parameter_triqler_cpus)
+        self.tab2_hidden_layout.addRow(QLabel('Triqler time'), self.tab2_parameter_triqler_time)
+        self.tab2_leftbox_layout.addWidget(self.tab2_hidden)
 
         # Right box
-        self.rightbox = QWidget()
-        self.rightbox_layout = QHBoxLayout()
-        self.rightbox.setLayout(self.rightbox_layout)
+        self.tab2_rightbox = QWidget()
+        self.tab2_rightbox_layout = QHBoxLayout()
+        self.tab2_rightbox.setLayout(self.tab2_rightbox_layout)
 
-        #self.workflow = workflow()
-        #self.rightbox_layout.addWidget(self.workflow)
+        self.tab2_workflow = workflow()
+        self.tab2_rightbox_layout.addWidget(self.tab2_workflow)
+
+        self.tab2_layout.addWidget(self.tab2_rightbox)
 
         # Combine
-        self.tab2_layout.addWidget(self.leftbox)
-        self.tab2_layout.addWidget(self.rightbox)
+        self.tab2_layout.addWidget(self.tab2_leftbox)
+        self.tab2_layout.addWidget(self.tab2_rightbox)
 
     def inittab3(self):
         self.tab3 = QWidget()
         self.tab3_layout = QFormLayout()
         self.tab3.setLayout(self.tab3_layout)
 
-        self.msconvert_arguments = msconvert_arguments(self.nf_settings_path)
-        self.parameter_max_missing = parameter_setter_single("max_missing", self.nf_settings_path)  # Quandenser
-        self.parameter_missed_clevages = parameter_setter_single("missed_clevages", self.nf_settings_path)  # Crux
-        self.parameter_precursor_window = parameter_setter_double("precursor_window", self.nf_settings_path)  # Crux
-        self.parameter_fold_change_eval = parameter_setter_double("fold_change_eval", self.nf_settings_path)  # Triqler
-        self.reset_button = reset_button(config_path)
+        self.tab3_msconvert_arguments = msconvert_arguments(self.nf_settings_path)
+        self.tab3_parameter_max_missing = parameter_setter_single("max_missing", self.nf_settings_path)  # Quandenser
+        self.tab3_parameter_missed_clevages = parameter_setter_single("missed_clevages", self.nf_settings_path)  # Crux
+        self.tab3_parameter_precursor_window = parameter_setter_double("precursor_window", self.nf_settings_path)  # Crux
+        self.tab3_parameter_fold_change_eval = parameter_setter_double("fold_change_eval", self.nf_settings_path)  # Triqler
+        self.tab3_reset_button = reset_button(config_path)
 
         self.tab3_layout.addRow(QLabel('<b>MSconvert'), QLabel())
-        self.tab3_layout.addRow(QLabel('MSconvert additional arguments'), self.msconvert_arguments)
+        self.tab3_layout.addRow(QLabel('MSconvert additional arguments'), self.tab3_msconvert_arguments)
         self.tab3_layout.addRow(QLabel('<b>Quandenser'), QLabel())
-        self.tab3_layout.addRow(QLabel('Max missing'), self.parameter_max_missing)
+        self.tab3_layout.addRow(QLabel('Max missing'), self.tab3_parameter_max_missing)
         self.tab3_layout.addRow(QLabel('<b>Crux'), QLabel())
-        self.tab3_layout.addRow(QLabel('Missed clevages'), self.parameter_missed_clevages)
-        self.tab3_layout.addRow(QLabel('Precursor window'), self.parameter_precursor_window)
+        self.tab3_layout.addRow(QLabel('Missed clevages'), self.tab3_parameter_missed_clevages)
+        self.tab3_layout.addRow(QLabel('Precursor window'), self.tab3_parameter_precursor_window)
         self.tab3_layout.addRow(QLabel('<b>Triqler'), QLabel())
-        self.tab3_layout.addRow(QLabel('Fold change evaluation'), self.parameter_fold_change_eval)
-        self.tab3_layout.addWidget(self.reset_button)
+        self.tab3_layout.addRow(QLabel('Fold change evaluation'), self.tab3_parameter_fold_change_eval)
+        self.tab3_layout.addWidget(self.tab3_reset_button)
 
     def inittab4(self):
         self.tab4 = QWidget()
         self.tab4_layout = QHBoxLayout()
         self.tab4.setLayout(self.tab4_layout)
 
-        self.running_jobs = running_jobs(config_path + "/jobs.txt")
+        self.tab4_running_jobs = running_jobs(config_path + "/jobs.txt")
 
-        self.tab4_layout.addWidget(self.running_jobs)
+        self.tab4_layout.addWidget(self.tab4_running_jobs)
 
     def inittab5(self):
         self.tab5 = QWidget()
         self.tab5_layout = QVBoxLayout()
         self.tab5.setLayout(self.tab5_layout)
-        self.about = about()
-        self.tab5_layout.addWidget(self.about)
+        self.tab5_about = about()
+        self.tab5_layout.addWidget(self.tab5_about)
 
     def closeEvent(self, event):
         self.settings_obj.setValue("windowGeometry", self.saveGeometry())
@@ -268,9 +313,10 @@ class Main(QMainWindow):
 
 
     def tab_changed(self, index):
+        if self.tabs.tabText(index) == "Edit workflow":
+            self.tab2_choose_option_profile.check_hidden()
         if self.tabs.tabText(index) == "Running jobs":
-            self.running_jobs.update()
-
+            self.tab4_running_jobs.update()
 
     """This is for loading and saving state of child widgets"""
 
