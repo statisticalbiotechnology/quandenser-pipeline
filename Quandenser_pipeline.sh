@@ -59,6 +59,9 @@ cd "$(dirname "$0")"
     printf "${GREEN}Singularity is not installed, requires sudo privileges. Y/y to install or N/n to cancel ${RESET}"
     read accept
     if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
+      # NOTE: it should be possible to install for just user (aka without sudo)
+      # Perhaps in the future, it could be set so singularity is only installed for user --> no sudo required
+      # However, all dependencies, such as squashfs-tools still need to be installed
       printf "${GREEN}Installing Singularity${RESET}"
       sudo apt-get update && \
       sudo apt-get install -y build-essential \
