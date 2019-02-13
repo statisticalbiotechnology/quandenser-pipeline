@@ -2,6 +2,8 @@ import os
 from PySide2.QtWidgets import QTextBrowser, QTableWidget, QHeaderView, QTableWidgetItem, QPushButton
 import subprocess
 from PySide2.QtGui import QColor
+from PySide2.QtCore import QTimer
+
 
 # Custom parser for both sh files and nf configs
 from ..custom_config_parser import custom_config_parser
@@ -30,6 +32,10 @@ class running_jobs(QTableWidget):
         self.header.setSectionResizeMode(1, QHeaderView.Stretch)
         self.header.setSectionResizeMode(2, QHeaderView.Stretch)
         self.setHorizontalHeaderLabels(["Pid", "Output path", "Started", "Running", "Kill"])
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update)
+        self.timer.start(10000)  # Update every 10 seconds
 
     def keyPressEvent(self, event):
         """Add functionallity to keyboard"""
