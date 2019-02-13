@@ -7,4 +7,5 @@ class about(QWebEngineView):
     def __init__(self):
         super(about,self).__init__(parent = None)
         html_file = open("ui/tab5/about.html", 'r', encoding='utf-8')
-        self.setHtml(html_file.read())
+        current_dir = os.getcwd().replace('\\', '/')  # Windows fix
+        self.load(QUrl(f"{current_dir}/ui/tab5/about.html"))
