@@ -4,6 +4,7 @@ config_location="/var/tmp/quandenser_pipeline_$USER"
 GREEN="\033[1;92m"
 RED="\033[0;31m"
 BLUE="\033[0;34m"
+YELLOW="\033[1;93m"
 RESET="\033[0m\n"
 
 function PIPE_read() {
@@ -43,11 +44,38 @@ done
 # Go to dir where the script lies, this allows for links to work
 cd "$(dirname "$0")"
 
-{ # try
-  nvidia-smi | grep -q "Driver" && graphics=" --nv"  # Check if nvidia is installed
+# Check if nvidia is installed
+{
+  nvidia-smi | grep -q "Driver" && graphics=" --nv"
 } || { # catch
   graphics=""
 }
+
+# Check if singularity is installed
+{
+  singularity --version | grep -q "version"
+} || { # catch
+  while true; do
+    printf "${GREEN}Singularity is not installed, requires sudo privileges. Y/y to install or N/n to cancel ${RESET}"
+    read accept
+    if [ "$accept" = "y"] || [ "$accept" = "Y"]; then
+      printf "${GREEN}Installing Singularity${RESET}"
+    elif [ "$accept" = "n"] || [ "$accept" = "N"]; then
+      printf "${RED}Singularity will not installed. Exiting... ${RESET}"
+      exit 0
+    else
+      printf "${RED}Not a valid command${RESET}"
+    fi
+}
+
+
+# Check if image is installed
+#singularity pull SingulQuand.SIF shub://TimothyBergstrom/Singularity-containers
+
+if (( $EUID == 0 )); then
+    printf "${YELLOW}You are running as root. Please run the script again as user${RESET}"
+    exit 0
+fi
 
 # Initialize parameters
 declare -i crash_count=0
