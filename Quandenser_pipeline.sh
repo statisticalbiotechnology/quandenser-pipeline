@@ -2,8 +2,8 @@
 
 config_location="/var/tmp/quandenser_pipeline_$USER"
 GREEN="\033[1;92m"
-RED="\033[0;31m"
-BLUE="\033[0;34m"
+RED="\033[1;31m"
+BLUE="\033[1;34m"
 YELLOW="\033[1;93m"
 RESET="\033[0m\n"
 
@@ -53,24 +53,57 @@ cd "$(dirname "$0")"
 
 # Check if singularity is installed
 {
-  singularity --version | grep -q "version"
+  singularity --version | grep -q "version" && :
 } || { # catch
   while true; do
     printf "${GREEN}Singularity is not installed, requires sudo privileges. Y/y to install or N/n to cancel ${RESET}"
     read accept
-    if [ "$accept" = "y"] || [ "$accept" = "Y"]; then
+    if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
       printf "${GREEN}Installing Singularity${RESET}"
-    elif [ "$accept" = "n"] || [ "$accept" = "N"]; then
+      sudo apt-get update && \
+      sudo apt-get install -y build-essential \
+      libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools
+      export VERSION=1.11.4 OS=linux ARCH=amd64  # change this as you need
+      wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+      sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
+      echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
+      echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+      source ~/.bashrc
+      mkdir -p ${GOPATH}/src/github.com/sylabs && \
+      cd ${GOPATH}/src/github.com/sylabs && \
+      git clone https://github.com/sylabs/singularity.git && \
+      cd singularity
+      cd ${GOPATH}/src/github.com/sylabs/singularity && \
+      ./mconfig && \
+      cd ./builddir && \
+      make && \
+      sudo make install
+      break
+    elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
       printf "${RED}Singularity will not installed. Exiting... ${RESET}"
       exit 0
     else
       printf "${RED}Not a valid command${RESET}"
     fi
+  done
 }
 
-
-# Check if image is installed
-#singularity pull SingulQuand.SIF shub://TimothyBergstrom/Singularity-containers
+if [ ! -f SingulQuand.SIF ]; then
+  while true; do
+    printf "${YELLOW}Singularity container not found. Install stable from Singularity Hub? Y/y or N/n${RESET}"
+    read accept
+    if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
+      printf "${GREEN}Installing Singularity container${RESET}"
+      singularity pull SingulQuand.SIF shub://TimothyBergstrom/quandenser-pipeline
+      break
+    elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
+      printf "${RED}Singularity will not installed. Exiting... ${RESET}"
+      exit 0
+    else
+      printf "${RED}Not a valid command${RESET}"
+    fi
+  done
+fi
 
 if (( $EUID == 0 )); then
     printf "${YELLOW}You are running as root. Please run the script again as user${RESET}"
