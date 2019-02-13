@@ -10,6 +10,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEPATH="C:\pwiz"  # Location where the pwiz files will be
     export WINEDEBUG=-all,err+all  # Hide all wine related output
 
+    # Set time zone from host
+    ln -s /usr/share/zoneinfo/CET /etc/localtime
+
     # Making so user who logs into the image can use wine
     mkdir -p "/tmp/wineprefix64_$USER"
     random_name=$(date +%s | sha256sum | base64 | head -c 32)
@@ -120,6 +123,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export LC_ALL=C
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
     export XDG_CONFIG_HOME=/tmp/runtime-$USER
+    # Set time zone from host
+    ln -s /usr/share/zoneinfo/CET /etc/localtime
     cd /var/local/quandenser_ui
 
 %apprun quandenser_ui
