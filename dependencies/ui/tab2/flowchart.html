@@ -54,11 +54,12 @@
             $(function(){
                 var cy = window.cy = cytoscape({
                     container: document.getElementById('cy'),
-                    boxSelectionEnabled: false,
+                    boxSelectionEnabled: true,
                     autounselectify: true,
 
                     layout: {
-                        name: 'dagre'
+                        name: 'dagre',
+                        zoom: 0.55  // zoom level
                     },
 
                     style: cytoscape.stylesheet()
