@@ -97,7 +97,7 @@ if [ ! -f SingulQuand.SIF ]; then
     read accept
     if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
       printf "${GREEN}Installing Singularity container${RESET}"
-      singularity pull SingulQuand.SIF shub://TimothyBergstrom/quandenser-pipeline
+      singularity pull SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline
       break
     elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
       printf "${RED}Singularity will not installed. Exiting... ${RESET}"
