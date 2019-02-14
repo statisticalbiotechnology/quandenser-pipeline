@@ -1,10 +1,11 @@
 import os
 from PySide2.QtWidgets import QPushButton, QDoubleSpinBox, QSpinBox
 import shutil
-from colorama import Fore, Back, Style
+from colorama import Fore
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
+from utils import ERROR
 
 class reset_button(QPushButton):
 
