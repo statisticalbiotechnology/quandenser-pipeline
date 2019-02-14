@@ -17,6 +17,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
     export WINEPREFIX="/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
 
+    mkdir -p /tmp/runtime-$USER
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
     export XDG_CONFIG_HOME=/tmp/runtime-$USER
 
@@ -37,6 +38,10 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/ui /
 
 %post
+    echo "Fixing timezones"
+    offset=1
+    ln -fs /usr/share/zoneinfo/Etc/GMT$offset /etc/localtime
+
     echo "Installling packages with apt-get"
     apt-get update
     apt-get -y install wget
@@ -115,6 +120,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
 %appenv quandenser_ui
     export LC_ALL=C
+    mkdir -p /tmp/runtime-$USER
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
     export XDG_CONFIG_HOME=/tmp/runtime-$USER
     cd /var/local/quandenser_ui
@@ -125,5 +131,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="0.01"
+    VERSION="0.02"
     printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
