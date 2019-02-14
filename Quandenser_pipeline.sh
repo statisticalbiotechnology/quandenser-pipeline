@@ -49,6 +49,7 @@ cd "$(dirname "$0")"
 {
   nvidia-smi | grep -q "Driver" && graphics=" --nv"
 } || { # catch
+  printf "${YELLOW}No nvidia drivers detected. Will use prebuilt drivers instead ${RESET}"
   graphics=""
 }
 
@@ -84,12 +85,12 @@ cd "$(dirname "$0")"
         ./mconfig && \
         cd ./builddir && \
         make && \
-        sudo make install && \
-        break
+        sudo make install
       } || { # catch
         printf "${RED}Singularity failed to install. Do you have root access? ${RESET}"
         exit 1
       }
+      break
     elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
       printf "${RED}Singularity will not installed. Exiting... ${RESET}"
       exit 0
@@ -150,8 +151,6 @@ while true; do
     crash_count=0  # Reset
     PIPE_write "exit_code" "2"  # Write pid to pipe
     PIPE_write "started" "true"
-    #chmod u+x /var/tmp/quandenser_pipeline_$USER/nextflow  # Fix permission
-    #chmod u+x /var/tmp/quandenser_pipeline_$USER/run_quandenser.sh  # Fix permission
     nohup $config_location/run_quandenser.sh & disown
     pid=$!
     PIPE_write "pid" $pid  # Write pid to pipe
