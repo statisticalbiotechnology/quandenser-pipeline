@@ -2,6 +2,8 @@
 import sys
 import os
 from colorama import Fore, Back, Style
+import pdb
+import time
 
 # Style for PySide2
 import qdarkstyle
@@ -40,7 +42,7 @@ from utils import check_corrupt, check_running, ERROR
 # read user and create config location
 user = os.environ.get('USER')
 config_path = f"/var/tmp/quandenser_pipeline_{user}"
-print(Style.BRIGHT, end='\r')  # Set style
+#print(Style.BRIGHT, end='\r')  # Set style
 
 class Main(QMainWindow):
 
@@ -48,10 +50,7 @@ class Main(QMainWindow):
         super().__init__()
         self.title = 'Quandenser-pipeline'
         self.setWindowIcon(QIcon('logo.png'))
-        self.left = 10
-        self.top = 10
-        self.WIDTH = 600
-        self.HEIGHT = 400
+        self.resize(1000, 800)
 
         # Check file integrety
         check_corrupt(config_path)
@@ -78,6 +77,7 @@ class Main(QMainWindow):
             children = self.children()
             for child in children:
                 self.recurse_children(child, save=False)
+        time.sleep(0.1)  # Should stop stack smashing
         self.show()
 
     def initUI(self):
@@ -101,6 +101,7 @@ class Main(QMainWindow):
         self.tabs.addTab(self.tab4, "Running jobs")
         self.tabs.addTab(self.tab5, "About")
         self.setCentralWidget(self.tabs)
+
         self.show()
 
     def inittab1(self):
@@ -248,7 +249,6 @@ class Main(QMainWindow):
         else:
             self.pipe_parser.write('exit_code', '1', isString=False)
 
-
     def tab_changed(self, index):
         if self.tabs.tabText(index) == "Edit workflow":
             self.tab2_choose_option_profile.check_hidden()
@@ -257,7 +257,7 @@ class Main(QMainWindow):
 
     """This is for loading and saving state of child widgets"""
 
-    def recurse_children(self, parent, save=True):
+    def recurse_children(self, parent, save=True):  # THIS DO NOT CREATE STACK SMASHING
         children = parent.children()
         if children == []:
             return
@@ -357,9 +357,8 @@ class Main(QMainWindow):
                     child.update()
                 child.blockSignals(False)
 
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyside())  # Set dark style
-    ex = Main()
+    ex = Main() # Stack smashing happens BEFORE we reach here
     sys.exit(app.exec_())
