@@ -21,7 +21,8 @@ class file_chooser(QPushButton):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         if self.type=='ms':
-            ms_file_types = ["*.mzML",
+            ms_file_types = [" *.mzML",
+                             "*.mzml",
                              "*.D | *.d",
                              "*.YEP",
                              "*.BAF",
