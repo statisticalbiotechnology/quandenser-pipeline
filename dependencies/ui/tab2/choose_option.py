@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame
 
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 class choose_option(QComboBox):
 
@@ -12,7 +12,7 @@ class choose_option(QComboBox):
         elif self.parameter == 'parallell_msconvert':
             self.addItems(["true", "false"])
         elif self.parameter == 'profile':
-            self.addItems(["local", "cluster"])
+            self.addItems(["local", "slurm_cluster"])
         self.parser = custom_config_parser()
         self.parser.load(settings_file)
         self.currentIndexChanged.connect(self.selectionchange)
@@ -30,7 +30,7 @@ class choose_option(QComboBox):
         parent = self.parentWidget()
         parent = parent.parentWidget()  # Exist two levels up
         children = parent.children()
-        if self.currentText() == "cluster":  # Add widgets
+        if self.currentText() == "slurm_cluster":  # Add widgets
             for child in children:
                 if hasattr(child, "hidden_object"):
                     child.show()

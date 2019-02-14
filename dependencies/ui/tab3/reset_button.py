@@ -3,9 +3,8 @@ from PySide2.QtWidgets import QPushButton, QDoubleSpinBox, QSpinBox
 import shutil
 from colorama import Fore, Back, Style
 
-
 # Custom parser for both sh files and nf configs
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 class reset_button(QPushButton):
 
@@ -23,7 +22,7 @@ class reset_button(QPushButton):
         for file in files:
             print(Fore.YELLOW + f"Replaced {file}" + Fore.RESET)
             os.remove(f"{self.config_path}/{file}")
-            shutil.copyfile(f"config/{file}", f"{self.config_path}/{file}")
+            shutil.copyfile(f"../config/{file}", f"{self.config_path}/{file}")
             os.chmod(f"{self.config_path}/{file}", 0o700)  # Only user will get access
 
         nf_parser = custom_config_parser()

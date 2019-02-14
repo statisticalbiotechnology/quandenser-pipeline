@@ -4,7 +4,6 @@ from PySide2.QtGui import QColor, QKeySequence, QClipboard
 import os
 from difflib import SequenceMatcher
 
-
 class batch_file_viewer(QTableWidget):
     def __init__(self):
         super(batch_file_viewer,self).__init__(parent = None)

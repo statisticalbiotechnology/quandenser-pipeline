@@ -4,9 +4,8 @@ import subprocess
 from PySide2.QtGui import QColor
 from PySide2.QtCore import QTimer
 
-
 # Custom parser for both sh files and nf configs
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 from .kill_button import kill_button
 
 class running_jobs(QTableWidget):

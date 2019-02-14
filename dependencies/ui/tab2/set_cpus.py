@@ -2,7 +2,7 @@ import sys
 from PySide2.QtWidgets import QSpinBox
 
 # Custom parser for both sh files and nf configs
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 class set_cpus(QSpinBox):
     def __init__(self, parameter, nf_settings_path):

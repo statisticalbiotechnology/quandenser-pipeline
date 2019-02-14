@@ -6,6 +6,7 @@ class about(QWebEngineView):
 
     def __init__(self):
         super(about,self).__init__(parent = None)
-        html_file = open("ui/tab5/about.html", 'r', encoding='utf-8')
         current_dir = os.getcwd().replace('\\', '/')  # Windows fix
-        self.load(QUrl(f"{current_dir}/ui/tab5/about.html"))
+        #html_file = open("ui/tab5/about.html", 'r', encoding='utf-8')
+        #self.setHtml(html_file.read())  # THIS WILL NOT LOAD IMAGES
+        self.load(QUrl.fromLocalFile(f"{current_dir}/tab5/about.html"))

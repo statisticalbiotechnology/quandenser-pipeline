@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QLineEdit
 from colorama import Fore
 
 # Custom parser for both sh files and nf configs
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 class set_time(QLineEdit):
     def __init__(self, process, nf_settings_path):

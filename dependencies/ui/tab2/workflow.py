@@ -15,7 +15,7 @@ class page(QWebEnginePage):
         super(page,self).__init__(parent = None)
 
     def load_page(self):
-        html_file = open("ui/tab2/flowchart.html", encoding='utf-8')
+        html_file = open("tab2/flowchart.html", encoding='utf-8')
         self.setHtml(html_file.read())
 
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceId):

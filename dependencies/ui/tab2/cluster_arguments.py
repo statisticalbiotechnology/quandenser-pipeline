@@ -2,7 +2,7 @@ import sys
 from PySide2.QtWidgets import QLineEdit
 
 # Custom parser for both sh files and nf configs
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 class cluster_arguments(QLineEdit):
     def __init__(self, argument, nf_settings_path):

@@ -2,7 +2,7 @@ import sys
 from PySide2.QtWidgets import QDoubleSpinBox, QSpinBox
 
 # Custom parser for both sh files and nf configs
-from ..custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 class parameter_setter_single(QSpinBox):
     def __init__(self, parameter, nf_settings_path):
