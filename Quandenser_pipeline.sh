@@ -64,27 +64,32 @@ cd "$(dirname "$0")"
       # Perhaps in the future, it could be set so singularity is only installed for user --> no sudo required
       # However, all dependencies, such as squashfs-tools still need to be installed
       printf "${GREEN}Installing Singularity${RESET}"
-      sudo apt-get update && \
-      sudo apt-get install -y build-essential \
-      libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git
-      export VERSION=1.11.4 OS=linux ARCH=amd64  # change this as you need
-      wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
-      sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
-      echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
-      echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
-      export GOPATH=${HOME}/go && \
-      export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin && \
-      source ~/.bashrc
-      mkdir -p ${GOPATH}/src/github.com/sylabs && \
-      cd ${GOPATH}/src/github.com/sylabs && \
-      git clone https://github.com/sylabs/singularity.git && \
-      cd singularity
-      cd ${GOPATH}/src/github.com/sylabs/singularity && \
-      ./mconfig && \
-      cd ./builddir && \
-      make && \
-      sudo make install
-      break
+      {  # try
+        sudo apt-get update && \
+        sudo apt-get install -y build-essential \
+        libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git
+        export VERSION=1.11.4 OS=linux ARCH=amd64  # change this as you need
+        wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+        sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
+        echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
+        echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+        export GOPATH=${HOME}/go && \
+        export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin && \
+        source ~/.bashrc
+        mkdir -p ${GOPATH}/src/github.com/sylabs && \
+        cd ${GOPATH}/src/github.com/sylabs && \
+        git clone https://github.com/sylabs/singularity.git && \
+        cd singularity
+        cd ${GOPATH}/src/github.com/sylabs/singularity && \
+        ./mconfig && \
+        cd ./builddir && \
+        make && \
+        sudo make install && \
+        break
+      } || { # catch
+        printf "${RED}Singularity failed to install. Do you have root access? ${RESET}"
+        exit 1
+      }
     elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
       printf "${RED}Singularity will not installed. Exiting... ${RESET}"
       exit 0
@@ -100,10 +105,15 @@ if [ ! -f SingulQuand.SIF ]; then
     read accept
     if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
       printf "${GREEN}Installing Singularity container${RESET}"
-      singularity pull SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline
+      {  # try
+        singularity pull SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline && \
+      } || {
+        printf "${RED}Downloading the container failed${RESET}"
+        exit 1
+      }
       break
     elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
-      printf "${RED}Singularity will not installed. Exiting... ${RESET}"
+      printf "${RED}The Singularity container will not installed. Exiting... ${RESET}"
       exit 0
     else
       printf "${RED}Not a valid command${RESET}"
