@@ -54,11 +54,18 @@ class run_button(QPushButton):
         child = parent.findChildren(QTableWidget)[0]
         full_table = []
         for row in range(child.rowCount()):
-            if not child.item(row, 0).text() == '' and not child.item(row, 1).text() == '':
+            if not child.item(row, 0).text() == '':
                 if not os.path.isfile(child.item(row, 0).text()):
                     ERROR(f"File in row {row} does not exist")
                     return 1
-                input_string = child.item(row, 0).text() + '\t' + child.item(row, 1).text() + '\n'
+                elif self.nf_settings_parser.get('params.workflow') == "MSconvert" and child.item(row, 1).text() == '':
+                    label = 'A'  # Add junk labeling
+                elif child.item(row, 1).text() == '' and self.nf_settings_parser.get('params.workflow') == "Full":
+                    ERROR(f"File in row {row} is missing a label (Full workflow enabled)")
+                    return 1
+                elif child.item(row, 1).text() != '':
+                    label = child.item(row, 1).text()
+                input_string = child.item(row, 0).text() + '\t' + label + '\n'
                 full_table.append(input_string)
 
         if full_table == []:
