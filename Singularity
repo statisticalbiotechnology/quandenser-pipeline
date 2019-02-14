@@ -10,9 +10,6 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEPATH="C:\pwiz"  # Location where the pwiz files will be
     export WINEDEBUG=-all,err+all  # Hide all wine related output
 
-    # Set time zone from host
-    ln -s /usr/share/zoneinfo/CET /etc/localtime
-
     # Making so user who logs into the image can use wine
     mkdir -p "/tmp/wineprefix64_$USER"
     random_name=$(date +%s | sha256sum | base64 | head -c 32)
@@ -37,9 +34,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/pwiz.tar.bz2 /pwiz.tar.bz2
    # A script that links all file in wineprefix64 to a directory owned by you --> anybody can use wine
    dependencies/link_wine.sh /usr/local/bin/link_wine.sh
-   dependencies/main.py /
    dependencies/ui /
-   dependencies/config /
 
 %post
     echo "Installling packages with apt-get"
@@ -54,10 +49,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     echo "Placing ui files in the correct directories"
     rm -rf /var/local/quandenser_ui  # Clear prev folder, if it exist
     mkdir -p /var/local/quandenser_ui
-    mv /main.py /var/local/quandenser_ui
-    mv /config /var/local/quandenser_ui
-    mv /ui /var/local/quandenser_ui
-    chmod -R a+rwx /var/local/quandenser_ui/*  # So everybody can access the files
+    mv /ui/* /var/local/quandenser_ui
+    rmdir ui
+    chmod -R a+x /var/local/quandenser_ui/*  # So everybody can access the files
 
     echo "Updating nextflow"
     curl -s https://get.nextflow.io | bash
@@ -123,9 +117,13 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export LC_ALL=C
     export XDG_RUNTIME_DIR=/tmp/runtime-$USER
     export XDG_CONFIG_HOME=/tmp/runtime-$USER
-    # Set time zone from host
-    ln -s /usr/share/zoneinfo/CET /etc/localtime
     cd /var/local/quandenser_ui
 
 %apprun quandenser_ui
     python /var/local/quandenser_ui/main.py
+
+%runscript
+    GREEN="\033[1;92m"
+    RESET="\033[0m\n"
+    VERSION="0.01"
+    printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
