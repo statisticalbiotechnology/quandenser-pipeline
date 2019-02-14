@@ -1,5 +1,6 @@
 from colorama import Fore, Back, Style
 import datetime
+import time
 import os
 import shutil
 import filecmp
@@ -78,7 +79,7 @@ def check_running(config_path):
         else:
             now = datetime.datetime.now()
             with open(f"{config_path}/jobs.txt", 'a') as job_file:
-                job_file.write(pid + '\t' + output_path + '\t' + now.strftime("%Y-%m-%d %H:%M") + '\n')
+                job_file.write(pid + '\t' + output_path + '\t' + now.strftime("%Y-%m-%d %H:%M") + time.localtime().tm_zone + '\n')
             pipe_parser.write('pid', '', isString=False)  # Reset pid
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
