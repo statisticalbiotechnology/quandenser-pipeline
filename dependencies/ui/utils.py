@@ -11,13 +11,16 @@ from custom_config_parser import custom_config_parser
 def ERROR(message):
     print(Fore.RED + f"ERROR: {message}" + Fore.RESET)
 
+def WARNING(message):
+    print(Fore.YELLOW + f"WARNING: {message}" + Fore.RESET)
+
 def check_corrupt(config_path):
     # Check for corrupt files/old/missing
     installed_parser = custom_config_parser()
     packed_parser = custom_config_parser()
 
     if not os.path.isdir(f"{config_path}"):
-        print(Fore.YELLOW + f"Missing config directory {config_path}. Initalizing directory" + Fore.RESET)
+        WARNING(f"Missing config directory {config_path}. Initalizing directory")
         os.makedirs(config_path)
 
     files = ["ui.config",
@@ -30,24 +33,29 @@ def check_corrupt(config_path):
     for file in files:
         corrupted = False
         if not os.path.isfile(f"{config_path}/{file}"):
-            print(Fore.YELLOW + f"Missing file {file}. Installing file" + Fore.RESET)
-            shutil.copyfile(f"../config/{file}", f"{config_path}/{file}")
+            WARNING(f"Missing file {file}. Installing file")
+            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
             os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
         else:  # check corrupt/old versions of config
             if (file.split('.')[-1] in ['config', 'sh'] or file == 'PIPE') and file != 'ui.config':
                 installed_parser.load(f"{config_path}/{file}")
                 installed_parameters = installed_parser.get_params()
-                packed_parser.load(f"../config/{file}")
+                packed_parser.load(f"config/{file}")
                 packed_parameters = packed_parser.get_params()
                 if not installed_parameters == packed_parameters:
                     corrupted = True
+            elif file == "nf.config":  # Check for old versions
+                lines = open(f"{config_path}/{file}", 'r').readlines()
+                if not any("slurm_cluster" in line for line in lines):  # Very specific
+                    corrupted=True
             else:
-                if not filecmp.cmp(f"{config_path}/{file}", f"../config/{file}") and file not in ['ui.config', 'jobs.txt']:  # check if files are the same
+                if not filecmp.cmp(f"{config_path}/{file}", f"config/{file}") and file not in ['ui.config', 'jobs.txt']:  # check if files are the same
                     corrupted = True
+
         if corrupted:
-            print(Fore.RED + f"Detected old or corrupt version of {file}. Replacing file" + Fore.RESET)
+            WARNING(f"Detected old or corrupt version of {file}. Replacing file")
             os.remove(f"{config_path}/{file}")
-            shutil.copyfile(f"../config/{file}", f"{config_path}/{file}")
+            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
             os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
 
 def check_running(config_path):
