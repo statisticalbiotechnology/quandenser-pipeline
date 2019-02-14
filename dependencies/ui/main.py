@@ -20,23 +20,23 @@ from PySide2.QtGui import QIcon
 from PySide2 import QtCore
 
 # Widgets
-from ui.tab1.file_chooser import file_chooser
-from ui.tab1.file_viewer import file_viewer
-from ui.tab1.batch_file_viewer import batch_file_viewer
-from ui.tab1.run_button import run_button
-from ui.tab2.workflow import workflow
-from ui.tab2.choose_option import choose_option
-from ui.tab2.cluster_arguments import cluster_arguments
-from ui.tab2.set_time import set_time
-from ui.tab2.set_cpus import set_cpus
-from ui.tab3.msconvert_arguments import msconvert_arguments
-from ui.tab3.parameter_setter import parameter_setter_double, parameter_setter_single
-from ui.tab3.reset_button import reset_button
-from ui.tab4.running_jobs import running_jobs
-from ui.tab5.about import about
+from tab1.file_chooser import file_chooser
+from tab1.file_viewer import file_viewer
+from tab1.batch_file_viewer import batch_file_viewer
+from tab1.run_button import run_button
+from tab2.workflow import workflow
+from tab2.choose_option import choose_option
+from tab2.cluster_arguments import cluster_arguments
+from tab2.set_time import set_time
+from tab2.set_cpus import set_cpus
+from tab3.msconvert_arguments import msconvert_arguments
+from tab3.parameter_setter import parameter_setter_double, parameter_setter_single
+from tab3.reset_button import reset_button
+from tab4.running_jobs import running_jobs
+from tab5.about import about
 
 # Custom parser
-from ui.custom_config_parser import custom_config_parser
+from custom_config_parser import custom_config_parser
 
 # read user and create config location
 user = os.environ.get('USER')
@@ -62,23 +62,23 @@ def check_corrupt():
         corrupted = False
         if not os.path.isfile(f"{config_path}/{file}"):
             print(Fore.YELLOW + f"Missing file {file}. Installing file" + Fore.RESET)
-            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
+            shutil.copyfile(f"../config/{file}", f"{config_path}/{file}")
             os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
         else:  # check corrupt/old versions of config
             if (file.split('.')[-1] in ['config', 'sh'] or file == 'PIPE') and file != 'ui.config':
                 installed_parser.load(f"{config_path}/{file}")
                 installed_parameters = installed_parser.get_params()
-                packed_parser.load(f"config/{file}")
+                packed_parser.load(f"../config/{file}")
                 packed_parameters = packed_parser.get_params()
                 if not installed_parameters == packed_parameters:
                     corrupted = True
             else:
-                if not filecmp.cmp(f"{config_path}/{file}", f"config/{file}") and file not in ['ui.config', 'jobs.txt']:  # check if files are the same
+                if not filecmp.cmp(f"{config_path}/{file}", f"../config/{file}") and file not in ['ui.config', 'jobs.txt']:  # check if files are the same
                     corrupted = True
         if corrupted:
             print(Fore.RED + f"Detected old or corrupt version of {file}. Replacing file" + Fore.RESET)
             os.remove(f"{config_path}/{file}")
-            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
+            shutil.copyfile(f"../config/{file}", f"{config_path}/{file}")
             os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
 
 def check_running():
@@ -115,7 +115,7 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Quandenser-pipeline'
-        self.setWindowIcon(QIcon('ui/logo.png'))
+        self.setWindowIcon(QIcon('logo.png'))
         self.left = 10
         self.top = 10
         self.WIDTH = 600
