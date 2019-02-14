@@ -48,6 +48,10 @@ class running_jobs(QTableWidget):
 
     def update(self):
         self.clear()
+        self.header = self.horizontalHeader()
+        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
+        self.header.setSectionResizeMode(2, QHeaderView.Stretch)
+        self.setHorizontalHeaderLabels(["Pid", "Output path", "Started", "Running", "Kill"])
         processes = []
         jobs = []
         for line in open(self.jobs_path, 'r'):
