@@ -77,7 +77,6 @@ class Main(QMainWindow):
             children = self.children()
             for child in children:
                 self.recurse_children(child, save=False)
-        time.sleep(0.1)  # Should stop stack smashing
         self.show()
 
     def initUI(self):
