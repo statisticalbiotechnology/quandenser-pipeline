@@ -35,4 +35,13 @@ settings!
 The GUI is built with the open source GUI [PySide2](https://pypi.org/project/PySide2/)
 with [ColinDuqesnoy's dark theme](https://github.com/ColinDuquesnoy/QDarkStyleSheet)
 
+
+## Building from scratch
+
+If you have come all the way down here in the README, you might be interested in building the image from scratch.
+
+Simply clone the repository with git or download it [here](https://github.com/statisticalbiotechnology/quandenser-pipeline/archive/master.zip). Unzip the directory and cd inside, then run "./build_image.sh" and it will build everything for you!
+
+
 <img src="/images/logo.png"  width="128" height="128">
+ <small>&copy; Copyright 2019, Timothy Bergström</small>
