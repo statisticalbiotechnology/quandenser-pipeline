@@ -47,6 +47,7 @@ class running_jobs(QTableWidget):
         super().keyPressEvent(event)  # Propagate to built in methods
 
     def update(self):
+        self.clear()
         processes = []
         jobs = []
         for line in open(self.jobs_path, 'r'):
