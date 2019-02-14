@@ -4,6 +4,7 @@ from colorama import Fore
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
+from utils import ERROR
 
 class set_time(QLineEdit):
     def __init__(self, process, nf_settings_path):
@@ -27,7 +28,7 @@ class set_time(QLineEdit):
         time  = self.text()  # Copy, dont use
         parameters = time.split(':')  # Days, hours, minutes, seconds
         if len(parameters) >= 5:
-            print(Fore.RED + f"ERROR, too many values for time at {self.process}" + Fore.RESET)
+            ERROR(f"too many values for time at {self.process}")
             return
         suffix = ['d', 'h', 'm', 's']
         suffix = suffix[-len(parameters):]

@@ -10,9 +10,7 @@ import secrets
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
-
-def ERROR(message):
-    print(Fore.RED + f"ERROR: {message}" + Fore.RESET)
+from utils import ERROR
 
 class run_button(QPushButton):
 

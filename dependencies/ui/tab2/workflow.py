@@ -1,4 +1,5 @@
 from PySide2.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+from utils import ERROR
 
 class workflow(QWebEngineView):
 
@@ -20,4 +21,4 @@ class page(QWebEnginePage):
 
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceId):
         if not "a parser-blocking" in message and level == 2:  # Filter script injection erros
-            print(level, message, lineNumber, sourceId)
+            ERROR(f"{level}, {message}, {lineNumber}, {sourceId}")
