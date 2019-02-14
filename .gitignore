@@ -123,3 +123,6 @@ venv.bak/
 
 # Index files
 **/*.index
+
+# SIF files
+*.SIF
