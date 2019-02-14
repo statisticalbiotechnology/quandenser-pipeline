@@ -1,6 +1,7 @@
 import sys
 from PySide2.QtWidgets import QLineEdit
 from colorama import Fore
+import re
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
@@ -13,32 +14,50 @@ class set_time(QLineEdit):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.process = process
-        if self.process == 'msconvert_time':
-            self.setText('0:00:15:00')
-        elif self.process == 'quandenser_time':
-            self.setText('0:03:00:00')
-        elif self.process == 'tide_search_time':
-            self.setText('0:00:05:00')
-        elif self.process == 'triqler_time':
-            self.setText('0:00:10:00')
+        self.default()
         self.textChanged.connect(self.check_text)
 
     def check_text(self):
         self.blockSignals(True)
         time  = self.text()  # Copy, dont use
+        nftime = self.time_to_nftime(time)
+        additional_information = self.process.split('_')[0]  # Very hacky way of doing it, but it should be fine
+        self.nf_settings_parser.write("time", nftime, additional_information=additional_information)  # Multiple time
+        self.blockSignals(False)
+
+    def time_to_nftime(self, time):
         parameters = time.split(':')  # Days, hours, minutes, seconds
         if len(parameters) >= 5:
             ERROR(f"too many values for time at {self.process}")
             return
         suffix = ['d', 'h', 'm', 's']
         suffix = suffix[-len(parameters):]
-
-        nf_time = ''
+        nftime = ''
         for suffix, parameter in zip(suffix, parameters):
             try:
-                nf_time+=f"{int(parameter)}{suffix}"
+                nftime+=f"{int(parameter)}{suffix}"
             except:
                 pass
+        return nftime
+
+    def nftime_to_time(self, nftime):
+        suffix = ['d', 'h', 'm', 's']
+        time_list = re.split('(\d+)', nftime)
+        time_list.pop(0)  # First value is empty
+        # [20, m, 10, s] ex
+        time_values = ['00', '00', '00', '00']
+        for group in zip(time_list[::2], time_list[1::2]):  # Group every other together
+            index = suffix.index(group[1])
+            value = group[0]
+            if len(group[0]) == 1:
+                value = '0' + value
+            time_values[index] = value
+
+        time = f"{time_values[0]}:{time_values[1]}:{time_values[2]}:{time_values[3]}"
+        return time
+
+    def default(self):
         additional_information = self.process.split('_')[0]  # Very hacky way of doing it, but it should be fine
-        self.nf_settings_parser.write("time", nf_time, additional_information=additional_information)  # Multiple time
-        self.blockSignals(False)
+        nftime = self.nf_settings_parser.get("time", additional_information=additional_information)  # Multiple time
+        time = self.nftime_to_time(nftime)
+        self.setText(time)

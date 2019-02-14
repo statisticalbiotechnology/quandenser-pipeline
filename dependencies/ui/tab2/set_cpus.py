@@ -11,8 +11,8 @@ class set_cpus(QSpinBox):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.parameter = parameter
-        self.setValue(8)
         self.valueChanged.connect(self.check_value)
+        self.default()
 
     def check_value(self):
         self.blockSignals(True)
@@ -23,3 +23,9 @@ class set_cpus(QSpinBox):
                                       isString=False,
                                       additional_information=additional_information)
         self.blockSignals(False)
+
+    def default(self):
+        additional_information = self.parameter.split('_')[0]  # Get name of process
+        additional_information = "withName: " + additional_information
+        value = int(self.nf_settings_parser.get(f"cpus", additional_information=additional_information))
+        self.setValue(value)

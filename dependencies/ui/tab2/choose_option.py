@@ -15,6 +15,7 @@ class choose_option(QComboBox):
             self.addItems(["local", "slurm_cluster"])
         self.parser = custom_config_parser()
         self.parser.load(settings_file)
+        self.default()
         self.currentIndexChanged.connect(self.selectionchange)
 
     def selectionchange(self,i):
@@ -38,3 +39,10 @@ class choose_option(QComboBox):
             for child in children:
                 if hasattr(child, "hidden_object"):
                     child.hide()
+
+    def default(self):
+        if self.parameter == 'profile':
+            index = self.findText(self.parser.get("PROFILE"))
+        else:
+            index = self.findText(self.parser.get(f"params.{self.parameter}"))
+        self.setCurrentIndex(index)

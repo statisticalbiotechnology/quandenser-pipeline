@@ -11,10 +11,7 @@ class parameter_setter_single(QSpinBox):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.parameter = parameter
-        if self.parameter == "max_missing":  # Quandenser
-            self.setValue(3)
-        elif self.parameter == "missed_clevages":  # Crux
-            self.setValue(2)
+        self.default()
         self.valueChanged.connect(self.check_value)
 
     def check_value(self):
@@ -23,6 +20,10 @@ class parameter_setter_single(QSpinBox):
                                       self.value(),
                                       isString=False)
         self.blockSignals(False)
+
+    def default(self):
+        value = int(self.nf_settings_parser.get(f"params.{self.parameter}"))
+        self.setValue(value)
 
 class parameter_setter_double(QDoubleSpinBox):
     def __init__(self, parameter, nf_settings_path):
@@ -31,12 +32,7 @@ class parameter_setter_double(QDoubleSpinBox):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.parameter = parameter
-        if self.parameter == "precursor_window":  # Crux
-            self.setSuffix(" ppm")
-            self.setValue(20.0)
-        if self.parameter == "fold_change_eval":  # Triqler
-            self.setValue(0.8)
-            self.setSingleStep(0.05)
+        self.default()
         self.valueChanged.connect(self.check_value)
 
     def check_value(self):
@@ -45,3 +41,11 @@ class parameter_setter_double(QDoubleSpinBox):
                                       self.value(),
                                       isString=False)
         self.blockSignals(False)
+
+    def default(self):
+        if self.parameter == "precursor_window":  # Crux
+            self.setSuffix(" ppm")
+        if self.parameter == "fold_change_eval":  # Triqler
+            self.setSingleStep(0.05)
+            
+        value = float(self.nf_settings_parser.get(f"params.{self.parameter}"))
