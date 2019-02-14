@@ -153,7 +153,7 @@ while true; do
     crash_count=0  # Reset
     PIPE_write "exit_code" "2"  # Write pid to pipe
     PIPE_write "started" "true"
-    nohup $config_location/run_quandenser.sh & disown
+    nohup $config_location/run_quandenser.sh </dev/null >/dev/null 2>&1 & disown
     pid=$!
     PIPE_write "pid" $pid  # Write pid to pipe
   elif [ "$result" = "1" ]; then
