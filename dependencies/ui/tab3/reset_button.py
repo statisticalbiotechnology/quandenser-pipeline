@@ -23,20 +23,21 @@ class reset_button(QPushButton):
         for file in files:
             print(Fore.YELLOW + f"Replaced {file}" + Fore.RESET)
             os.remove(f"{self.config_path}/{file}")
-            shutil.copyfile(f"../config/{file}", f"{self.config_path}/{file}")
+            shutil.copyfile(f"config/{file}", f"{self.config_path}/{file}")
             os.chmod(f"{self.config_path}/{file}", 0o700)  # Only user will get access
 
         nf_parser = custom_config_parser()
         nf_parser.load(self.config_path + "/nf.config")
 
         # Read parent
-        parent = self.parentWidget()
+        window = self.window()
+        self.recurse_children(window)
 
-        # Get children
-        children = parent.findChildren(QDoubleSpinBox)
-        children.extend(parent.findChildren(QSpinBox))
-
-        # Same as main.py
+    def recurse_children(self, parent):
+        children = parent.children()
+        if children == []:
+            return
         for child in children:
-            parameter = child.parameter
-            child.setValue(float(nf_parser.get(f"params.{parameter}")))
+            if hasattr(child, 'default'):
+                child.default()
+            self.recurse_children(child)  # WE HAVE TO GO DEEPER!
