@@ -124,5 +124,9 @@ venv.bak/
 # Index files
 **/*.index
 
+# SIF files from build
 # SIF files
 *.SIF
+
+# Output folder (for testing)
+output/**
