@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame
+from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame, QTableWidget
 
 from custom_config_parser import custom_config_parser
 
@@ -21,6 +21,9 @@ class choose_option(QComboBox):
     def selectionchange(self,i):
         if self.parameter == 'workflow':
             self.parser.write("params.workflow", self.currentText())
+            self.window()
+            window = self.window()
+            self.recurse_children(window)
         elif self.parameter == 'parallell_msconvert':
             self.parser.write("params.parallell_msconvert", self.currentText(), isString=False)
         elif self.parameter == 'profile':
@@ -46,3 +49,13 @@ class choose_option(QComboBox):
         else:
             index = self.findText(self.parser.get(f"params.{self.parameter}"))
         self.setCurrentIndex(index)
+
+    def recurse_children(self, parent):
+        children = parent.children()
+        if children == []:
+            return
+        for child in children:
+            if isinstance(child, QTableWidget) and child.__class__.__name__ == "batch_file_viewer":
+                child.update()
+                return
+            self.recurse_children(child)  # WE HAVE TO GO DEEPER!
