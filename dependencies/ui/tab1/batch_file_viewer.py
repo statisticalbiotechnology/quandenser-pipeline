@@ -4,9 +4,14 @@ from PySide2.QtGui import QColor, QKeySequence, QClipboard
 import os
 from difflib import SequenceMatcher
 
+# Custom parser for both sh files and nf configs
+from custom_config_parser import custom_config_parser
+
 class batch_file_viewer(QTableWidget):
-    def __init__(self):
+    def __init__(self, nf_settings_path):
         super(batch_file_viewer,self).__init__(parent = None)
+        self.nf_settings_parser = custom_config_parser()
+        self.nf_settings_parser.load(nf_settings_path)
         self.setRowCount(20)
         self.setColumnCount(2)
         # Fill all places so there are no "None" types in the table
@@ -44,33 +49,31 @@ class batch_file_viewer(QTableWidget):
 
     def pick_color(self, row, column):
         """Triggered by check_cell"""
-        item = self.item(row, column)
-        if column == 0:
-            if item is None:  # NOTE: item == None will give NotImplementedError. Must use "is"
-                return  # This might remove some weird errors in the future
-            elif not os.path.isfile(item.text()):
-                item.setForeground(QColor('red'))
-            elif item.text().split('.')[-1] == "mzML":
-                item.setForeground(QColor(0,255,150))
-            elif item.text().split('.')[-1] != "mzML":
-                item.setForeground(QColor(30,150,255))
-                #R: 51 G: 65 B: 76
-            label = self.item(row, column + 1)
-            if self.item(row, column).text() == '':
-                label.setBackground(self.original_background)
-                label.setForeground(QColor(255,255,255))
-            elif label.text() == '':
-                label.setBackground(QColor('red'))
-        elif column == 1:
-            label = self.item(row, column)
-            if self.item(row, column - 1).text() == '':
-                label.setBackground(self.original_background)
-                label.setForeground(QColor('white'))
-            elif self.item(row, column - 1).text() != '' and label.text() != '':
-                label.setBackground(self.original_background)
-                label.setForeground(QColor(0,255,150))
-            else:
-                label.setBackground(QColor('red'))
+        msfile = self.item(row, 0)
+        label = self.item(row, 1)
+        if label is None or msfile is None:  # NOTE: item == None will give NotImplementedError. Must use "is"
+            return  # This might remove some weird errors in the future
+
+        # Ms file
+        if not os.path.isfile(msfile.text()):
+            msfile.setForeground(QColor('red'))
+        elif msfile.text().split('.')[-1] == "mzML":
+            msfile.setForeground(QColor(0,255,150))
+        elif msfile.text().split('.')[-1] != "mzML":
+            msfile.setForeground(QColor(30,150,255))
+
+        workflow = self.nf_settings_parser.get('params.workflow')
+        if msfile.text() == '':
+            label.setBackground(self.original_background)
+            label.setForeground(QColor('white'))
+        elif label.text() == '' and os.path.isfile(msfile.text()) and workflow == "Full":
+            label.setBackground(QColor('red'))
+        elif os.path.isfile(msfile.text()) and label.text() != '':
+            label.setBackground(self.original_background)
+            label.setForeground(QColor(0,255,150))
+        else:
+            label.setBackground(self.original_background)
+            label.setForeground(QColor('white'))
 
     def update(self):
         for row in range(self.rowCount()):

@@ -112,7 +112,7 @@ class Main(QMainWindow):
         self.tab1_fasta_chooser = file_chooser(type='fasta')
         self.tab1_database_viewer = file_viewer(type='file')
         self.tab1_ms_chooser = file_chooser(type='ms')
-        self.tab1_batch_file_viewer = batch_file_viewer()
+        self.tab1_batch_file_viewer = batch_file_viewer(self.nf_settings_path)
         self.tab1_output_chooser = file_chooser(type='directory')
         self.tab1_output_viewer = file_viewer(type='directory')
         self.tab1_run_button = run_button(self.nf_settings_path, self.sh_script_path, self.pipe_path)
