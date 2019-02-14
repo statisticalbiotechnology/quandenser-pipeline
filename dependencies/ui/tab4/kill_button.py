@@ -16,4 +16,5 @@ class kill_button(QPushButton):
         process = subprocess.Popen([f"pkill -15 -P {self.ppid}"],
                                     stdout=subprocess.PIPE,
                                     shell=True)
+        print(Fore.RED + f"Killed process with pid {self.ppid} and its children" + Fore.RESET)
         return 0
