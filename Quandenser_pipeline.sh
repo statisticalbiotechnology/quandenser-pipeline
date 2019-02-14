@@ -58,7 +58,7 @@ cd "$(dirname "$0")"
   singularity --version | grep -q "version" && :
 } || { # catch
   while true; do
-    printf "${GREEN}Singularity is not installed, requires sudo privileges. Y/y to install or N/n to cancel ${RESET}"
+    printf "${GREEN}Singularity is not installed. Y/y to install (requires sudo privileges) or N/n to cancel ${RESET}"
     read accept
     if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
       # NOTE: it should be possible to install for just user (aka without sudo)
@@ -68,24 +68,25 @@ cd "$(dirname "$0")"
       {  # try
         sudo apt-get update && \
         sudo apt-get install -y build-essential \
-        libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git
-        export VERSION=1.11.4 OS=linux ARCH=amd64  # change this as you need
+        libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git && \
+        export VERSION=1.11.4 OS=linux ARCH=amd64 && \ # change this as you need
         wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
-        sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
+        sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz && \
         echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
         echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
         export GOPATH=${HOME}/go && \
         export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin && \
-        source ~/.bashrc
+        source ~/.bashrc && \
         mkdir -p ${GOPATH}/src/github.com/sylabs && \
         cd ${GOPATH}/src/github.com/sylabs && \
         git clone https://github.com/sylabs/singularity.git && \
-        cd singularity
+        cd singularity && \
         cd ${GOPATH}/src/github.com/sylabs/singularity && \
         ./mconfig && \
         cd ./builddir && \
         make && \
-        sudo make install
+        sudo make install && \
+        printf "${GREEN}Singularity successfully installed${RESET}"
       } || { # catch
         printf "${RED}Singularity failed to install. Do you have root access? ${RESET}"
         exit 1
@@ -108,6 +109,7 @@ if [ ! -f SingulQuand.SIF ]; then
       printf "${GREEN}Installing Singularity container${RESET}"
       {  # try
         singularity pull SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline && \
+        printf "${GREEN}Singularity container successfully installed${RESET}"
       } || {
         printf "${RED}Downloading the container failed${RESET}"
         exit 1
