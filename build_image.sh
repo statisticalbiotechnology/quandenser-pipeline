@@ -1,4 +1,4 @@
 #!/bin/bash
-sudo SINGULARITY_TMPDIR=/media/storage/timothy/tmp singularity build SingulQuand.SIF Singularity
+sudo SINGULARITY_TMPDIR=/tmp singularity build SingulQuand.SIF Singularity
 
-# Note, remove "SINGULARITY_TMPDIR" when done
+# Note, You can change the tmpdir to another location
