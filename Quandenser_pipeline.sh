@@ -1,10 +1,10 @@
 #!/bin/bash
 
 config_location="/var/tmp/quandenser_pipeline_$USER"
-GREEN="\033[1;92m"
-RED="\033[1;31m"
-BLUE="\033[1;34m"
-YELLOW="\033[1;93m"
+GREEN="\033[0;92m"
+RED="\033[0;31m"
+BLUE="\033[0;34m"
+YELLOW="\033[0;93m"
 RESET="\033[0m\n"
 
 function PIPE_read() {
@@ -34,6 +34,7 @@ function read_command() {
 for var in "$@"
 do
   if [ "$var" = "-h" ] || [ "$var" = "--help" ]; then
+    echo ""  # Empty row
     printf "${GREEN}Quandenser-pipeline HELP$RESET"
     printf "Usage:\n"
     printf "${BLUE}./Open_UI.sh <path_to_mount>$RESET"
@@ -123,7 +124,7 @@ done
 if [ -f $config_location/PIPE ]; then
   PIPE_write "custom_mounts" "$mount_point"
 else
-  echo "PIPE not found. It will be created when running the GUI"
+  printf "${YELLOW}PIPE not found. It will be created when running the GUI${RESET}"
 fi
 if [ -f $config_location/PIPE ]; then
   PIPE_write "exit_code" "2"  # Write pid to pipe
