@@ -35,6 +35,7 @@ from tab5.about import about
 
 # Custom parser
 from custom_config_parser import custom_config_parser
+from tooltip_label import tooltip_label
 
 # Utils
 from utils import check_corrupt, check_running, ERROR
@@ -185,9 +186,13 @@ class Main(QMainWindow):
         self.tab2_rightbox_layout = QHBoxLayout()
         self.tab2_rightbox.setLayout(self.tab2_rightbox_layout)
 
-        self.tab2_workflow = workflow()
-        self.tab2_rightbox_layout.addWidget(self.tab2_workflow)
+        if self.pipe_parser.get('disable-opengl') in ['false', '']:
+            self.tab2_workflow = workflow()
+            self.tab2_rightbox_layout.addWidget(self.tab2_workflow)
+        else:
+            self.tab2_workflow = tooltip_label("OpenGL disabled", "OpenGL disabled")
 
+        self.tab2_rightbox_layout.addWidget(self.tab2_workflow)
         self.tab2_layout.addWidget(self.tab2_rightbox)
 
         # Combine
@@ -230,7 +235,11 @@ class Main(QMainWindow):
         self.tab5 = QWidget()
         self.tab5_layout = QVBoxLayout()
         self.tab5.setLayout(self.tab5_layout)
-        self.tab5_about = about()
+
+        if self.pipe_parser.get('disable-opengl') in ['false', '']:
+            self.tab5_about = about()
+        else:
+            self.tab5_about = tooltip_label("OpenGL disabled", "OpenGL disabled")
         self.tab5_layout.addWidget(self.tab5_about)
 
     def closeEvent(self, event):
