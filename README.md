@@ -5,10 +5,10 @@
 [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2356)
 
 ## How to install
-Go to releases and download ''Quandenser_pipeline.sh'' and run the shell script. The shell script will handle the rest!
+Go to releases and download *Quandenser_pipeline.sh* and run the shell script. The shell script will handle the rest!
 
 ## Usage
-Go to the directory where ''Quandenser_pipeline.sh'' is installed and run the command
+Go to the directory where *Quandenser_pipeline.sh* is installed and run the command
 
     ./Quandenser_pipeline.sh
 
@@ -24,9 +24,9 @@ settings!
 
 
 ## Description
-Quandenser-pipeline is a tool to analyze label-free MS data, from (almost) any vendor format alongside a fasta
-database with proteins to .tsv files containing which proteins are in the sample + a lot of other parameters.
-The aim of the pipeline is to streamline the process from using proteome MS files to actual results.
+*Quandenser-pipeline* is a tool that combines *Quandenser*, a tool which condenses label-free MS data and *Triqler*, a tool which finds differentially expressed proteins using both MS1 and MS2 data. *Quandenser-pipeline* streamlines the process, by accepting almost any vendor format alongside a fasta database containing proteins, which are then run through a Singularity image containing all the necessary parts to do the analysis. 
+
+
 
 <img src="/images/gui.png" width="1000" height="800">
 
