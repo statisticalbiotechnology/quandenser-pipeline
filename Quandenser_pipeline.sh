@@ -129,21 +129,32 @@ if (( $EUID == 0 )); then
     exit 0
 fi
 
-# Initialize parameters
-declare -i crash_count=0
+# Check arguments
 mount_point=""
 for var in "$@"
 do
-  mount_point+=" --bind $var:$var"
+  if [[ -d $var ]]; then
+    mount_point+=" --bind $var:$var"
+  elif [[ "$var" = "--disable-opengl" ]]; then
+    PIPE_write "disable-opengl" "true"
+  else
+    PIPE_write "disable-opengl" "false"
+  fi
+
 done
 if [ -f $config_location/PIPE ]; then
   PIPE_write "custom_mounts" "$mount_point"
 else
   printf "${YELLOW}PIPE not found. It will be created when running the GUI${RESET}"
 fi
+
+
 if [ -f $config_location/PIPE ]; then
   PIPE_write "exit_code" "2"  # Write pid to pipe
 fi
+
+# Initialize parameters
+declare -i crash_count=0
 
 while true; do
   singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF
