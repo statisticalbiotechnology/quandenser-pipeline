@@ -29,7 +29,6 @@ function read_command() {
   echo $exit_code
 }
 
-
 # Check for help
 for var in "$@"
 do
@@ -37,7 +36,12 @@ do
     echo ""  # Empty row
     printf "${GREEN}Quandenser-pipeline HELP$RESET"
     printf "Usage:\n"
-    printf "${BLUE}./Open_UI.sh <path_to_mount>$RESET"
+    printf "${BLUE}  ./Open_UI.sh <path_to_mount>$RESET"
+    echo ""  # Empty row
+    printf "Description:\n"
+    printf "${BLUE}  PLACEHOLDER$RESET"
+    printf "Options:\n"
+    printf "${BLUE}  --disable-opengl\t This will disable opengl. Can be useful if the program crashes when switching to Edit Workflow or About tab$RESET"
     exit 0
   fi
 done
