@@ -1,4 +1,4 @@
-# Quandenser-pipeline <img align='right' src="/images/logo.png"  width="50" height="50">
+# Quandenser-pipeline <img align='right' src="/images/logo.png" height="50">
 
 ## A Nextflow/Singularity pipeline for Quandenser
 
@@ -56,5 +56,5 @@ If you have come all the way down here in the README, you might be interested in
 Simply clone the repository with git or download it [here](https://github.com/statisticalbiotechnology/quandenser-pipeline/archive/master.zip). Unzip the directory and cd inside, then run "./build_image.sh" and it will build everything for you! (However, this requires both Singularity and sudo privileges, so run the release first to install Singularity)
 
 
-<img src="/images/logo.png"  width="128" height="128">
+<img src="/images/logo.png" height="128">
  <small>&copy; Copyright 2019, Timothy Bergström</small>
