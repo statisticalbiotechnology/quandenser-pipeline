@@ -10,3 +10,4 @@ exit_code=2
 pid=
 custom_mounts=
 started=
+disable-opengl=
