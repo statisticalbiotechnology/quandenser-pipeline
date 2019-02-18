@@ -41,6 +41,7 @@ do
     printf "${BLUE}  PLACEHOLDER$RESET"
     printf "Options:\n"
     printf "${BLUE}  --disable-opengl\t This will disable opengl. Can be useful if the program crashes when switching to Edit Workflow or About tab$RESET"
+    printf "${BLUE}  --enable-opengl\t This will enable opengl. Can be used when the user has disabled opengl and wants to reset$RESET"
     exit 0
   fi
 done
@@ -143,9 +144,9 @@ for var in "$@"
 do
   if [[ -d $var ]]; then  # If it is a path, add it to mount list
     mount_point+=" --bind $var:$var"
-  elif [[ "$var" = "--disable-opengl" ]]; then  # Check if user wants to disable opengl
+  elif [[ "$var" = "--disable-opengl" ]]; then  # Check if user wants to disable opengl, will remember it for next time
     PIPE_write "disable-opengl" "true"
-  else
+  elif [[ "$var" = "--enable-opengl" ]]; then  # Check if user wants to enable opengl
     PIPE_write "disable-opengl" "false"
   fi
 done
