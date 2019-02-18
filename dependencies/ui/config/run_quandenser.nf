@@ -103,7 +103,7 @@ process quandenser {
   script:
 	"""
   #--dinosaur-memory 16G
-	quandenser --batch list.txt --max-missing ${params.max_missing}
+	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
 	"""
 }
 
@@ -120,9 +120,9 @@ process tide_perc_search {
     params.workflow == "Full"
   script:
 	"""
-  crux tide-index --missed-cleavages ${params.missed_clevages} --mods-spec 2M+15.9949 --decoy-format protein-reverse seqdb.fa ${seq_index_name}
-	crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name}
-	crux percolator --top-match 1 crux-output/tide-search.txt
+  crux tide-index --missed-cleavages ${params.missed_clevages} --mods-spec 2M+15.9949 --decoy-format protein-reverse seqdb.fa ${seq_index_name} ${params.crux_index_additional_arguments}
+	crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name} ${params.crux_search_additional_arguments}
+	crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments}
   """
 }
 
@@ -141,7 +141,7 @@ process triqler {
   script:
 	"""
 	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-	triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv
+	triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments}
   """
 }
 
