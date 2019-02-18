@@ -1,4 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	rss	vmem	rchar	wchar
-1	d3/488da7	11615	quandenser	COMPLETED	0	2019-01-23 15:01:15.657	1h 44m 14s	1h 44m 11s	754.5%	15.5 GB	24 GB	36.4 GB	4.6 GB
-2	c1/9cdce3	7747	tide_perc_search	COMPLETED	0	2019-01-23 16:45:29.895	41.2s	40.4s	276.9%	484.5 MB	1.1 GB	437 MB	103.5 MB
-3	8c/fb2e19	9434	triqler	COMPLETED	0	2019-01-23 16:46:11.108	1m 31s	1m 30s	756.6%	4.4 GB	6.4 GB	705.2 MB	575.2 MB

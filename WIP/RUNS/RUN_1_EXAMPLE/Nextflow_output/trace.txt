@@ -1,5 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	rss	vmem	rchar	wchar
-2	f7/f31c66	6152	tide_indexing	COMPLETED	0	2019-01-17 17:09:31.688	490ms	260ms	104.1%	27.2 MB	146.1 MB	4 MB	2.7 MB
-1	1d/482ba9	6168	quandenser	COMPLETED	0	2019-01-17 17:09:31.700	1h 45m 45s	1h 45m 40s	786.2%	15.6 GB	24 GB	36.4 GB	4.5 GB
-3	89/042a75	21358	tide_perc_search	COMPLETED	0	2019-01-17 18:55:16.566	43.2s	42.1s	275.7%	419.6 MB	1.1 GB	426.7 MB	94.2 MB
-4	b8/92a559	22383	triqle	COMPLETED	0	2019-01-17 18:55:59.794	1m 25s	1m 20s	780.3%	4.5 GB	6.5 GB	643.1 MB	517.2 MB
