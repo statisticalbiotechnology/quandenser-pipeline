@@ -181,7 +181,7 @@ while true; do
       printf "${RED}The GUI crashed 3 times. Aborting${RESET}"
       printf "${RED}If you are on a cluster, be aware that you need to enable the X11 server ${RESET}"
       printf "${RED}by using the command ssh -X ...${RESET}"
-      printf "${RED}Look at the crash log in the console for additonal information${RESET}"
+      printf "${RED}Look at the crash log in the console for additional information${RESET}"
       break
     fi
   fi
