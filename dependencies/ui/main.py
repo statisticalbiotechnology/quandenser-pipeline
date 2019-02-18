@@ -17,25 +17,11 @@ from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableW
 from PySide2.QtGui import QIcon, QFontDatabase
 from PySide2 import QtCore
 
-# Widgets
-from tab1.file_chooser import file_chooser
-from tab1.file_viewer import file_viewer
-from tab1.batch_file_viewer import batch_file_viewer
-from tab1.run_button import run_button
-
-from tab2.workflow import workflow
-from tab2.choose_option import choose_option
-from tab2.cluster_arguments import cluster_arguments
-from tab2.set_time import set_time
-from tab2.set_cpus import set_cpus
-
-from tab3.additional_arguments import additional_arguments
-from tab3.parameter_setter import parameter_setter_double, parameter_setter_single
-from tab3.reset_button import reset_button
-
-from tab4.running_jobs import running_jobs
-
-from tab5.about import about
+from tab1.init_tab1 import init_tab1
+from tab2.init_tab2 import init_tab2
+from tab3.init_tab3 import init_tab3
+from tab4.init_tab4 import init_tab4
+from tab5.init_tab5 import init_tab5
 
 # Custom parser
 from custom_config_parser import custom_config_parser
@@ -60,24 +46,27 @@ class Main(QMainWindow):
 
         # Check file integrety
         check_corrupt(config_path)
-        self.ui_settings_path = f"{config_path}/ui.config"
-        self.nf_settings_path = f"{config_path}/nf.config"
-        self.sh_script_path = f"{config_path}/run_quandenser.sh"
-        self.pipe_path = f"{config_path}/PIPE"
+        self.paths = {}
+        self.paths['config'] = f"{config_path}"
+        self.paths['ui'] = f"{config_path}/ui.config"
+        self.paths['nf'] = f"{config_path}/nf.config"
+        self.paths['sh'] = f"{config_path}/run_quandenser.sh"
+        self.paths['pipe'] = f"{config_path}/PIPE"
+        self.paths['jobs'] = f"{config_path}/jobs.txt"
 
         # Open pipe and read
         self.pipe_parser = custom_config_parser()
-        self.pipe_parser.load(self.pipe_path)
+        self.pipe_parser.load(self.paths['pipe'])
         check_running(config_path)
         self.pipe_parser.write('exit_code', '2', isString=False)  # Add error code 2. If we manage to load, change to 1
 
         # To restore settings of window
-        self.settings_obj = QtCore.QSettings(self.ui_settings_path, QtCore.QSettings.IniFormat)
+        self.settings_obj = QtCore.QSettings(self.paths['ui'], QtCore.QSettings.IniFormat)
         # Restore window's previous geometry from file
         self.setMinimumWidth(300)
         self.setMinimumHeight(200)
         self.initUI()
-        if os.path.exists(self.ui_settings_path):
+        if os.path.exists(self.paths['ui']):
             self.restoreGeometry(self.settings_obj.value("windowGeometry"))
             self.restoreState(self.settings_obj.value("State_main"))
             children = self.children()
@@ -93,11 +82,11 @@ class Main(QMainWindow):
         self.tabs.currentChanged.connect(self.tab_changed)
 
         # Init tabs
-        self.inittab1()  # Tab 1
-        self.inittab2()  # Tab 2
-        self.inittab3()  # Tab 3
-        self.inittab4()  # Tab 4
-        self.inittab5()  # Tab 5
+        self.tab1 = init_tab1(self.paths)  # Tab 1
+        self.tab2 = init_tab2(self.paths)  # Tab 2
+        self.tab3 = init_tab3(self.paths)  # Tab 3
+        self.tab4 = init_tab4(self.paths)  # Tab 4
+        self.tab5 = init_tab5(self.paths)  # Tab 5
 
         # Add the tabs
         self.tabs.addTab(self.tab1, "MS files")
@@ -106,153 +95,35 @@ class Main(QMainWindow):
         self.tabs.addTab(self.tab4, "Running jobs")
         self.tabs.addTab(self.tab5, "About")
         self.setCentralWidget(self.tabs)
-
         self.show()
 
-    def inittab1(self):
-        self.tab1 = QWidget()
-        self.tab1_layout = QVBoxLayout()
-        self.tab1.setLayout(self.tab1_layout)
 
-        # Widgets in leftbox
-        self.tab1_fasta_chooser = file_chooser(self.pipe_path, type='fasta')
-        self.tab1_database_viewer = file_viewer(type='file')
-        self.tab1_ms_chooser = file_chooser(self.pipe_path, type='ms')
-        self.tab1_batch_file_viewer = batch_file_viewer(self.nf_settings_path)
-        self.tab1_output_chooser = file_chooser(self.pipe_path, type='directory')
-        self.tab1_output_viewer = file_viewer(type='directory')
-        self.tab1_run_button = run_button(self.nf_settings_path, self.sh_script_path, self.pipe_path)
+    def tab_changed(self, index):
+        if self.tabs.tabText(index) == "Edit workflow":
 
-        self.tab1_layout.addWidget(self.tab1_fasta_chooser, 0, QtCore.Qt.AlignCenter)
-        self.tab1_layout.addWidget(self.tab1_database_viewer)
-        self.tab1_layout.addWidget(self.tab1_ms_chooser, 0, QtCore.Qt.AlignCenter)
-        self.tab1_layout.addWidget(self.tab1_batch_file_viewer)
-        self.tab1_layout.addWidget(self.tab1_output_chooser, 0, QtCore.Qt.AlignCenter)
-        self.tab1_layout.addWidget(self.tab1_output_viewer)
-        self.tab1_layout.addWidget(self.tab1_run_button)
+            def recurse_children(parent):  # not "self.recurse_children"
+                children = parent.children()
+                for child in children:
+                    if hasattr(child, 'parameter'):
+                        if child.parameter == 'profile':
+                            child.check_hidden()
+                    else:
+                        recurse_children(child)
 
-    def inittab2(self):
-        self.tab2 = QWidget()
-        self.tab2_layout = QHBoxLayout()
-        self.tab2.setLayout(self.tab2_layout)
+            recurse_children(self.tab2)
+        elif self.tabs.tabText(index) == "Running jobs":
 
-        # Left box
-        self.tab2_leftbox = QWidget()
-        self.tab2_leftbox_layout = QVBoxLayout()
-        self.tab2_leftbox.setLayout(self.tab2_leftbox_layout)
+            def recurse_children(parent):  # not "self.recurse_children"
+                children = parent.children()
+                for child in children:
+                    if hasattr(child, 'update'):
+                        child.update()
+                    else:
+                        recurse_children(child)
 
-        # Top
-        self.tab2_leftbox_top = QWidget()
-        self.tab2_leftbox_top_layout = QFormLayout()
-        self.tab2_leftbox_top.setLayout(self.tab2_leftbox_top_layout)
+            recurse_children(self.tab4)
 
-        self.tab2_choose_option_workflow = choose_option(self.nf_settings_path, 'workflow')
-        self.tab2_choose_option_parallell_msconvert = choose_option(self.nf_settings_path, 'parallell_msconvert')
-        self.tab2_choose_option_profile = choose_option(self.sh_script_path, 'profile')
-
-        # Always visible
-        self.tab2_leftbox_top_layout.addRow(QLabel('Choose pipeline'), self.tab2_choose_option_workflow)
-        self.tab2_leftbox_top_layout.addRow(QLabel('Enable parallell MSconvert'), self.tab2_choose_option_parallell_msconvert)
-        self.tab2_leftbox_top_layout.addRow(QLabel('Profile'), self.tab2_choose_option_profile)
-        self.tab2_leftbox_layout.addWidget(self.tab2_leftbox_top)
-
-        # Bottom, these will be hidden or shown depending on profile option
-        self.tab2_hidden = QWidget()
-        self.tab2_hidden.hidden_object = True
-        self.tab2_hidden_layout = QFormLayout()
-        self.tab2_hidden.setLayout(self.tab2_hidden_layout)
-
-        self.tab2_cluster_arguments = cluster_arguments("process.clusterOptions", self.nf_settings_path)
-        self.tab2_cluster_queue = cluster_arguments("process.queue", self.nf_settings_path)
-        self.tab2_parameter_msconvert_cpus = set_cpus("msconvert_cpus", self.nf_settings_path)
-        self.tab2_parameter_msconvert_time = set_time("msconvert_time", self.nf_settings_path)
-        self.tab2_parameter_quandenser_cpus = set_cpus("quandenser_cpus", self.nf_settings_path)
-        self.tab2_parameter_quandenser_time = set_time("quandenser_time", self.nf_settings_path)
-        self.tab2_parameter_tide_search_cpus = set_cpus("tide_search_cpus", self.nf_settings_path)
-        self.tab2_parameter_tide_search_time = set_time("tide_search_time", self.nf_settings_path)
-        self.tab2_parameter_triqler_cpus = set_cpus("triqler_cpus", self.nf_settings_path)
-        self.tab2_parameter_triqler_time = set_time("triqler_time", self.nf_settings_path)
-
-        # Hidden depending on setting
-        self.tab2_hidden_layout.addRow(QLabel('Cluster arguments'), self.tab2_cluster_arguments)
-        self.tab2_hidden_layout.addRow(QLabel('Cluster queue'), self.tab2_cluster_queue)
-        self.tab2_hidden_layout.addRow(QLabel('MSconvert cpus'), self.tab2_parameter_msconvert_cpus)
-        self.tab2_hidden_layout.addRow(QLabel('MSconvert time'), self.tab2_parameter_msconvert_time)
-        self.tab2_hidden_layout.addRow(QLabel('Quandenser cpus'), self.tab2_parameter_quandenser_cpus)
-        self.tab2_hidden_layout.addRow(QLabel('Quandenser time'), self.tab2_parameter_quandenser_time)
-        self.tab2_hidden_layout.addRow(QLabel('Tide search cpus'), self.tab2_parameter_tide_search_cpus)
-        self.tab2_hidden_layout.addRow(QLabel('Tide search time'), self.tab2_parameter_tide_search_time)
-        self.tab2_hidden_layout.addRow(QLabel('Triqler cpus'), self.tab2_parameter_triqler_cpus)
-        self.tab2_hidden_layout.addRow(QLabel('Triqler time'), self.tab2_parameter_triqler_time)
-        self.tab2_leftbox_layout.addWidget(self.tab2_hidden)
-
-        # Right box
-        self.tab2_rightbox = QWidget()
-        self.tab2_rightbox_layout = QHBoxLayout()
-        self.tab2_rightbox.setLayout(self.tab2_rightbox_layout)
-
-        if self.pipe_parser.get('disable-opengl') in ['false', '']:
-            self.tab2_workflow = workflow()
-            self.tab2_rightbox_layout.addWidget(self.tab2_workflow)
-        else:
-            self.tab2_workflow = tooltip_label("OpenGL disabled", "OpenGL disabled")
-
-        self.tab2_rightbox_layout.addWidget(self.tab2_workflow)
-        self.tab2_layout.addWidget(self.tab2_rightbox)
-
-        # Combine
-        self.tab2_layout.addWidget(self.tab2_leftbox)
-        self.tab2_layout.addWidget(self.tab2_rightbox)
-
-    def inittab3(self):
-        self.tab3 = QWidget()
-        self.tab3_layout = QFormLayout()
-        self.tab3.setLayout(self.tab3_layout)
-
-        self.tab3_msconvert_arguments = additional_arguments(self.nf_settings_path, type='msconvert_additional_arguments')
-        self.tab3_parameter_max_missing = parameter_setter_single("max_missing", self.nf_settings_path)  # Quandenser
-        self.tab3_quandenser_arguments = additional_arguments(self.nf_settings_path, type='quandenser_additional_arguments')
-        self.tab3_parameter_missed_clevages = parameter_setter_single("missed_clevages", self.nf_settings_path)  # Crux
-        self.tab3_parameter_precursor_window = parameter_setter_double("precursor_window", self.nf_settings_path)  # Crux
-        self.tab3_crux_arguments = additional_arguments(self.nf_settings_path, type='crux_additional_arguments')
-        self.tab3_parameter_fold_change_eval = parameter_setter_double("fold_change_eval", self.nf_settings_path)  # Triqler
-        self.tab3_triqler_arguments = additional_arguments(self.nf_settings_path, type='triqler_additional_arguments')
-        self.tab3_reset_button = reset_button(config_path)
-
-        self.tab3_layout.addRow(QLabel('<b>MSconvert'), QLabel())
-        self.tab3_layout.addRow(QLabel('MSconvert additional arguments'), self.tab3_msconvert_arguments)
-        self.tab3_layout.addRow(QLabel('<b>Quandenser'), QLabel())
-        self.tab3_layout.addRow(QLabel('Max missing'), self.tab3_parameter_max_missing)
-        self.tab3_layout.addRow(QLabel('Quandenser additional_arguments'), self.tab3_quandenser_arguments)
-        self.tab3_layout.addRow(QLabel('<b>Crux'), QLabel())
-        self.tab3_layout.addRow(QLabel('Missed clevages'), self.tab3_parameter_missed_clevages)
-        self.tab3_layout.addRow(QLabel('Precursor window'), self.tab3_parameter_precursor_window)
-        self.tab3_layout.addRow(QLabel('Crux additional_arguments'), self.tab3_crux_arguments)
-        self.tab3_layout.addRow(QLabel('<b>Triqler'), QLabel())
-        self.tab3_layout.addRow(QLabel('Fold change evaluation'), self.tab3_parameter_fold_change_eval)
-        self.tab3_layout.addRow(QLabel('Triqler additional_arguments'), self.tab3_triqler_arguments)
-        self.tab3_layout.addWidget(self.tab3_reset_button)
-
-    def inittab4(self):
-        self.tab4 = QWidget()
-        self.tab4_layout = QHBoxLayout()
-        self.tab4.setLayout(self.tab4_layout)
-
-        self.tab4_running_jobs = running_jobs(config_path + "/jobs.txt")
-
-        self.tab4_layout.addWidget(self.tab4_running_jobs)
-
-    def inittab5(self):
-        self.tab5 = QWidget()
-        self.tab5_layout = QVBoxLayout()
-        self.tab5.setLayout(self.tab5_layout)
-
-        if self.pipe_parser.get('disable-opengl') in ['false', '']:
-            self.tab5_about = about()
-        else:
-            self.tab5_about = tooltip_label("OpenGL disabled", "OpenGL disabled")
-        self.tab5_layout.addWidget(self.tab5_about)
-
+    """This is for loading and saving state of child widgets"""
     def closeEvent(self, event):
         self.settings_obj.setValue("windowGeometry", self.saveGeometry())
         self.settings_obj.setValue("State_main", self.saveState())
@@ -260,21 +131,12 @@ class Main(QMainWindow):
         self.widget_counter = 0  # Reset
         for child in children:
             self.recurse_children(child)
-
         # Clean exit
         exit_code = int(self.pipe_parser.get('exit_code'))
         if exit_code == 0:  # This means that it had been modified during runtime --> run button has been pressed
             pass
         else:
             self.pipe_parser.write('exit_code', '1', isString=False)
-
-    def tab_changed(self, index):
-        if self.tabs.tabText(index) == "Edit workflow":
-            self.tab2_choose_option_profile.check_hidden()
-        if self.tabs.tabText(index) == "Running jobs":
-            self.tab4_running_jobs.update()
-
-    """This is for loading and saving state of child widgets"""
 
     def recurse_children(self, parent, save=True):  # THIS DO NOT CREATE STACK SMASHING
         children = parent.children()
