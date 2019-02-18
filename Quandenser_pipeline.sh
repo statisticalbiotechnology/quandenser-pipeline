@@ -1,6 +1,5 @@
 #!/bin/bash
-
-config_location="/var/tmp/quandenser_pipeline_$USER"
+config_location="/var/tmp/quandenser_pipeline_$USER"  # Change depending on mac or linux
 GREEN="\033[0;92m"
 RED="\033[0;31m"
 BLUE="\033[0;34m"
@@ -29,7 +28,7 @@ function read_command() {
   echo $exit_code
 }
 
-# Check for help
+# Check for help before doing anything
 for var in "$@"
 do
   if [ "$var" = "-h" ] || [ "$var" = "--help" ]; then
@@ -133,35 +132,37 @@ if (( $EUID == 0 )); then
     exit 0
 fi
 
+# Initialize pipe before trying to write, this will be automacially done with the GUI as well
+# However, doing it here will allow users to add parameters without having to run and close the GUI
+# The GUI will work without this
+singularity exec --app quandenser_ui SingulQuand.SIF  python -c "from utils import check_corrupt; check_corrupt('${config_location}')"
+
 # Check arguments
 mount_point=""
 for var in "$@"
 do
-  if [[ -d $var ]]; then
+  if [[ -d $var ]]; then  # If it is a path, add it to mount list
     mount_point+=" --bind $var:$var"
-  elif [[ "$var" = "--disable-opengl" ]]; then
+  elif [[ "$var" = "--disable-opengl" ]]; then  # Check if user wants to disable opengl
     PIPE_write "disable-opengl" "true"
   else
     PIPE_write "disable-opengl" "false"
   fi
-
 done
+
 if [ -f $config_location/PIPE ]; then
   PIPE_write "custom_mounts" "$mount_point"
+  PIPE_write "exit_code" "2"
+  PIPE_write "pwd" "$(pwd)"  # Add the current location of the SIF file, which will be used to browse files
 else
-  printf "${YELLOW}PIPE not found. It will be created when running the GUI${RESET}"
+  printf "${YELLOW}PIPE not found. It will be created when running the GUI${RESET}"  # You should never get here
 fi
 
-
-if [ -f $config_location/PIPE ]; then
-  PIPE_write "exit_code" "2"  # Write pid to pipe
-fi
-
-# Initialize parameters
+# Initialize parameters as integer
 declare -i crash_count=0
 
 while true; do
-  singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF
+  singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF  # All parameters have to be close
   wait
   result=$(read_command)
   if [ "$result" = "0" ]; then
