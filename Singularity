@@ -131,5 +131,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="0.03"
+    VERSION="0.031"
     printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
