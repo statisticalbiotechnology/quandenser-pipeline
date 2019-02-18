@@ -15,6 +15,6 @@ def init_tab5(paths):
     if pipe_parser.get('disable-opengl') in ['false', '']:
         tab5_about = about()
     else:
-        tab5_about = tooltip_label("OpenGL disabled", "OpenGL disabled")
+        tab5_about = tooltip_label("OpenGL disabled", "OpenGL disabled", style=True)
     tab5_layout.addWidget(tab5_about)
     return tab5
