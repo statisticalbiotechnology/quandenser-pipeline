@@ -76,7 +76,7 @@ def init_tab2(paths):
         tab2_workflow = workflow()
         tab2_rightbox_layout.addWidget(tab2_workflow)
     else:
-        tab2_workflow = tooltip_label("OpenGL disabled", "OpenGL disabled")
+        tab2_workflow = tooltip_label("OpenGL disabled", "OpenGL disabled", style=True)
 
     tab2_rightbox_layout.addWidget(tab2_workflow)
     tab2_layout.addWidget(tab2_rightbox)
