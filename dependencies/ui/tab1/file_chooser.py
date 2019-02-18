@@ -2,13 +2,17 @@ import sys
 from PySide2.QtWidgets import QFileDialog, QPushButton, QTextEdit, QLineEdit, QTableWidget, QSizePolicy
 from PySide2.QtGui import QIcon
 
+from custom_config_parser import custom_config_parser
+
 class file_chooser(QPushButton):
 
-    def __init__(self, type='ms'):
+    def __init__(self, pipe_path, type='ms'):
         super(file_chooser,self).__init__(parent = None)
         self.setFixedWidth(200)
         self.type = type
         self.id = id
+        self.pipe_parser = custom_config_parser()
+        self.pipe_parser.load(pipe_path)
         if self.type=='ms':
             self.setText('Choose MS files')
         elif self.type=='fasta':
@@ -20,6 +24,7 @@ class file_chooser(QPushButton):
     def open_window(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
+        path = self.pipe_parser.get('pwd')
         if self.type=='ms':
             ms_file_types = [" *.mzML",
                              "*.mzml",
@@ -33,17 +38,19 @@ class file_chooser(QPushButton):
             choose_string += ";;".join(ms_file_types)
             output, _ = QFileDialog.getOpenFileNames(self,
                                                     "Choose MS files",
-                                                    "",
+                                                    path,
                                                     f"MS files ({choose_string});;All Files (*)",
                                                     options=options)
         elif self.type=='fasta':
             output, _ = QFileDialog.getOpenFileName(self,
                                                    "Choose fasta files",
-                                                   "",
+                                                   path,
                                                    "Fasta files (.*fasta | *.Fasta | *.FASTA);;All Files (*)",
                                                    options=options)
         elif self.type=='directory':
             output = QFileDialog.getExistingDirectory(self,
+                                                      "Choose an output directory",
+                                                      path,
                                                       options=options)
         if output:
             self.display_in_file_viewer(output)
