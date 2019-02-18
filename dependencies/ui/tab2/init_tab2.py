@@ -8,6 +8,7 @@ from tab2.set_time import set_time
 from tab2.set_cpus import set_cpus
 
 from custom_config_parser import custom_config_parser
+from tooltip_label import tooltip_label
 
 def init_tab2(paths):
     tab2 = QWidget()

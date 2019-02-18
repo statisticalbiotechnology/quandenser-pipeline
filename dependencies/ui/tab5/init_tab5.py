@@ -4,6 +4,7 @@ from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QFormLayout, QL
 from tab5.about import about
 
 from custom_config_parser import custom_config_parser
+from tooltip_label import tooltip_label
 
 def init_tab5(paths):
     tab5 = QWidget()
