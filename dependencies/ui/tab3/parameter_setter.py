@@ -47,5 +47,5 @@ class parameter_setter_double(QDoubleSpinBox):
             self.setSuffix(" ppm")
         if self.parameter == "fold_change_eval":  # Triqler
             self.setSingleStep(0.05)
-            
         value = float(self.nf_settings_parser.get(f"params.{self.parameter}"))
+        self.setValue(value)
