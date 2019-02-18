@@ -14,7 +14,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)  # Bug where futu
 from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QTabWidget
 from PySide2.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QFormLayout, QApplication, QDoubleSpinBox, QSpinBox
 from PySide2.QtWidgets import QLabel, QMainWindow, QComboBox, QTextEdit, QTableWidget, QMessageBox, QTableWidgetItem, QFrame
-from PySide2.QtGui import QIcon
+from PySide2.QtGui import QIcon, QFontDatabase
 from PySide2 import QtCore
 
 # Widgets
@@ -22,15 +22,19 @@ from tab1.file_chooser import file_chooser
 from tab1.file_viewer import file_viewer
 from tab1.batch_file_viewer import batch_file_viewer
 from tab1.run_button import run_button
+
 from tab2.workflow import workflow
 from tab2.choose_option import choose_option
 from tab2.cluster_arguments import cluster_arguments
 from tab2.set_time import set_time
 from tab2.set_cpus import set_cpus
-from tab3.msconvert_arguments import msconvert_arguments
+
+from tab3.additional_arguments import additional_arguments
 from tab3.parameter_setter import parameter_setter_double, parameter_setter_single
 from tab3.reset_button import reset_button
+
 from tab4.running_jobs import running_jobs
+
 from tab5.about import about
 
 # Custom parser
@@ -50,7 +54,8 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Quandenser-pipeline'
-        self.setWindowIcon(QIcon('logo.png'))
+        self.setWindowIcon(QIcon('images/logo.png'))
+        QFontDatabase.addApplicationFont("fonts/rockwell.ttf")
         self.resize(1000, 800)
 
         # Check file integrety
@@ -110,11 +115,11 @@ class Main(QMainWindow):
         self.tab1.setLayout(self.tab1_layout)
 
         # Widgets in leftbox
-        self.tab1_fasta_chooser = file_chooser(type='fasta')
+        self.tab1_fasta_chooser = file_chooser(self.pipe_path, type='fasta')
         self.tab1_database_viewer = file_viewer(type='file')
-        self.tab1_ms_chooser = file_chooser(type='ms')
+        self.tab1_ms_chooser = file_chooser(self.pipe_path, type='ms')
         self.tab1_batch_file_viewer = batch_file_viewer(self.nf_settings_path)
-        self.tab1_output_chooser = file_chooser(type='directory')
+        self.tab1_output_chooser = file_chooser(self.pipe_path, type='directory')
         self.tab1_output_viewer = file_viewer(type='directory')
         self.tab1_run_button = run_button(self.nf_settings_path, self.sh_script_path, self.pipe_path)
 
@@ -204,22 +209,28 @@ class Main(QMainWindow):
         self.tab3_layout = QFormLayout()
         self.tab3.setLayout(self.tab3_layout)
 
-        self.tab3_msconvert_arguments = msconvert_arguments(self.nf_settings_path)
+        self.tab3_msconvert_arguments = additional_arguments(self.nf_settings_path, type='msconvert_additional_arguments')
         self.tab3_parameter_max_missing = parameter_setter_single("max_missing", self.nf_settings_path)  # Quandenser
+        self.tab3_quandenser_arguments = additional_arguments(self.nf_settings_path, type='quandenser_additional_arguments')
         self.tab3_parameter_missed_clevages = parameter_setter_single("missed_clevages", self.nf_settings_path)  # Crux
         self.tab3_parameter_precursor_window = parameter_setter_double("precursor_window", self.nf_settings_path)  # Crux
+        self.tab3_crux_arguments = additional_arguments(self.nf_settings_path, type='crux_additional_arguments')
         self.tab3_parameter_fold_change_eval = parameter_setter_double("fold_change_eval", self.nf_settings_path)  # Triqler
+        self.tab3_triqler_arguments = additional_arguments(self.nf_settings_path, type='triqler_additional_arguments')
         self.tab3_reset_button = reset_button(config_path)
 
         self.tab3_layout.addRow(QLabel('<b>MSconvert'), QLabel())
         self.tab3_layout.addRow(QLabel('MSconvert additional arguments'), self.tab3_msconvert_arguments)
         self.tab3_layout.addRow(QLabel('<b>Quandenser'), QLabel())
         self.tab3_layout.addRow(QLabel('Max missing'), self.tab3_parameter_max_missing)
+        self.tab3_layout.addRow(QLabel('Quandenser additional_arguments'), self.tab3_quandenser_arguments)
         self.tab3_layout.addRow(QLabel('<b>Crux'), QLabel())
         self.tab3_layout.addRow(QLabel('Missed clevages'), self.tab3_parameter_missed_clevages)
         self.tab3_layout.addRow(QLabel('Precursor window'), self.tab3_parameter_precursor_window)
+        self.tab3_layout.addRow(QLabel('Crux additional_arguments'), self.tab3_crux_arguments)
         self.tab3_layout.addRow(QLabel('<b>Triqler'), QLabel())
         self.tab3_layout.addRow(QLabel('Fold change evaluation'), self.tab3_parameter_fold_change_eval)
+        self.tab3_layout.addRow(QLabel('Triqler additional_arguments'), self.tab3_triqler_arguments)
         self.tab3_layout.addWidget(self.tab3_reset_button)
 
     def inittab4(self):
