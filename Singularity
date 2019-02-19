@@ -36,6 +36,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    # A script that links all file in wineprefix64 to a directory owned by you --> anybody can use wine
    dependencies/link_wine.sh /usr/local/bin/link_wine.sh
    dependencies/ui /
+   dependencies/quandenser-v0-01-linux-amd64_MODIFIED_repack.deb /
 
 %post
     echo "Fixing timezones"
@@ -106,6 +107,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     echo "Installling quandenser"
     wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
     dpkg -i quandenser-v0-01-linux-amd64.deb
+    dpkg -i /quandenser-v0-01-linux-amd64_MODIFIED_repack.deb
     apt-get install -f
 
     echo "Installling crux"
@@ -131,5 +133,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="0.031"
+    VERSION="0.032"
     printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
