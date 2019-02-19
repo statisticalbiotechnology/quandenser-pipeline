@@ -27,11 +27,13 @@ def init_tab2(paths):
 
     tab2_choose_option_workflow = choose_option(paths['nf'], 'workflow')
     tab2_choose_option_parallell_msconvert = choose_option(paths['nf'], 'parallell_msconvert')
+    tab2_choose_option_parallell_quandenser = choose_option(paths['nf'], 'parallell_quandenser')
     tab2_choose_option_profile = choose_option(paths['sh'], 'profile')
 
     # Always visible
     tab2_leftbox_top_layout.addRow(QLabel('Choose pipeline'), tab2_choose_option_workflow)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallell MSconvert'), tab2_choose_option_parallell_msconvert)
+    tab2_leftbox_top_layout.addRow(QLabel('Enable parallell quandenser (EXPERIMENTAL)'), tab2_choose_option_parallell_quandenser)
     tab2_leftbox_top_layout.addRow(QLabel('Profile'), tab2_choose_option_profile)
     tab2_leftbox_layout.addWidget(tab2_leftbox_top)
 
