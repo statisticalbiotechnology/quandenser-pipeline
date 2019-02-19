@@ -9,7 +9,7 @@ class choose_option(QComboBox):
         self.parameter = parameter
         if self.parameter == 'workflow':
             self.addItems(["Full", "MSconvert"])
-        elif self.parameter == 'parallell_msconvert':
+        elif 'parallell' in self.parameter:
             self.addItems(["true", "false"])
         elif self.parameter == 'profile':
             self.addItems(["local", "slurm_cluster"])
@@ -24,8 +24,8 @@ class choose_option(QComboBox):
             self.window()
             window = self.window()
             self.recurse_children(window)
-        elif self.parameter == 'parallell_msconvert':
-            self.parser.write("params.parallell_msconvert", self.currentText(), isString=False)
+        elif 'parallell' in self.parameter:
+            self.parser.write(f"params.{self.parameter}", self.currentText(), isString=False)
         elif self.parameter == 'profile':
             self.parser.write("PROFILE", self.currentText())
             self.check_hidden()
