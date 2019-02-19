@@ -4,22 +4,32 @@ From:ubuntu:bionic-20180526
 %environment
     export LC_ALL=C
     #export WINEARCH="win32"  # Set wine to handle 32 bit
-    export WINEPREFIX=/wine  # Get a clean prefix
+    export WINEPREFIX=/wineprefix64  # Get a clean prefix
     export WINEDISTRO=devel
-    export WORKDIR=/wine
     export WINEPATH="C:\pwiz"
-    #export WINEDEBUG=-all,err+all
+    export WINEDEBUG=-all,err+all  # Hide all wine related output
+
+    # Making so user who logs into the image can use wine
+    mkdir -p "/tmp/wineprefix64_$USER"
+    random_name=$(date +%s | sha256sum | base64 | head -c 32)
+    mkdir -p "/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Create folder, so you are owner
+    link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
+    export WINEPREFIX="/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
+
+    mkdir -p /tmp/runtime-$USER
+    export XDG_RUNTIME_DIR=/tmp/runtime-$USER
+    export XDG_CONFIG_HOME=/tmp/runtime-$USER
 
 %labels
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
 
 %files
-   pwiz-bin-windows-* /tmp
+   pwiz.tar.bz2 /pwiz.tar.bz2
+   link_wine.sh /usr/local/bin/link_wine.sh
 
 %post
-    export WINEPREFIX=/wine  # Get a clean prefix
+    export WINEPREFIX=/wineprefix64  # Get a clean prefix
     export WINEDISTRO=devel
-    export WORKDIR=/wine
     export WINEPATH="C:\pwiz"
 
     echo "INSTALLING UTILS"
@@ -35,30 +45,25 @@ From:ubuntu:bionic-20180526
     apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'  # Main repo for ubuntu 18.04 LTS
     apt-get update  # Update once again to be able to install wine
     apt-get install -y --install-recommends winehq-$WINEDISTRO wine-$WINEDISTRO wine-$WINEDISTRO-i386 wine-$WINEDISTRO-amd64
+    wineboot -u  # Update the prefix
     apt-get -y clean
+
+    echo "INSTALLING PROTEOWIZARD 32 BIT (FULL VENDOR CAPABILITIES)"
+    mkdir -p $WINEPREFIX/drive_c/pwiz
+    tar xjvf /pwiz.tar.bz2 -C $WINEPREFIX/drive_c/pwiz
+    rm /pwiz.tar.bz2
 
     echo "INSTALLING WINETRICKS"
     wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
     chmod +x winetricks
     cp winetricks /usr/bin/winetricks
-    wineboot -u  # Update the prefix
 
     echo "INSTALLING .NET and VC"
-    DEBIAN_FRONTEND=noninteractive winetricks -q dotnet35sp1
-    DEBIAN_FRONTEND=noninteractive winetricks -q dotnet472
+    DEBIAN_FRONTEND=noninteractive winetricks -q dotnet472 dotnet40
     wineserver -w
     winetricks -q win7
     xvfb-run winetricks -q vcrun2008 vcrun2017 corefonts
     wineserver -w
-
-    echo "ENABLE X11 forwarding"
-    #xhost +
-    #xhost local:root
-
-    echo "INSTALLING PROTEOWIZARD 32 BIT (FULL VENDOR CAPABILITIES)"
-    mkdir -p $WINEPREFIX/drive_c/pwiz
-    tar xjvf /tmp/pwiz-bin-windows-* -C $WINEPREFIX/drive_c/pwiz
-    rm /tmp/pwiz-bin-windows-*
 
 %runscript
     echo "Test"
