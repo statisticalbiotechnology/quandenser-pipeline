@@ -88,31 +88,80 @@ c1 = spectra_in
 c2 = spectra_converted
 combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 
+combined_channel.into {  // Clone channel
+  combined_channel_normal
+  combined_channel_parallell_1
+  combined_channel_parallell_2
+  combined_channel_parallell_3
+}
+
 process quandenser {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
-	//
   file 'list.txt' from file_def
-  file('mzML/*') from combined_channel.collect()
+  file('mzML/*') from combined_channel_normal.collect()
   output:
-	file("Quandenser_output/consensus_spectra/**") into spectra
-	file "Quandenser_output/*" into quandenser_out
+	file("Quandenser_output/consensus_spectra/**") into spectra_normal
+	file "Quandenser_output/*" into quandenser_out_normal
   when:
-    params.workflow == "Full"
+    params.workflow == "Full" && params.parallell_quandenser == false
   script:
 	"""
-  #--dinosaur-memory 16G
 	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
 	"""
 }
+
+process quandenser_parallell_1 {
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  containerOptions "$params.custom_mounts"
+  input:
+  file 'list.txt' from file_def
+  file('mzML/*') from combined_channel_parallell_1
+  output:
+	 file "Quandenser_output/*" into quandenser_out_1
+  when:
+    params.workflow == "Full" && params.parallell_quandenser == true
+  script:
+	"""
+	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallell-1 true ${params.quandenser_additional_arguments}
+	"""
+}
+
+process quandenser_parallell_end {
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  containerOptions "$params.custom_mounts"
+  input:
+  file 'list.txt' from file_def
+  file('mzML/*') from combined_channel_parallell_2
+  file('Quandenser_output/dinosaur/*') from quandenser_out_1
+  output:
+	file("Quandenser_output/consensus_spectra/**") into spectra_parallell
+	file "Quandenser_output/*" into quandenser_out_parallell
+  when:
+    params.workflow == "Full" && params.parallell_quandenser == true
+  script:
+	"""
+	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
+	"""
+}
+
+// Mix quandenser_out
+c1 = quandenser_out_normal
+c2 = quandenser_out_parallell
+quandenser_out = c1.concat(c2)
+
+// Mix spectra
+c1 = spectra_normal
+c2 = spectra_parallell
+spectra = c1.concat(c2)
 
 process tide_perc_search {
   publishDir params.output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
   containerOptions "$params.custom_mounts"
   input:
 	file 'seqdb.fa' from db
-	file ms2_files from spectra.collect()  // PS: Sentistive to nameing (no blankspace, paranthesis and such)
+	file ms2_files from spectra.collect()  // PS: Sensitive to naming (no blankspace, paranthesis and such)
   output:
 	file("crux-output/*") into id_files
   file("${seq_index_name}") into index_files
@@ -125,7 +174,6 @@ process tide_perc_search {
 	crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments}
   """
 }
-
 
 process triqler {
   publishDir params.output_path, mode: 'copy', pattern: "proteins.*",overwrite: true
