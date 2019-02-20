@@ -120,7 +120,7 @@ process quandenser_parallell_1 {
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallell_1
   output:
-	 file "Quandenser_output/*" into quandenser_out_1
+	 file "Quandenser_output/dinosaur/*" into quandenser_out_1
   when:
     params.workflow == "Full" && params.parallell_quandenser == true
   script:
@@ -138,7 +138,7 @@ process quandenser_parallell_end {
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallell_2.collect()
-   file('Quandenser_output/*') from quandenser_out_1.collect()
+   file('Quandenser_output/dinosaur/*') from quandenser_out_1.collect()
   output:
 	 file("Quandenser_output/consensus_spectra/**") into spectra_parallell
 	 file "Quandenser_output/*" into quandenser_out_parallell
