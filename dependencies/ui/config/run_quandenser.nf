@@ -49,6 +49,7 @@ for( line in all_lines ){
   }
 }
 file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")  // Create new file for in work directory
+file_def.text = ""  // Clear file, if it exists
 total_spectras = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
@@ -116,15 +117,18 @@ process quandenser_parallell_1 {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
-  file 'list.txt' from file_def
-  file('mzML/*') from combined_channel_parallell_1
+   file 'list.txt' from file_def
+   file('mzML/*') from combined_channel_parallell_1
   output:
 	 file "Quandenser_output/*" into quandenser_out_1
   when:
     params.workflow == "Full" && params.parallell_quandenser == true
   script:
 	"""
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallell-1 true ${params.quandenser_additional_arguments}
+  cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
+  filename=\$(find mzML/* | xargs basename)
+  sed -i "/\$filename/!d" modified_list.txt
+  quandenser-modified --batch modified_list.txt --max-missing ${params.max_missing} --parallell-1 true ${params.quandenser_additional_arguments}
 	"""
 }
 
@@ -132,12 +136,12 @@ process quandenser_parallell_end {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
-  file 'list.txt' from file_def
-  file('mzML/*') from combined_channel_parallell_2
-  file('Quandenser_output/dinosaur/*') from quandenser_out_1
+   file 'list.txt' from file_def
+   file('mzML/*') from combined_channel_parallell_2.collect()
+   file('Quandenser_output/*') from quandenser_out_1.collect()
   output:
-	file("Quandenser_output/consensus_spectra/**") into spectra_parallell
-	file "Quandenser_output/*" into quandenser_out_parallell
+	 file("Quandenser_output/consensus_spectra/**") into spectra_parallell
+	 file "Quandenser_output/*" into quandenser_out_parallell
   when:
     params.workflow == "Full" && params.parallell_quandenser == true
   script:
