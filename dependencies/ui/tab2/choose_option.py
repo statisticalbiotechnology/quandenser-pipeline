@@ -9,7 +9,7 @@ class choose_option(QComboBox):
         self.parameter = parameter
         if self.parameter == 'workflow':
             self.addItems(["Full", "MSconvert"])
-        elif 'parallell' in self.parameter:
+        elif 'parallel' in self.parameter:
             self.addItems(["true", "false"])
         elif self.parameter == 'profile':
             self.addItems(["local", "slurm_cluster"])
