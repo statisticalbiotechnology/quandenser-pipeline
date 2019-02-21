@@ -1,10 +1,9 @@
 #!/usr/bin/env nextflow
 echo true
 
-/* Important:
-change the path to where the database is and the batch file is
-*/
 file_def = file(params.batch_file)  // batch_file
+
+// change the path to where the database is and the batch file is if you are only doing msconvert
 if( params.workflow == "MSconvert" ) {
   db_file = params.batch_file  // Will not be used, so junk name
 } else {
@@ -30,7 +29,7 @@ Channel  // non-mzML files with proper labeling which will be converted
   .map { it -> file(it[0]) }
   .into{ spectra_convert; spectra_convert_bool }
 
-// Replaces the lines in the file_list with the new paths (will only change file if non-mzML)
+// Replaces the lines of non-mzML with their corresponding converted mzML counterpart
 count = 0
 amount_of_non_mzML = 0
 all_lines = file_def.readLines()
@@ -48,20 +47,24 @@ for( line in all_lines ){
     count++
   }
 }
-file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")  // Create new file for in work directory
+
+// Create new batch file to use in work directory. Add the "corrected" raw to mzML paths here
+file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")
 file_def.text = ""  // Clear file, if it exists
 total_spectras = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
   total_spectras++
 }
+
+
 println("Total spectras = " + total_spectras)
 println("Spectras that will be converted = " + amount_of_non_mzML)
 
-if( params.parallell_msconvert == true ) {
-  spectra_convert_channel = spectra_convert  // No collect = parallell processing
+if( params.parallel_msconvert == true ) {
+  spectra_convert_channel = spectra_convert  // No collect = parallel processing, one file in each process
 } else {
-  spectra_convert_channel = spectra_convert.collect()
+  spectra_convert_channel = spectra_convert.collect()  // Collect = everything is run in one process
 }
 
 process msconvert {
@@ -85,18 +88,22 @@ process msconvert {
   """
 }
 
+// Problem: We get a channel with proper mzML files and non mzML file
+// Solution: Concate these channel, even if one channel is empty, you get the contents either way
 c1 = spectra_in
 c2 = spectra_converted
 combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 
-combined_channel.into {  // Clone channel
+// Clone channel we created to use in multiple processes (one channel per process, no more)
+combined_channel.into {
   combined_channel_normal
-  combined_channel_parallell_1
-  combined_channel_parallell_2
-  combined_channel_parallell_3
+  combined_channel_parallel_1
+  combined_channel_parallel_2
+  combined_channel_parallel_3
 }
 
 process quandenser {
+  // The normal process, no parallelization
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
@@ -106,58 +113,119 @@ process quandenser {
 	file("Quandenser_output/consensus_spectra/**") into spectra_normal
 	file "Quandenser_output/*" into quandenser_out_normal
   when:
-    params.workflow == "Full" && params.parallell_quandenser == false
+    params.workflow == "Full" && params.parallel_quandenser == false
   script:
 	"""
 	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
 	"""
 }
 
-process quandenser_parallell_1 {
+process quandenser_parallel_1 {
+  // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
-   file('mzML/*') from combined_channel_parallell_1
+   file('mzML/*') from combined_channel_parallel_1
   output:
 	 file "Quandenser_output/dinosaur/*" into quandenser_out_1
   when:
-    params.workflow == "Full" && params.parallell_quandenser == true
+    params.workflow == "Full" && params.parallel_quandenser == true
   script:
 	"""
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
-  quandenser-modified --batch modified_list.txt --max-missing ${params.max_missing} --parallell-1 true ${params.quandenser_additional_arguments}
+  quandenser-modified --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments}
 	"""
 }
 
-process quandenser_parallell_end {
+process quandenser_parallel_2 {
+  // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
-   file('mzML/*') from combined_channel_parallell_2.collect()
+   file('mzML/*') from combined_channel_parallel_2.collect()
    file('Quandenser_output/dinosaur/*') from quandenser_out_1.collect()
   output:
-	 file("Quandenser_output/consensus_spectra/**") into spectra_parallell
-	 file "Quandenser_output/*" into quandenser_out_parallell
+	 file "Quandenser_output/maracluster/*" into quandenser_out_2_maracluster
+   file "Quandenser_output/dinosaur/*" into quandenser_out_2_dinosaur
+   file "alignRetention_queue.txt" into alignRetention_queue
   when:
-    params.workflow == "Full" && params.parallell_quandenser == true
+    params.workflow == "Full" && params.parallel_quandenser == true
   script:
 	"""
-	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
+	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments}
 	"""
 }
 
-// Mix quandenser_out
+// Parallel process 2 will output a tree which must be calculated IN ORDER. However, each level can be calculated
+// in parallel. This means you first needs to get the maximum depth
+if( params.parallel_quandenser == true ) {
+  Channel
+    .from(alignRetention_queue.readLines())
+    .map { it -> it.tokenize('\t') }
+    .map { it -> it[0] }  // convert to int
+    .subscribe { println "Max value is $it" }
+}
+
+process quandenser_parallel_3 {
+  // Parallel 3: Take all dinosaur files and maracluster files. Run dinosaur + percolator on one specific filepair. Exit when done.
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  containerOptions "$params.custom_mounts"
+  input:
+   file 'list.txt' from file_def
+   file('mzML/*') from combined_channel_parallel_3.collect()
+   file('Quandenser_output/dinosaur/*') from quandenser_out_2_dinosaur.collect()
+   file('Quandenser_output/maracluster/*') from quandenser_out_2_maracluster.collect()
+  output:
+    // Feedback
+   //file "Quandenser_output/maracluster/*" into feedback_channel
+   //file "Quandenser_output/dinosaur/*" into feedback_channel
+   //file "Quandenser_output/percolator/*" into feedback_channel
+
+   // Results
+   file "Quandenser_output/maracluster/*" into quandenser_out_3_maracluster
+   file "Quandenser_output/dinosaur/*" into quandenser_out_3_dinosaur
+   file "Quandenser_output/percolator/*" into quandenser_out_3_percolator
+  when:
+    params.workflow == "Full" && params.parallel_quandenser == true
+  script:
+	"""
+	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 true ${params.quandenser_additional_arguments}
+	"""
+}
+
+/*
+process quandenser_Parallel_4 {
+  // Parallel 4: Run through the whole process. Quandenser will skip all the files that has already completed
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  containerOptions "$params.custom_mounts"
+  input:
+   file 'list.txt' from file_def
+   file('mzML/*') from combined_channel_parallel_2.collect()
+   file('Quandenser_output/dinosaur/*') from quandenser_out_1.collect()
+  output:
+	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
+	 file "Quandenser_output/*" into quandenser_out_parallel
+  when:
+    params.workflow == "Full" && params.parallel_quandenser == true
+  script:
+	"""
+	quandenser-modified --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
+	"""
+}
+
+
+// Concate quandenser_out. We don't know which the user did, so we mix them
 c1 = quandenser_out_normal
-c2 = quandenser_out_parallell
+c2 = quandenser_out_parallel
 quandenser_out = c1.concat(c2)
 
-// Mix spectra
+// Do the same thing with the consensus spectra
 c1 = spectra_normal
-c2 = spectra_parallell
+c2 = spectra_parallel
 spectra = c1.concat(c2)
 
 process tide_perc_search {
@@ -198,3 +266,4 @@ process triqler {
 }
 
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
+*/
