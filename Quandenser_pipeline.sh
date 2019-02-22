@@ -59,7 +59,7 @@ cd "$(dirname "$0")"
 
 # Check if singularity is installed
 {
-  singularity --version | grep -q "version" && :
+  singularity --version && :
 } || { # catch
   while true; do
     printf "${GREEN}Singularity is not installed. Y/y to install (requires sudo privileges) or N/n to cancel ${RESET}"
