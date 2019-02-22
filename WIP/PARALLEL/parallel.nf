@@ -19,7 +19,18 @@ alignRetention_queue
     .splitText()  // Split text, each line in a seperate loop
     .map { it -> [it.tokenize('\t')[0], [file(it.tokenize('\t')[1]), file(it.tokenize('\t')[2])]] }
     .groupTuple()
-    .println()
+    //.println()
+    .into { processing_groups; processing_groups_copy }
 
+
+process process {
+  input:
+    set val(depth), set file('*'), file('*') from processing_groups
+  script:
+	"""
+  ls
+	"""
+}
 
 // https://groups.google.com/forum/#!topic/nextflow/eUWMzrEm0IY
+// https://groups.google.com/forum/#!topic/nextflow/kmX5ueuhViE
