@@ -37,8 +37,9 @@ class parameter_setter_double(QDoubleSpinBox):
 
     def check_value(self):
         self.blockSignals(True)
+        value = round(self.value(), 4)  # Prevents weird behavior with 0.0000001
         self.nf_settings_parser.write(f"params.{self.parameter}",
-                                      self.value(),
+                                      value,
                                       isString=False)
         self.blockSignals(False)
 
