@@ -16,18 +16,18 @@ seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 Channel  // mzML files with proper labeling
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
-  .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
-  .filter{ it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
+  .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+  .filter { it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
   .map { it -> file(it[0]) }
-  .into{ spectra_in; spectra_in_q }  // Puts the files into spectra_in
+  .into { spectra_in; spectra_in_q }  // Puts the files into spectra_in
 
 Channel  // non-mzML files with proper labeling which will be converted
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
-  .filter{ it.size() > 1 }  // filters any input that is not <path> <X>
+  .filter { it.size() > 1 }  // filters any input that is not <path> <X>
   .filter{ it[0].tokenize('.')[-1] != "mzML" }  // filters any input that is .mzML
   .map { it -> file(it[0]) }
-  .into{ spectra_convert; spectra_convert_bool }
+  .into { spectra_convert; spectra_convert_bool }
 
 // Replaces the lines of non-mzML with their corresponding converted mzML counterpart
 count = 0
@@ -122,13 +122,13 @@ process quandenser {
 
 process quandenser_parallel_1 {
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_1
   output:
-	 file "Quandenser_output/dinosaur/*" into quandenser_out_1
+	 file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur, quandenser_out_1_to_3_dinosaur
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
@@ -136,66 +136,75 @@ process quandenser_parallel_1 {
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
-  quandenser-modified --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments}
+  quandenser --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments}
 	"""
 }
 
 process quandenser_parallel_2 {
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_2.collect()
-   file('Quandenser_output/dinosaur/*') from quandenser_out_1.collect()
+   file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
   output:
 	 file "Quandenser_output/maracluster/*" into quandenser_out_2_maracluster
-   file "Quandenser_output/dinosaur/*" into quandenser_out_2_dinosaur
    file "alignRetention_queue.txt" into alignRetention_queue
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
 	"""
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments}
+	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments}
 	"""
 }
 
-// Parallel process 2 will output a tree which must be calculated IN ORDER. However, each level can be calculated
-// in parallel. This means you first needs to get the maximum depth
+// Parallel process 2 will output a tree which must be calculated IN ORDER. However, each level can be calculated in parallel.
+// This means you first needs to get the maximum depth
+
 if( params.parallel_quandenser == true ) {
-  Channel
-    .from(alignRetention_queue.readLines())
-    .map { it -> it.tokenize('\t') }
-    .map { it -> it[0] }  // convert to int
-    .subscribe { println "Max value is $it" }
+  // This queue will define maximum depth
+  alignRetention_queue
+      .collectFile()  // Get file, will wait for process to finish
+      .map { it.text }  // Convert file to text
+      .splitText()  // Split text, each line in a seperate loop
+      .map { it -> it.tokenize('\t')[0] }  // Get first value, it contains the rounds
+      .toInteger()  // String to integer
+      .max()  // Maximum amount of rounds
+      .subscribe { max_depth=it }
+
+  condition = { it > max_depth }  // max_depth is not defined until previous queue has been gone through
+  feedback_ch = Channel.create()
+  input_ch = Channel.from(0).mix( feedback_ch.until(condition) )
+} else {
+  //max_depth=0
 }
 
 process quandenser_parallel_3 {
   // Parallel 3: Take all dinosaur files and maracluster files. Run dinosaur + percolator on one specific filepair. Exit when done.
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
+  publishDir "work/params.random_hash", mode: 'symlink', overwrite: true,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_3.collect()
-   file('Quandenser_output/dinosaur/*') from quandenser_out_2_dinosaur.collect()
-   file('Quandenser_output/maracluster/*') from quandenser_out_2_maracluster.collect()
+   file('Quandenser_output/*') from input_quandenser_feedback.collect()
+   val depth from input_ch
   output:
-    // Feedback
-   //file "Quandenser_output/maracluster/*" into feedback_channel
-   //file "Quandenser_output/dinosaur/*" into feedback_channel
-   //file "Quandenser_output/percolator/*" into feedback_channel
-
-   // Results
-   file "Quandenser_output/maracluster/*" into quandenser_out_3_maracluster
-   file "Quandenser_output/dinosaur/*" into quandenser_out_3_dinosaur
    file "Quandenser_output/percolator/*" into quandenser_out_3_percolator
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
+  depth = depth + 1
 	"""
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 true ${params.quandenser_additional_arguments}
+	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${depth} ${params.quandenser_additional_arguments}
 	"""
 }
+
+if( params.parallel_quandenser == true ) {
+  feedback_done=true
+}
+
 
 /*
 process quandenser_Parallel_4 {
@@ -216,7 +225,6 @@ process quandenser_Parallel_4 {
 	quandenser-modified --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
 	"""
 }
-
 
 // Concate quandenser_out. We don't know which the user did, so we mix them
 c1 = quandenser_out_normal
