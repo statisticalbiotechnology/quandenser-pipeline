@@ -25,7 +25,7 @@ alignRetention_queue
 
 process process {
   input:
-    set val(depth), set file('*'), file('*') from processing_groups
+    set val(depth), file('*') from processing_groups.flatten()
   script:
 	"""
   ls
