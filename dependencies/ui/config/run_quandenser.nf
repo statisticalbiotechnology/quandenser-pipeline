@@ -128,7 +128,7 @@ process quandenser_parallel_1 {
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_1
   output:
-	 file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur, quandenser_out_1_to_3_dinosaur
+	 file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
@@ -149,8 +149,7 @@ process quandenser_parallel_2 {
    file('mzML/*') from combined_channel_parallel_2.collect()
    file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
   output:
-	 file "Quandenser_output/maracluster/*" into quandenser_out_2_maracluster
-   file "alignRetention_queue.txt" into alignRetention_queue
+	 file "Quandenser_output/*" into quandenser_out_2_to_3
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
@@ -161,25 +160,6 @@ process quandenser_parallel_2 {
 
 // Parallel process 2 will output a tree which must be calculated IN ORDER. However, each level can be calculated in parallel.
 // This means you first needs to get the maximum depth
-
-if( params.parallel_quandenser == true ) {
-  // This queue will define maximum depth
-  alignRetention_queue
-      .collectFile()  // Get file, will wait for process to finish
-      .map { it.text }  // Convert file to text
-      .splitText()  // Split text, each line in a seperate loop
-      .map { it -> it.tokenize('\t')[0] }  // Get first value, it contains the rounds
-      .toInteger()  // String to integer
-      .max()  // Maximum amount of rounds
-      .subscribe { max_depth=it }
-
-  condition = { it > max_depth }  // max_depth is not defined until previous queue has been gone through
-  feedback_ch = Channel.create()
-  input_ch = Channel.from(0).mix( feedback_ch.until(condition) )
-} else {
-  //max_depth=0
-}
-
 process quandenser_parallel_3 {
   // Parallel 3: Take all dinosaur files and maracluster files. Run dinosaur + percolator on one specific filepair. Exit when done.
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
@@ -188,36 +168,28 @@ process quandenser_parallel_3 {
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_3.collect()
-   file('Quandenser_output/*') from input_quandenser_feedback.collect()
-   val depth from input_ch
+   file("*") from quandenser_out_2_to_3
   output:
-   file "Quandenser_output/percolator/*" into quandenser_out_3_percolator
+   file "Quandenser_output/*" into quandenser_out_3_to_4 includeInput true
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
-  depth = depth + 1
 	"""
-	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${depth} ${params.quandenser_additional_arguments}
+	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 true ${params.quandenser_additional_arguments}
 	"""
 }
 
-if( params.parallel_quandenser == true ) {
-  feedback_done=true
-}
-
-
-/*
 process quandenser_Parallel_4 {
   // Parallel 4: Run through the whole process. Quandenser will skip all the files that has already completed
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
-   file('mzML/*') from combined_channel_parallel_2.collect()
-   file('Quandenser_output/dinosaur/*') from quandenser_out_1.collect()
+   file('mzML/*') from combined_channel_parallel_3.collect()
+   file('Quandenser_output/*') from quandenser_out_3_to_4.collect()
   output:
 	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
-	 file "Quandenser_output/*" into quandenser_out_parallel
+	 file "Quandenser_output/*" into quandenser_out_parallel includeInput true
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
@@ -274,4 +246,3 @@ process triqler {
 }
 
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
-*/
