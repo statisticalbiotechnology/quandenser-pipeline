@@ -22,6 +22,7 @@ class set_time(QLineEdit):
         time  = self.text()  # Copy, dont use
         nftime = self.time_to_nftime(time)
         additional_information = self.process.split('_')[0]  # Very hacky way of doing it, but it should be fine
+        additional_information = "withName: " + additional_information
         self.nf_settings_parser.write("time", nftime, additional_information=additional_information)  # Multiple time
         self.blockSignals(False)
 
@@ -58,6 +59,7 @@ class set_time(QLineEdit):
 
     def default(self):
         additional_information = self.process.split('_')[0]  # Very hacky way of doing it, but it should be fine
+        additional_information = "withName: " + additional_information
         nftime = self.nf_settings_parser.get("time", additional_information=additional_information)  # Multiple time
         time = self.nftime_to_time(nftime)
         self.setText(time)
