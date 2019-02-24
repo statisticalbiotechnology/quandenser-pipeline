@@ -150,7 +150,7 @@ process quandenser_parallel_2 {
    file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
   output:
 	 file "Quandenser_output/*" into quandenser_out_2_to_3
-   file "Quandenser_output/alignRetention_queue.txt" into alignRetention_queue
+   file "alignRetention_queue.txt" into alignRetention_queue
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
