@@ -58,23 +58,32 @@ run async and will each input a value into the feedback channel, it will spawn t
 the beginning. I solved the issue by creating a tree map, which countains all the rounds and how many processes it can run in parallel.
 Each process will submit a value, which is the next round that should be processed. The unique command takes the list and outputs only 1
 value (important). This is then piped to a function that creates list that is flattened, spawning the exact amount of processes needed before
-the next batch
+the next batch.
+
+Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
 */
-// IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS
+// IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
 input_ch = Channel.from(0).mix( feedback_ch.until(condition).unique() ).flatMap { n -> 0..<tree_map[n] }
 
-percolator_workdir = file("work/percolator")  // Create working percolator directory
-result = percolator_workdir.mkdir()
+percolator_workdir = file("work/percolator")  // Path to working percolator directory
+result = percolator_workdir.mkdir()  // Create the directory
 process parallel {
   publishDir "work/percolator", mode: 'symlink', overwrite: true,  pattern: "*"
   input:
     set val(depth), val(filepair) from processing_tree
+    // This will replace percolator directory with a link to work directory percolator
     each prev_percolator from Channel.fromPath("work/percolator")
-    each prev_dinosaur from Channel.fromPath("Quandenser_output/dinosaur")
-    each prev_maracluster from Channel.fromPath("Quandenser_output/maracluster")
+
+    // Access previous files from quandenser. Consider maracluster files as links, takes time to publish
+    each prev_dinosaur from Channel.fromPath("Quandenser_output/dinosaur")  // Published long before, should not be a problem
+    each prev_maracluster from Channel.fromPath("Quandenser_output/maracluster")  // Async + publish time might make this problematic
+
+    // This is the magic that makes the process loop
     val feedback_val from input_ch
   output:
     val depth into feedback_ch
+    // Just dump the files. This will need rework, since the percolator files are directly written directly to workdir.
+    // Perhaps remove output files completely
     file("*.txt") into file_completed
   exec:
     depth++
