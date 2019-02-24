@@ -63,20 +63,35 @@ the next batch
 // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS
 input_ch = Channel.from(0).mix( feedback_ch.until(condition).unique() ).flatMap { n -> 0..<tree_map[n] }
 
+percolator_workdir = file("work/percolator")  // Create working percolator directory
+result = percolator_workdir.mkdir()
 process parallel {
+  publishDir "work/percolator", mode: 'symlink', overwrite: true,  pattern: "*"
   input:
     set val(depth), val(filepair) from processing_tree
+    each prev_percolator from Channel.fromPath("work/percolator")
+    each prev_dinosaur from Channel.fromPath("Quandenser_output/dinosaur")
+    each prev_maracluster from Channel.fromPath("Quandenser_output/maracluster")
     val feedback_val from input_ch
   output:
     val depth into feedback_ch
+    file("*.txt") into file_completed
   exec:
     depth++
   script:
   """
   echo "DEPTH ${depth - 1}"
   echo "FILES ${filepair[0]} and ${filepair[1]}"
-  #mkdir -p pair/file1; mkdir pair/file2
-  #ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/; 
+  mkdir -p pair/file1; mkdir pair/file2
+  ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
+  mkdir Quandenser_output
+  ln -s ${prev_percolator} Quandenser_output/percolator
+  ln -s ${prev_dinosaur} Quandenser_output/dinosaur
+  ln -s ${prev_maracluster} Quandenser_output/maracluster
+  touch ${depth}.txt
+  tree
+  cd Quandenser_output/percolator
+  ls
   sleep 2
 	"""
 }
