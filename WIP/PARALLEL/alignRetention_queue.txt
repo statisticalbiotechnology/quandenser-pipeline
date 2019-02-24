@@ -4,3 +4,9 @@
 2	mzML/A5.mzML	mzML/A1.mzML
 3	mzML/A4.mzML	mzML/A6.mzML
 3	mzML/A6.mzML	mzML/A1.mzML
+3	mzML/A4.mzML	mzML/A6.mzML
+3	mzML/A6.mzML	mzML/A1.mzML
+4	mzML/A8.mzML	mzML/A6.mzML
+5	mzML/A2.mzML	mzML/A11.mzML
+5	mzML/A9.mzML	mzML/A3.mzML
+5	mzML/A2.mzML	mzML/A10.mzML
