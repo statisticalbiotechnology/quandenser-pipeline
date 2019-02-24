@@ -65,15 +65,15 @@ the next batch.
 Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
 */
 // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
-input_ch = wait_queue
-.mix( feedback_ch.until(condition).unique() )
-.flatMap { n -> 0..<tree_map[n] }
+input_ch = wait_queue  // Syncronization, aka wait until tree_map is defined
+.mix( feedback_ch.until(condition).unique() )  // Continously add
+.flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
 
 percolator_workdir = file("work/percolator")  // Path to working percolator directory
 result = percolator_workdir.mkdir()  // Create the directory
 process parallel {
   publishDir "work/percolator", mode: 'symlink', overwrite: true,  pattern: "*"
-  // REMEMBER TO ADD PUBLISHDIR TO REAL PULISH HERE TOO
+  publishDir "Quandenser_output", mode: 'copy', overwrite: true,  pattern: "*"
   input:
     set val(depth), val(filepair) from processing_tree
     // This will replace percolator directory with a link to work directory percolator
