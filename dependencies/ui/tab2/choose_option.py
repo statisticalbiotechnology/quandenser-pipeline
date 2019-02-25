@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame, QTableWidget, QLabel
 
 from custom_config_parser import custom_config_parser
+from tooltip_label import tooltip_label
 from tab2.parameter_setter import parameter_setter_single
 
 class choose_option(QComboBox):
@@ -31,7 +32,8 @@ class choose_option(QComboBox):
             self.parser.write(f"params.{self.parameter}", self.currentText(), isString=False)
             if not hasattr(self, 'max_forks_widget'):
                 self.max_forks_widget = parameter_setter_single(f"{self.parameter}_max_forks", self.settings_file)
-                self.label = QLabel(f"Max forks {self.parameter.replace('_', ' ')}")
+                self.label = tooltip_label(f"Max forks {self.parameter.replace('_', ' ')}",
+                                           "Maximum amount of parallel processes. Set to 0 for no limit")
                 parent = self.parent().layout()
                 parent.addRow(self.label, self.max_forks_widget)
                 self.max_forks_widget.hide()
