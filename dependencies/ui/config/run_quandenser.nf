@@ -147,6 +147,7 @@ process quandenser_parallel_1 {
 process quandenser_parallel_2 {
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
@@ -278,13 +279,13 @@ process quandenser_parallel_3 {
 
 process quandenser_parallel_4 {
   // Parallel 4: Run through the whole process. Quandenser will skip all the files that has already completed
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/consensus_spectra/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_3.collect()
    each prev_quandenser from Channel.fromPath("${params.output_path}/Quandenser_output")
-   val completed from percolator_completed
+   val completed from percolator_completed.collect()
   output:
 	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
 	 file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
