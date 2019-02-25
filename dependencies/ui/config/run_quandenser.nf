@@ -189,17 +189,29 @@ if (params.parallel_quandenser == true){
       .into { processing_tree; processing_tree_copy }  // Add queue to channel
 
   // This queue will create the tree
-  wait_queue_1
+  alignRetention_queue
     .collectFile()  // Get file, will wait for process to finish
     .map { it.text }  // Convert file to text
     .splitText()  // Split text, each line in a seperate loop
     .map { it -> it.tokenize('\t')[0].toInteger() }  // Get first value, it contains the rounds. Convert to int!
     .countBy()  // Count depths and put into a map. Will output ex [0:1, 1:1, 2:2, 3:4, 4:1, 5:3 ...] Depends on tree
     .view()  // view the map. Syntax: [round_nr:amount_of_parallel_files]. A map is kind of like a dict in python
-    .subscribe{ end_depth = max_depth + 1; it[end_depth] = 1; tree_map=it; }
+    .subscribe{ tree_map=it; }
     .map { it -> 0 }  // Tree map has now been defined, add 0 to queue to initialize tree_map channel
     .into { wait_queue_2; wait_queue_2_copy }
   // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
+
+  process sync_variables {
+    exectutor = 'local'
+    input:
+      val wait1 from wait_queue_1
+      val wait2 from wait_queue_2
+    output:
+      val 0 into sync_ch
+    exec:
+      end_depth = max_depth + 1  // Need to add last value in map to prevent crash
+      tree_map[end_depth] = 1  // tree_map should be defined by now
+  }
 
   //tree_map = [0:1]  // We DON'T need to initialize treemap, since input_ch will wait until tree_map is defined. Added Sync
   condition = { it == max_depth++ }  // Stop when reaching max_depth. Defined in channel above
@@ -218,7 +230,7 @@ if (params.parallel_quandenser == true){
   Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
   */
   // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
-  input_ch = wait_queue_2  // Syncronization, aka wait until tree_map is defined
+  input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined and last round added
   .mix( feedback_ch.until(condition).unique() )  // Continously add
   .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
 } else {
