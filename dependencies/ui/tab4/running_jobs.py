@@ -83,7 +83,7 @@ class running_jobs(QTableWidget):
                         item.setForeground(QColor('red'))
                         item.setText("RUNNING")
                     else:
-                        item.setForeground(QColor('green'))
+                        item.setForeground(QColor(0,255,150))
                         item.setText("COMPLETED")
                 elif column == self.columnCount() - 1:  # last columnt
                     if self.item(row, column - 1).text() == "RUNNING":
