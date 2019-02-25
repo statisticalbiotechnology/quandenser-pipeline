@@ -55,7 +55,6 @@ alignRetention_queue
   .splitText()  // Split text, each line in a seperate loop
   .map { it -> it.tokenize('\t')[0].toInteger() }  // Get first value, it contains the rounds. Convert to int!
   .countBy()  // Count depths and put into a map. Will output ex [0:1, 1:1, 2:2, 3:4, 4:1, 5:3 ...] Depends on tree
-  .view()  // view the map. Syntax: [round_nr:amount_of_parallel_files]. A map is kind of like a dict in python
   .subscribe{ tree_map=it; }
   .map { it -> 0 }  // Tree map has now been defined, add 0 to queue to initialize tree_map channel
   .into { wait_queue_2; wait_queue_2_copy }
@@ -71,11 +70,9 @@ process sync_variables {
   exec:
   end_depth = max_depth + 1
   tree_map[end_depth] = 1
-
 }
 
-//tree_map = [0:1]  // We DON'T need to initialize treemap, since input_ch will wait until tree_map is defined. Added Sync
-condition = { it == max_depth++ }  // Stop when reaching max_depth. Defined in channel above
+condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
 feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
 
 /* Okay, this one is tricky and needs an explanation

@@ -195,7 +195,6 @@ if (params.parallel_quandenser == true){
     .splitText()  // Split text, each line in a seperate loop
     .map { it -> it.tokenize('\t')[0].toInteger() }  // Get first value, it contains the rounds. Convert to int!
     .countBy()  // Count depths and put into a map. Will output ex [0:1, 1:1, 2:2, 3:4, 4:1, 5:3 ...] Depends on tree
-    .view()  // view the map. Syntax: [round_nr:amount_of_parallel_files]. A map is kind of like a dict in python
     .subscribe{ tree_map=it; }
     .map { it -> 0 }  // Tree map has now been defined, add 0 to queue to initialize tree_map channel
     .into { wait_queue_2; wait_queue_2_copy }
@@ -211,10 +210,10 @@ if (params.parallel_quandenser == true){
     exec:
       end_depth = max_depth + 1  // Need to add last value in map to prevent crash
       tree_map[end_depth] = 1  // tree_map should be defined by now
+      println("Treemap is ${tree_map}")  // view the map. Syntax: [round_nr:amount_of_parallel_files]. A map is kind of like a dict in python
   }
 
-  //tree_map = [0:1]  // We DON'T need to initialize treemap, since input_ch will wait until tree_map is defined. Added Sync
-  condition = { it == max_depth++ }  // Stop when reaching max_depth. Defined in channel above
+  condition = { 1 == 0 }  // Never stop. It will do so automatically when the files run out
   feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
 
   /* Okay, this one is tricky and needs an explanation
@@ -243,7 +242,7 @@ if (params.parallel_quandenser == true){
 percolator_workdir = file("${params.output_path}/work/percolator_${params.random_hash}")  // Path to working percolator directory
 result = percolator_workdir.mkdir()  // Create the directory
 process quandenser_parallel_3 {
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
+  publishDir params.output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
@@ -263,7 +262,7 @@ process quandenser_parallel_3 {
   output:
     val depth into feedback_ch
     file("Quandenser_output/percolator/*") into file_completed
-    val completed into percolator_completed
+    val 0 into percolator_completed
   exec:
     depth++
   script:
@@ -279,7 +278,7 @@ process quandenser_parallel_3 {
 
 process quandenser_parallel_4 {
   // Parallel 4: Run through the whole process. Quandenser will skip all the files that has already completed
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/consensus_spectra/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
