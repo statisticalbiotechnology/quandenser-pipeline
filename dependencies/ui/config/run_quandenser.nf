@@ -78,7 +78,7 @@ process msconvert {
   publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "*"
   publishDir "$params.output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
   containerOptions "$params.custom_mounts"
-  maxForks "$params.parallel_msconvert_max_forks"
+  maxForks params.parallel_msconvert_max_forks
   input:
     file f from spectra_convert_channel
   output:
@@ -127,7 +127,7 @@ process quandenser_parallel_1 {
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
-  maxForks "$params.parallel_quandenser_max_forks"  // Defaults to the amount of cores
+  maxForks params.parallel_quandenser_max_forks  // Defaults to the amount of cores
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_1
@@ -140,7 +140,7 @@ process quandenser_parallel_1 {
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
-  quandenser --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments}
+  quandenser-modified --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments}
 	"""
 }
 
@@ -159,7 +159,7 @@ process quandenser_parallel_2 {
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
 	"""
-	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments}
+	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments}
 	"""
 }
 
@@ -173,6 +173,8 @@ if (params.parallel_quandenser == true){
       .toInteger()  // Convert string to integer for max function
       .max()  // Maximum amount of rounds there is
       .subscribe { max_depth=it; println("Maximum depth = $max_depth") }  // Add maximum_depth as a variable
+      .map{ it -> 0 }
+      .into { wait_queue_1; wait_queue_1_copy }
 
   // This queue will create the file pairs
   alignRetention_queue
@@ -187,7 +189,7 @@ if (params.parallel_quandenser == true){
       .into { processing_tree; processing_tree_copy }  // Add queue to channel
 
   // This queue will create the tree
-  alignRetention_queue
+  wait_queue_1
     .collectFile()  // Get file, will wait for process to finish
     .map { it.text }  // Convert file to text
     .splitText()  // Split text, each line in a seperate loop
@@ -196,7 +198,7 @@ if (params.parallel_quandenser == true){
     .view()  // view the map. Syntax: [round_nr:amount_of_parallel_files]. A map is kind of like a dict in python
     .subscribe{ end_depth = max_depth + 1; it[end_depth] = 1; tree_map=it; }
     .map { it -> 0 }  // Tree map has now been defined, add 0 to queue to initialize tree_map channel
-    .into { wait_queue; wait_queue_copy }
+    .into { wait_queue_2; wait_queue_2_copy }
   // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
 
   //tree_map = [0:1]  // We DON'T need to initialize treemap, since input_ch will wait until tree_map is defined. Added Sync
@@ -216,7 +218,7 @@ if (params.parallel_quandenser == true){
   Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
   */
   // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
-  input_ch = wait_queue  // Syncronization, aka wait until tree_map is defined
+  input_ch = wait_queue_2  // Syncronization, aka wait until tree_map is defined
   .mix( feedback_ch.until(condition).unique() )  // Continously add
   .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
 } else {
@@ -248,6 +250,7 @@ process quandenser_parallel_3 {
   output:
     val depth into feedback_ch
     file("Quandenser_output/percolator/*") into file_completed
+    val completed into percolator_completed
   exec:
     depth++
   script:
@@ -272,6 +275,7 @@ process quandenser_parallel_4 {
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_3.collect()
    each prev_quandenser from Channel.fromPath("${params.output_path}/Quandenser_output")
+   val completed from percolator_completed
   output:
 	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
 	 file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
