@@ -13,6 +13,17 @@ process queue {
 	"""
 }
 
+process test {
+  input:
+    file "alignRetention_queue.txt" from file("alignRetention_queue.txt")
+  output:
+    file "*.txt" into test_queue
+  script:
+	"""
+  touch test.txt
+	"""
+}
+
 // This queue will define maximum depth of the processing tree
 alignRetention_queue
     .collectFile()  // Get file, will wait for process to finish
@@ -96,8 +107,9 @@ process parallel {
     each prev_percolator from Channel.fromPath("work/percolator")
 
     // Access previous files from quandenser. Consider maracluster files as links, takes time to publish
-    each prev_dinosaur from Channel.fromPath("Quandenser_output/dinosaur")  // Published long before, should not be a problem
-    each prev_maracluster from Channel.fromPath("Quandenser_output/maracluster")  // Async + publish time might make this problematic
+    //each prev_dinosaur from Channel.fromPath("Quandenser_output/dinosaur")  // Published long before, should not be a problem
+    //each prev_maracluster from Channel.fromPath("Quandenser_output/maracluster")  // Async + publish time might make this problematic
+    file ("*.txt") from test_queue.collect()
 
     // This is the magic that makes the process loop
     val feedback_val from input_ch
@@ -116,8 +128,6 @@ process parallel {
   ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
   mkdir Quandenser_output
   ln -s ${prev_percolator} Quandenser_output/percolator
-  ln -s ${prev_dinosaur} Quandenser_output/dinosaur
-  ln -s ${prev_maracluster} Quandenser_output/maracluster
   touch ${depth}.txt
   #tree
   #cd Quandenser_output/percolator
