@@ -6,6 +6,7 @@ from tab2.choose_option import choose_option
 from tab2.cluster_arguments import cluster_arguments
 from tab2.set_time import set_time
 from tab2.set_cpus import set_cpus
+from tab2.parameter_setter import parameter_setter_single
 
 from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
@@ -25,17 +26,18 @@ def init_tab2(paths):
     tab2_leftbox_top_layout = QFormLayout()
     tab2_leftbox_top.setLayout(tab2_leftbox_top_layout)
 
-    tab2_choose_option_workflow = choose_option(paths['nf'], 'workflow')
-    tab2_choose_option_parallel_msconvert = choose_option(paths['nf'], 'parallel_msconvert')
-    tab2_choose_option_parallel_quandenser = choose_option(paths['nf'], 'parallel_quandenser')
-    tab2_choose_option_profile = choose_option(paths['sh'], 'profile')
+    tab2_choose_option_workflow = choose_option('workflow', paths['nf'])
+    tab2_choose_option_parallel_msconvert = choose_option('parallel_msconvert', paths['nf'])
+    tab2_choose_option_parallel_quandenser = choose_option('parallel_quandenser', paths['nf'])
+    tab2_choose_option_profile = choose_option('profile', paths['sh'])
 
     # Always visible
     tab2_leftbox_top_layout.addRow(QLabel('Choose pipeline'), tab2_choose_option_workflow)
-    tab2_leftbox_top_layout.addRow(QLabel('Enable parallel MSconvert'), tab2_choose_option_parallel_msconvert)
-    tab2_leftbox_top_layout.addRow(QLabel('Enable parallel quandenser (EXPERIMENTAL)'), tab2_choose_option_parallel_quandenser)
     tab2_leftbox_top_layout.addRow(QLabel('Profile'), tab2_choose_option_profile)
+    tab2_leftbox_top_layout.addRow(QLabel('Enable parallel MSconvert'), tab2_choose_option_parallel_msconvert)
+    tab2_leftbox_top_layout.addRow(QLabel('Enable parallel quandenser'), tab2_choose_option_parallel_quandenser)
     tab2_leftbox_layout.addWidget(tab2_leftbox_top)
+
 
     # Bottom, these will be hidden or shown depending on profile option
     tab2_hidden = QWidget()
@@ -43,6 +45,8 @@ def init_tab2(paths):
     tab2_hidden_layout = QFormLayout()
     tab2_hidden.setLayout(tab2_hidden_layout)
 
+    # Hidden depending on setting
+    tab2_cluster_type = choose_option("process.executor", paths['nf'])
     tab2_cluster_arguments = cluster_arguments("process.clusterOptions", paths['nf'])
     tab2_cluster_queue = cluster_arguments("process.queue", paths['nf'])
     tab2_parameter_msconvert_cpus = set_cpus("msconvert_cpus", paths['nf'])
@@ -55,6 +59,7 @@ def init_tab2(paths):
     tab2_parameter_triqler_time = set_time("triqler_time", paths['nf'])
 
     # Hidden depending on setting
+    tab2_hidden_layout.addRow(QLabel('Cluster type'), tab2_cluster_type)
     tab2_hidden_layout.addRow(QLabel('Cluster arguments'), tab2_cluster_arguments)
     tab2_hidden_layout.addRow(QLabel('Cluster queue'), tab2_cluster_queue)
     tab2_hidden_layout.addRow(QLabel('MSconvert cpus'), tab2_parameter_msconvert_cpus)
