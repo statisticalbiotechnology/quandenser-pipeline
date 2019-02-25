@@ -24,7 +24,7 @@ class choose_option(QComboBox):
             self.window()
             window = self.window()
             self.recurse_children(window)
-        elif 'parallell' in self.parameter:
+        elif 'parallel' in self.parameter:
             self.parser.write(f"params.{self.parameter}", self.currentText(), isString=False)
         elif self.parameter == 'profile':
             self.parser.write("PROFILE", self.currentText())
