@@ -153,7 +153,7 @@ process quandenser_parallel_2 {
    file('mzML/*') from combined_channel_parallel_2.collect()
    file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
   output:
-	 file "Quandenser_output/*" into quandenser_out_2_to_3
+	 file "Quandenser_output/*" into quandenser_out_2_to_3 includeInputs true
    file "alignRetention_queue.txt" into alignRetention_queue
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
@@ -252,8 +252,9 @@ process quandenser_parallel_3 {
     each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
 
     // Access previous files from quandenser. Consider maracluster files as links, takes time to publish
-    each prev_dinosaur from Channel.fromPath("${params.output_path}/Quandenser_output/dinosaur")  // Published long before, should not be a problem
-    each prev_maracluster from Channel.fromPath("${params.output_path}/Quandenser_output/maracluster")  // Async + publish time might make this problematic
+    //each prev_dinosaur from Channel.fromPath("${params.output_path}/Quandenser_output/dinosaur")  // Published long before, should not be a problem
+    //each prev_maracluster from Channel.fromPath("${params.output_path}/Quandenser_output/maracluster")  // Async + publish time might make this problematic
+    file "Quandenser_output/*" from quandenser_out_2_to_3.collect()
 
     // This is the magic that makes the process loop
     val feedback_val from input_ch
@@ -271,10 +272,7 @@ process quandenser_parallel_3 {
   echo "FILES ${filepair[0]} and ${filepair[1]}"
   mkdir -p pair/file1; mkdir pair/file2
   ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
-  mkdir Quandenser_output
   ln -s ${prev_percolator} Quandenser_output/percolator
-  ln -s ${prev_dinosaur} Quandenser_output/dinosaur
-  ln -s ${prev_maracluster} Quandenser_output/maracluster
   quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${depth} ${params.quandenser_additional_arguments}
 	"""
 }
