@@ -9,6 +9,7 @@ process queue {
   script:
 	"""
   touch alignRetention_queue.txt
+  sleep 2
 	"""
 }
 
