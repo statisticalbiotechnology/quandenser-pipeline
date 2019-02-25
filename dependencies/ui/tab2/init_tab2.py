@@ -53,6 +53,16 @@ def init_tab2(paths):
     tab2_parameter_msconvert_time = set_time("msconvert_time", paths['nf'])
     tab2_parameter_quandenser_cpus = set_cpus("quandenser_cpus", paths['nf'])
     tab2_parameter_quandenser_time = set_time("quandenser_time", paths['nf'])
+
+    tab2_parameter_quandenser_parallel_1_cpus = set_cpus("quandenser_parallel_1_cpus", paths['nf'])
+    tab2_parameter_quandenser_parallel_1_time = set_time("quandenser_parallel_1_time", paths['nf'])
+    tab2_parameter_quandenser_parallel_2_cpus = set_cpus("quandenser_parallel_2_cpus", paths['nf'])
+    tab2_parameter_quandenser_parallel_2_time = set_time("quandenser_parallel_2_time", paths['nf'])
+    tab2_parameter_quandenser_parallel_3_cpus = set_cpus("quandenser_parallel_3_cpus", paths['nf'])
+    tab2_parameter_quandenser_parallel_3_time = set_time("quandenser_parallel_3_time", paths['nf'])
+    tab2_parameter_quandenser_parallel_4_cpus = set_cpus("quandenser_parallel_4_cpus", paths['nf'])
+    tab2_parameter_quandenser_parallel_4_time = set_time("quandenser_parallel_4_time", paths['nf'])
+
     tab2_parameter_tide_search_cpus = set_cpus("tide_search_cpus", paths['nf'])
     tab2_parameter_tide_search_time = set_time("tide_search_time", paths['nf'])
     tab2_parameter_triqler_cpus = set_cpus("triqler_cpus", paths['nf'])
