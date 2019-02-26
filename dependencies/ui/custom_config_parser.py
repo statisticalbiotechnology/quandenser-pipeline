@@ -24,7 +24,14 @@ class custom_config_parser():
         else:  # If multiple, will use additional information to get correct
             start_search_index = [settings.index(i) for i in settings if additional_information in i][0]
             settings_slice = settings[start_search_index:]
-            index = [settings.index(i) for i in settings_slice if i.lstrip().startswith(parameter)][0]
+            # This caused REALLY wierd bugs. DO NOT USE
+            #index = [settings.index(i) for i in settings_slice if i.lstrip().startswith(parameter)]
+            for i, line in enumerate(settings):
+                if i < start_search_index:
+                    continue
+                if line.lstrip().startswith(parameter):
+                    index = i
+                    break
         return index
 
     def get(self, parameter, additional_information=''):
@@ -50,7 +57,7 @@ class custom_config_parser():
             else:
                 break
         intendation = intendation * ' '
-        
+
         if isString:  # Need "
             value = '"' + value + '"'
         settings[index] = f'{intendation}{parameter}={value}\n'  # Need to add \n here
