@@ -1,5 +1,6 @@
 from PySide2 import QtCore
 from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel
+from PySide2.QtWidgets import QStackedLayout
 
 from tab2.workflow import workflow
 from tab2.choose_option import choose_option
@@ -42,18 +43,56 @@ def init_tab2(paths):
     # Bottom, these will be hidden or shown depending on profile option
     tab2_hidden = QWidget()
     tab2_hidden.hidden_object = True
-    tab2_hidden_layout = QFormLayout()
+    tab2_hidden_layout = QStackedLayout()
     tab2_hidden.setLayout(tab2_hidden_layout)
 
-    # Hidden depending on setting
-    tab2_cluster_type = choose_option("process.executor", paths['nf'])
-    tab2_cluster_arguments = cluster_arguments("process.clusterOptions", paths['nf'])
-    tab2_cluster_queue = cluster_arguments("process.queue", paths['nf'])
-    tab2_parameter_msconvert_cpus = set_cpus("msconvert_cpus", paths['nf'])
-    tab2_parameter_msconvert_time = set_time("msconvert_time", paths['nf'])
+    # Stack 1: Empty layout. Cluster disabled
+    tab2_hidden_stack_1 = QWidget()
+    tab2_hidden_stack_1_layout = QFormLayout()
+    tab2_hidden_stack_1.setLayout(tab2_hidden_stack_1_layout)
+
+    # Stack 2: Regular quandenser, cluster enabled
+    tab2_hidden_stack_2 = QWidget()
+    tab2_hidden_stack_2_layout = QFormLayout()
+    tab2_hidden_stack_2.setLayout(tab2_hidden_stack_2_layout)
+
+    tab2_cluster_type_stack_2 = choose_option("process.executor", paths['nf'])
+    tab2_cluster_arguments_stack_2 = cluster_arguments("process.clusterOptions", paths['nf'])
+    tab2_cluster_queue_stack_2 = cluster_arguments("process.queue", paths['nf'])
+    tab2_parameter_msconvert_cpus_stack_2 = set_cpus("msconvert_cpus", paths['nf'])
+    tab2_parameter_msconvert_time_stack_2 = set_time("msconvert_time", paths['nf'])
     tab2_parameter_quandenser_cpus = set_cpus("quandenser_cpus", paths['nf'])
     tab2_parameter_quandenser_time = set_time("quandenser_time", paths['nf'])
+    tab2_parameter_tide_search_cpus_stack_2 = set_cpus("tide_search_cpus", paths['nf'])
+    tab2_parameter_tide_search_time_stack_2 = set_time("tide_search_time", paths['nf'])
+    tab2_parameter_triqler_cpus_stack_2 = set_cpus("triqler_cpus", paths['nf'])
+    tab2_parameter_triqler_time_stack_2 = set_time("triqler_time", paths['nf'])
 
+    tab2_hidden_stack_2_layout.addRow(QLabel('Cluster type'), tab2_cluster_type_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Cluster arguments'), tab2_cluster_arguments_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Cluster queue'), tab2_cluster_queue_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('MSconvert cpus'), tab2_parameter_msconvert_cpus_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('MSconvert time'), tab2_parameter_msconvert_time_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Quandenser cpus'), tab2_parameter_quandenser_cpus)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Quandenser time'), tab2_parameter_quandenser_time)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Tide search cpus'), tab2_parameter_tide_search_cpus_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Tide search time'), tab2_parameter_tide_search_time_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Triqler cpus'), tab2_parameter_triqler_cpus_stack_2)
+    tab2_hidden_stack_2_layout.addRow(QLabel('Triqler time'), tab2_parameter_triqler_time_stack_2)
+
+    # Stack 3: Parallel quandenser, cluster enabled
+    tab2_hidden_stack_3 = QWidget()
+    tab2_hidden_stack_3_layout = QFormLayout()
+    tab2_hidden_stack_3.setLayout(tab2_hidden_stack_3_layout)
+
+    # Same as above
+    tab2_cluster_type_stack_3 = choose_option("process.executor", paths['nf'])
+    tab2_cluster_arguments_stack_3 = cluster_arguments("process.clusterOptions", paths['nf'])
+    tab2_cluster_queue_stack_3 = cluster_arguments("process.queue", paths['nf'])
+    tab2_parameter_msconvert_cpus_stack_3 = set_cpus("msconvert_cpus", paths['nf'])
+    tab2_parameter_msconvert_time_stack_3 = set_time("msconvert_time", paths['nf'])
+
+    # Parallel parameters
     tab2_parameter_quandenser_parallel_1_cpus = set_cpus("quandenser_parallel_1_cpus", paths['nf'])
     tab2_parameter_quandenser_parallel_1_time = set_time("quandenser_parallel_1_time", paths['nf'])
     tab2_parameter_quandenser_parallel_2_cpus = set_cpus("quandenser_parallel_2_cpus", paths['nf'])
@@ -62,24 +101,41 @@ def init_tab2(paths):
     tab2_parameter_quandenser_parallel_3_time = set_time("quandenser_parallel_3_time", paths['nf'])
     tab2_parameter_quandenser_parallel_4_cpus = set_cpus("quandenser_parallel_4_cpus", paths['nf'])
     tab2_parameter_quandenser_parallel_4_time = set_time("quandenser_parallel_4_time", paths['nf'])
+    tab2_parameter_quandenser_parallel_5_cpus = set_cpus("quandenser_parallel_5_cpus", paths['nf'])
+    tab2_parameter_quandenser_parallel_5_time = set_time("quandenser_parallel_5_time", paths['nf'])
 
-    tab2_parameter_tide_search_cpus = set_cpus("tide_search_cpus", paths['nf'])
-    tab2_parameter_tide_search_time = set_time("tide_search_time", paths['nf'])
-    tab2_parameter_triqler_cpus = set_cpus("triqler_cpus", paths['nf'])
-    tab2_parameter_triqler_time = set_time("triqler_time", paths['nf'])
+    # Same as above
+    tab2_parameter_tide_search_cpus_stack_3 = set_cpus("tide_search_cpus", paths['nf'])
+    tab2_parameter_tide_search_time_stack_3 = set_time("tide_search_time", paths['nf'])
+    tab2_parameter_triqler_cpus_stack_3 = set_cpus("triqler_cpus", paths['nf'])
+    tab2_parameter_triqler_time_stack_3 = set_time("triqler_time", paths['nf'])
 
-    # Hidden depending on setting
-    tab2_hidden_layout.addRow(QLabel('Cluster type'), tab2_cluster_type)
-    tab2_hidden_layout.addRow(QLabel('Cluster arguments'), tab2_cluster_arguments)
-    tab2_hidden_layout.addRow(QLabel('Cluster queue'), tab2_cluster_queue)
-    tab2_hidden_layout.addRow(QLabel('MSconvert cpus'), tab2_parameter_msconvert_cpus)
-    tab2_hidden_layout.addRow(QLabel('MSconvert time'), tab2_parameter_msconvert_time)
-    tab2_hidden_layout.addRow(QLabel('Quandenser cpus'), tab2_parameter_quandenser_cpus)
-    tab2_hidden_layout.addRow(QLabel('Quandenser time'), tab2_parameter_quandenser_time)
-    tab2_hidden_layout.addRow(QLabel('Tide search cpus'), tab2_parameter_tide_search_cpus)
-    tab2_hidden_layout.addRow(QLabel('Tide search time'), tab2_parameter_tide_search_time)
-    tab2_hidden_layout.addRow(QLabel('Triqler cpus'), tab2_parameter_triqler_cpus)
-    tab2_hidden_layout.addRow(QLabel('Triqler time'), tab2_parameter_triqler_time)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Cluster type'), tab2_cluster_type_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Cluster arguments'), tab2_cluster_arguments_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Cluster queue'), tab2_cluster_queue_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('MSconvert cpus'), tab2_parameter_msconvert_cpus_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('MSconvert time'), tab2_parameter_msconvert_time_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 1 cpus'), tab2_parameter_quandenser_parallel_1_cpus)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 1 time'), tab2_parameter_quandenser_parallel_1_time)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 2 cpus'), tab2_parameter_quandenser_parallel_2_cpus)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 2 time'), tab2_parameter_quandenser_parallel_2_time)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 3 cpus'), tab2_parameter_quandenser_parallel_3_cpus)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 3 time'), tab2_parameter_quandenser_parallel_3_time)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 4 cpus'), tab2_parameter_quandenser_parallel_4_cpus)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 4 time'), tab2_parameter_quandenser_parallel_4_time)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 5 cpus'), tab2_parameter_quandenser_parallel_5_cpus)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 5 time'), tab2_parameter_quandenser_parallel_5_time)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Tide search cpus'), tab2_parameter_tide_search_cpus_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Tide search time'), tab2_parameter_tide_search_time_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Triqler cpus'), tab2_parameter_triqler_cpus_stack_3)
+    tab2_hidden_stack_3_layout.addRow(QLabel('Triqler time'), tab2_parameter_triqler_time_stack_3)
+
+    # Add stacks
+    tab2_hidden_layout.addWidget(tab2_hidden_stack_1)
+    tab2_hidden_layout.addWidget(tab2_hidden_stack_2)
+    tab2_hidden_layout.addWidget(tab2_hidden_stack_3)
+
+    # Add hidden stacked layout
     tab2_leftbox_layout.addWidget(tab2_hidden)
 
     # Right box
