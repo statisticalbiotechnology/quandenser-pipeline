@@ -106,7 +106,9 @@ class Main(QMainWindow):
                 for child in children:
                     if hasattr(child, 'parameter'):
                         if child.parameter == 'profile':
-                            child.check_hidden()
+                            child.change_stack()
+                        elif hasattr(child, 'parallel_option') and 'parallel' in child.parameter:
+                            child.parallel_option()
                     else:
                         recurse_children(child)
 
