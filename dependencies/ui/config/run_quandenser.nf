@@ -329,7 +329,7 @@ c1 = spectra_normal
 c2 = spectra_parallel
 spectra = c1.concat(c2)
 
-process tide_perc_search {
+process tide_search {
   publishDir params.output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
   containerOptions "$params.custom_mounts"
   input:
