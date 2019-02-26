@@ -1,4 +1,5 @@
 mkdir -p oldpack/DEBIAN
+rm quandenser-v0-01-linux-amd64_MODIFIED_repack.deb
 dpkg-deb -x *.deb oldpack/
 dpkg-deb -e *.deb oldpack/DEBIAN
 rm -r oldpack/usr/share  # Remove dinosaur, installed by regular quandenser
