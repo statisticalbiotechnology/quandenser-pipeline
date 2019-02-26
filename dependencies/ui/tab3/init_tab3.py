@@ -24,12 +24,13 @@ def init_tab3(paths):
     tab3_quandenser_arguments = additional_arguments(paths['nf'], type='quandenser_additional_arguments')
     tab3_parameter_missed_clevages = parameter_setter_single("missed_clevages", paths['nf'])  # Crux
     tab3_parameter_precursor_window = parameter_setter_double("precursor_window", paths['nf'])  # Crux
-    tab3_crux_arguments = additional_arguments(paths['nf'], type='crux_index_additional_arguments')
-    tab3_crux_index_arguments = additional_arguments(paths['nf'], type='crux_index_additional_arguments')
-    tab3_crux_search_arguments = additional_arguments(paths['nf'], type='crux_search_additional_arguments')
-    tab3_crux_percolator_arguments = additional_arguments(paths['nf'], type='crux_percolator_additional_arguments')
+    tab3_parameter_mods_spec = additional_arguments(paths['nf'], type='mods_spec')  # Crux
+    tab3_crux_arguments = additional_arguments(paths['nf'], type='crux_index_additional_arguments')  # Crux
+    tab3_crux_index_arguments = additional_arguments(paths['nf'], type='crux_index_additional_arguments')  # Crux
+    tab3_crux_search_arguments = additional_arguments(paths['nf'], type='crux_search_additional_arguments')  # Crux
+    tab3_crux_percolator_arguments = additional_arguments(paths['nf'], type='crux_percolator_additional_arguments')  # Crux
     tab3_parameter_fold_change_eval = parameter_setter_double("fold_change_eval", paths['nf'])  # Triqler
-    tab3_triqler_arguments = additional_arguments(paths['nf'], type='triqler_additional_arguments')
+    tab3_triqler_arguments = additional_arguments(paths['nf'], type='triqler_additional_arguments')  # Triqler
     tab3_reset_button = reset_button(paths['config'])
 
     tab3_leftbox_layout.addRow(QLabel('<b>MSconvert'), QLabel())
@@ -40,6 +41,7 @@ def init_tab3(paths):
     tab3_leftbox_layout.addRow(QLabel('<b>Crux'), QLabel())
     tab3_leftbox_layout.addRow(QLabel('Missed clevages'), tab3_parameter_missed_clevages)
     tab3_leftbox_layout.addRow(QLabel('Precursor window'), tab3_parameter_precursor_window)
+    tab3_leftbox_layout.addRow(QLabel('Mods spec'), tab3_parameter_mods_spec)
     tab3_leftbox_layout.addRow(QLabel('Crux indexing additional arguments'), tab3_crux_index_arguments)
     tab3_leftbox_layout.addRow(QLabel('Crux search additional arguments'), tab3_crux_search_arguments)
     tab3_leftbox_layout.addRow(QLabel('Crux percolator additional arguments'), tab3_crux_percolator_arguments)
