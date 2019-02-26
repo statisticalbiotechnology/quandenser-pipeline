@@ -12,10 +12,16 @@ class additional_arguments(QLineEdit):
         self.nf_settings_parser.load(self.nf_settings_path)
         self.type = type
         self.setText('')
+        self.default()
         self.textChanged.connect(self.check_text)
 
     def check_text(self):
         self.blockSignals(True)
         all_txt = self.text()  # Copy, dont use
         self.nf_settings_parser.write(f"params.{self.type}", all_txt)
+        self.blockSignals(False)
+
+    def default(self):
+        self.blockSignals(True)
+        self.setText(self.nf_settings_parser.get(f"params.{self.type}"))
         self.blockSignals(False)
