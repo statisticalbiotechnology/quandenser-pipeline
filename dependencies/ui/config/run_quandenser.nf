@@ -123,7 +123,7 @@ process quandenser {
 }
 
 
-process quandenser_parallel_1 {
+process quandenser_parallel_1 {  // About 3 min/run
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
@@ -146,7 +146,7 @@ process quandenser_parallel_1 {
 
 percolator_workdir = file("${params.output_path}/work/percolator_${params.random_hash}")  // Path to working percolator directory
 result = percolator_workdir.mkdir()  // Create the directory
-process quandenser_parallel_2 {
+process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
   containerOptions "$params.custom_mounts"
@@ -174,7 +174,7 @@ if (params.parallel_quandenser == true){
       .map { it -> it.tokenize('\t')[0] }  // Get first value, it contains the rounds
       .toInteger()  // Convert string to integer for max function
       .max()  // Maximum amount of rounds there is
-      .subscribe { max_depth=it; println("Maximum depth = $max_depth") }  // Add maximum_depth as a variable
+      .subscribe { max_depth=it; }  // Add maximum_depth as a variable
       .map{ it -> 0 }
       .into { wait_queue_1; wait_queue_1_copy }
 
@@ -203,7 +203,7 @@ if (params.parallel_quandenser == true){
   // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
 
   process sync_variables {
-    exectutor = 'local'
+    exectutor = 'local'  // This takes 1 ms, no real calculations
     input:
       val wait1 from wait_queue_1
       val wait2 from wait_queue_2
@@ -213,11 +213,13 @@ if (params.parallel_quandenser == true){
       end_depth = max_depth + 1  // Need to add last value in map to prevent crash
       tree_map[end_depth] = 1  // tree_map should be defined by now
       println("Processor tree is ${tree_map}")
+      println("Maximum depth = $max_depth")
       println("Syntax: round_nr:amount_of_parallel_files")  // A map is kind of like a dict in python
   }
 
   condition = { 1 == 0 }  // Never stop. It will do so automatically when the files run out
   feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
+  feedback_ch_copy = Channel.create()  // This channel loop until max_depth has been reached
 
   /* Okay, this one is tricky and needs an explanation
   The problem was that I need to create a processing tree. Any amount of files in each round can be processed in parallel,
@@ -235,6 +237,7 @@ if (params.parallel_quandenser == true){
   input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined and last round added
   .mix( feedback_ch.until(condition).unique() )  // Continously add
   .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
+
 } else {
   // Empty dummy channels if not parallel
   processing_tree = Channel.create()
@@ -242,7 +245,8 @@ if (params.parallel_quandenser == true){
   input_ch = Channel.create()
 }
 
-process quandenser_parallel_3 {
+process quandenser_parallel_3 {  // About 3 min/run
+  // Parallel 3: matchFeatures. Parallel
   publishDir params.output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
   input:
@@ -260,7 +264,7 @@ process quandenser_parallel_3 {
     params.workflow == "Full" && params.parallel_quandenser == true
   output:
     val depth into feedback_ch
-    file("Quandenser_output/percolator/*") into percolator_1_completed
+    val 0 into percolator_1_completed
   exec:
     depth++
   script:
@@ -274,72 +278,34 @@ process quandenser_parallel_3 {
 	"""
 }
 
-process quandenser_parallel_4 {
+process quandenser_parallel_4 {  // About 30 seconds
   // Parallel 4: Run through maracluster extra features. Non-parallel
-  publishDir "${params.output_path}/work/percolator_${params.random_hash}", mode: 'symlink', overwrite: true,  pattern: "Quandenser_output/percolator/*"
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
-   each prev_quandenser from Channel.fromPath("${params.output_path}/Quandenser_output")
-   file ("Quandenser_output/*") from percolator_1_completed.collect()
+   each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
+   file("Quandenser_output/*") from quandenser_out_2_to_4.collect()
+   val percolator_1 from percolator_1_completed.collect()
   output:
-	 file "Quandenser_output/*" into quandenser_out_4_to_5, quandenser_out_4_to_6 includeInputs true
+	 file "Quandenser_output/*" into quandenser_out_4_to_5 includeInputs true
   when:
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
 	"""
-  ln -s ${prev_quandenser} Quandenser_output  # Create link to publishDir
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel_4 true ${params.quandenser_additional_arguments}
+  ln -s ${prev_percolator} Quandenser_output/percolator  # Create link to publishDir
+	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-4 true ${params.quandenser_additional_arguments}
 	"""
 }
 
 process quandenser_parallel_5 {
-  publishDir params.output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/percolator/*"
-  containerOptions "$params.custom_mounts"
-  input:
-    file 'list.txt' from file_def
-    set val(depth), val(filepair) from processing_tree_copy  // Use copy from previous tree
-    // This will replace percolator directory with a link to work directory percolator
-    each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
-
-    // Access previous files from quandenser. Consider maracluster files as links, takes time to publish
-    //each prev_dinosaur from Channel.fromPath("${params.output_path}/Quandenser_output/dinosaur")  // Published long before, should not be a problem
-    //each prev_maracluster from Channel.fromPath("${params.output_path}/Quandenser_output/maracluster")  // Async + publish time might make this problematic
-    file "Quandenser_output/*" from quandenser_out_4_to_5.collect()
-
-    // This is the magic that makes the process loop
-    val feedback_val from input_ch
-  when:
-    params.workflow == "Full" && params.parallel_quandenser == true
-  output:
-    val depth into feedback_ch
-    file("Quandenser_output/percolator/*") into percolator_2_completed
-  exec:
-    depth++
-  script:
-  """
-  echo "DEPTH ${depth - 1}"
-  echo "FILES ${filepair[0]} and ${filepair[1]}"
-  mkdir -p pair/file1; mkdir pair/file2
-  ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
-  rm -rf Quandenser_output/percolator  # Replace directory with link
-  ln -s ${prev_percolator} Quandenser_output/percolator
-  quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-5 ${depth} ${params.quandenser_additional_arguments}
-	"""
-}
-
-process quandenser_parallel_6 {
-  // Parallel 6: Create the consensus_spectra. Non-parallel
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/consensus_spectra/*"
+  // Parallel 5: Create the consensus_spectra + clustering. Non-parallel
+  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
    each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
-   file("Quandenser_output/*") from quandenser_out_4_to_6.collect()
-   file("Quandenser_output/percolator/*") from percolator_2_completed.collect()
-
+   file("Quandenser_output/*") from quandenser_out_4_to_5.collect()  // Includes links to first percolator
   output:
 	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
 	 file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
@@ -347,6 +313,8 @@ process quandenser_parallel_6 {
     params.workflow == "Full" && params.parallel_quandenser == true
   script:
 	"""
+  rm -rf Quandenser_output/percolator
+  ln -s ${prev_percolator} Quandenser_output/percolator
 	quandenser-modified --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
 	"""
 }
