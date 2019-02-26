@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame, QTableWidget, QLabel
+from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame, QTableWidget, QLabel, QStackedLayout
 
 from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
@@ -30,39 +30,53 @@ class choose_option(QComboBox):
             self.recurse_children(window)
         elif 'parallel' in self.parameter:
             self.parser.write(f"params.{self.parameter}", self.currentText(), isString=False)
-            if not hasattr(self, 'max_forks_widget'):
-                self.max_forks_widget = parameter_setter_single(f"{self.parameter}_max_forks", self.settings_file)
-                self.label = tooltip_label(f"Max forks {self.parameter.replace('_', ' ')}",
-                                           "Maximum amount of parallel processes. Set to 0 for no limit")
-                parent = self.parent().layout()
-                parent.addRow(self.label, self.max_forks_widget)
-                self.max_forks_widget.hide()
-                self.label.hide()
-            if self.currentText() == "true":
-                self.max_forks_widget.show()
-                self.label.show()
-            else:
-                self.max_forks_widget.hide()
-                self.label.hide()
+            self.parallel_option()
+            self.change_stack()
         elif self.parameter == 'profile':
             self.parser.write("PROFILE", self.currentText())
-            self.check_hidden()
+            self.change_stack()
         elif self.parameter == 'process.executor':
             self.parser.write(f"{self.parameter}", self.currentText(),
                               additional_information="cluster {")
 
-    def check_hidden(self):
+    def change_stack(self):
         parent = self.parentWidget()
-        parent = parent.parentWidget()  # Exist two levels up
+        # Check if parallel quandenser is enabled
+        for child in parent.children():
+            if hasattr(child, 'parameter'):
+                if child.parameter == 'parallel_quandenser':
+                    quandenser_parallel = child.currentText()
+                elif child.parameter == 'profile':
+                    profile = child.currentText()
+
+        if profile == "local":
+            current_stack = 0
+        elif quandenser_parallel == 'false':
+            current_stack = 1
+        elif quandenser_parallel == 'true':
+            current_stack = 2
+
+        parent = parent.parentWidget()  # To get to hidden box, widget is 2 levels up
         children = parent.children()
-        if self.currentText() == "cluster":  # Add widgets
-            for child in children:
-                if hasattr(child, "hidden_object"):
-                    child.show()
-        elif self.currentText() == "local":
-            for child in children:
-                if hasattr(child, "hidden_object"):
-                    child.hide()
+        for child in children:
+            if hasattr(child, "hidden_object"):
+                child.layout().setCurrentIndex(current_stack)
+
+    def parallel_option(self):  # Will trigger on tab change
+        if not hasattr(self, 'max_forks_widget'):
+            self.max_forks_widget = parameter_setter_single(f"{self.parameter}_max_forks", self.settings_file)
+            self.label = tooltip_label(f"Max forks {self.parameter.replace('_', ' ')}",
+                                       "Maximum amount of parallel processes. Set to 0 for no limit")
+            parent = self.parent().layout()
+            parent.addRow(self.label, self.max_forks_widget)
+            self.max_forks_widget.hide()
+            self.label.hide()
+        if self.currentText() == "true":
+            self.max_forks_widget.show()
+            self.label.show()
+        else:
+            self.max_forks_widget.hide()
+            self.label.hide()
 
     def default(self):
         if self.parameter == 'profile':
