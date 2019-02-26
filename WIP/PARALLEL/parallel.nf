@@ -66,10 +66,13 @@ process sync_variables {
     val wait1 from wait_queue_1
     val wait2 from wait_queue_2
   output:
-    val 0 into sync_ch
+    val initial_range into sync_ch
   exec:
-  end_depth = max_depth + 1
-  tree_map[end_depth] = 1
+   end_depth = max_depth + 1
+   tree_map[end_depth] = 1
+   tree_map[-1] = tree_map[0]  // Initializiation
+   initial_range = 0..<tree_map[0]
+   println("Tree map is $tree_map")
 }
 
 condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
@@ -89,9 +92,19 @@ the next batch.
 Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
 */
 // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
+current_depth = -1
+current_width = 0
 input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
-.mix( feedback_ch.until(condition).unique() )  // Continously add
+.flatten()
+.mix( feedback_ch.until(condition) )  // Continously add
+.map { it -> current_width++; }
+.view { it -> "it is $it" }
+.buffer { it >= tree_map[current_depth] - 1}
+.view { it -> "Buffer at $it" }
+.map { it -> current_depth++; current_width = 0; current_depth}
+.view { it -> "Mapped at $it" }
 .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
+.view { it -> "Processes at $it" }
 
 percolator_workdir = file("work/percolator")  // Path to working percolator directory
 result = percolator_workdir.mkdir()  // Create the directory
@@ -129,6 +142,8 @@ process parallel {
   #tree
   #cd Quandenser_output/percolator
   #ls
-  sleep 2
+  random=\$(shuf -i 2-15 -n 1)
+  sleep \$random
+  echo "Slept for \$random"
 	"""
 }
