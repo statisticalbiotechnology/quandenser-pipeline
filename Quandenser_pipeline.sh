@@ -6,6 +6,9 @@ BLUE="\033[0;34m"
 YELLOW="\033[0;93m"
 RESET="\033[0m\n"
 
+# Go to dir where the script lies, this allows for links to work
+cd "$(dirname "$(realpath "$0")")"
+
 function PIPE_read() {
   # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
   value=$(grep -o "$1=.*" "$config_location/PIPE" | cut -d'=' -f2 | tr -d '\r')
@@ -45,9 +48,6 @@ do
     exit 0
   fi
 done
-
-# Go to dir where the script lies, this allows for links to work
-cd "$(dirname "$0")"
 
 # Check if nvidia is installed
 {
