@@ -27,14 +27,17 @@ class running_jobs(QTableWidget):
                 item = QTableWidgetItem()
                 item.setText('')
                 self.setItem(row, column, item)
-        self.header = self.horizontalHeader()
-        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
-        self.header.setSectionResizeMode(2, QHeaderView.Stretch)
-        self.setHorizontalHeaderLabels(["Pid", "Output path", "Started", "Running", "Kill"])
 
+        self.fix_header()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
         self.timer.start(10000)  # Update every 10 seconds
+
+    def fix_header(self):
+        self.header = self.horizontalHeader()
+        self.setHorizontalHeaderLabels(["Pid", "Output path", "Started", "Running", "Kill"])
+        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
+        self.header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
 
     def keyPressEvent(self, event):
         """Add functionallity to keyboard"""
@@ -48,10 +51,7 @@ class running_jobs(QTableWidget):
 
     def update(self):
         self.clear()
-        self.header = self.horizontalHeader()
-        self.header.setSectionResizeMode(1, QHeaderView.Stretch)
-        self.header.setSectionResizeMode(2, QHeaderView.Stretch)
-        self.setHorizontalHeaderLabels(["Pid", "Output path", "Started", "Running", "Kill"])
+        self.fix_header()
         processes = []
         jobs = []
         for line in open(self.jobs_path, 'r'):
