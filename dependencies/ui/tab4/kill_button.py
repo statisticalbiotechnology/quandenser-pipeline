@@ -13,10 +13,20 @@ class kill_button(QPushButton):
         self.clicked.connect(self.kill)
 
     def kill(self):
-        process = subprocess.Popen([f"pkill -15 -P {self.ppid}"],
+        process = subprocess.Popen([f"pkill -15 -P {self.ppid} && echo KILLED PROCESS"],
                                     stdout=subprocess.PIPE,
                                     shell=True)
-        print(Fore.RED + f"Killed process with pid {self.ppid} and its children" + Fore.RESET)
+        out, err = process.communicate()  # Wait for process to terminate
+        out = out.decode("utf-8")
+        out = out.split('\t')
+        killed = False
+        for line in out:
+            if "KILLED PROCESS" in line:
+                killed = True
+        if killed:
+            print(Fore.RED + f"Killed process with pid {self.ppid} and its children" + Fore.RESET)
+        else:
+            print(Fore.RED + f"FAILED to kill process with pid {self.ppid} and its children. Are you on the same login node?" + Fore.RESET)
         parent = self.parentWidget()
         children = parent.children()
         for child in children:
