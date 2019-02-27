@@ -16,7 +16,7 @@ NEXTFLOW_OUTPUTS="-with-trace $OUTPUT_PATH/Nextflow_output/trace.txt -with-repor
 
 mkdir -p "$OUTPUT_PATH/Nextflow_output"  # Will also create output folder if it does not exist
 
-/var/tmp/quandenser_pipeline_$USER/nextflow run $NEXTFLOW_PIPELINE $SINGULARITY_ENABLE $SINGULARITY_IMAGE \
+$CONFIG_LOCATION/nextflow run $NEXTFLOW_PIPELINE $SINGULARITY_ENABLE $SINGULARITY_IMAGE \
 -c $NF_CONFIG_LOCATION $NEXTFLOW_OUTPUTS -w $WORK_DIRECTORY -profile $PROFILE | tee $STDOUT_FILE
 
 # Notes: by using "-with-weblog", you could send the output to a url (HTTP POST request)
