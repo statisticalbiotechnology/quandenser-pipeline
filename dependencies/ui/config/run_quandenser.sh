@@ -1,9 +1,12 @@
 #!/bin/bash
+
+# Changeable
 PROFILE="local"
-CONFIG_LOCATION="/var/tmp/quandenser_pipeline_$USER"
-OUTPUT_PATH="/media/storage/timothy/quandenser-pipeline/output"
+OUTPUT_PATH=""
 OUTPUT_PATH_LABEL=""
 
+# Static
+CONFIG_LOCATION="/home/$USER/.quandenser_pipeline"
 WORK_DIRECTORY="$OUTPUT_PATH/work"  # Work should always be merged, multiple runs should use same
 NF_CONFIG_LOCATION="$CONFIG_LOCATION/nf.config"
 NEXTFLOW_PIPELINE="$CONFIG_LOCATION/run_quandenser.nf"

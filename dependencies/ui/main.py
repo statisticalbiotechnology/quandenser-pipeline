@@ -32,7 +32,7 @@ from utils import check_corrupt, check_running, ERROR
 
 # read user and create config location
 user = os.environ.get('USER')
-config_path = f"/var/tmp/quandenser_pipeline_{user}"
+config_path = f"/home/{user}/.quandenser_pipeline"
 #print(Style.BRIGHT, end='\r')  # Set style
 
 class Main(QMainWindow):

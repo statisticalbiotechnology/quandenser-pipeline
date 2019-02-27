@@ -1,5 +1,5 @@
 #!/bin/bash
-config_location="/var/tmp/quandenser_pipeline_$USER"  # Change depending on mac or linux
+config_location="/home/$USER/.quandenser_pipeline"  # Change depending on mac or linux
 GREEN="\033[0;92m"
 RED="\033[0;31m"
 BLUE="\033[0;34m"
