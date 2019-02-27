@@ -203,23 +203,22 @@ if (params.parallel_quandenser == true){
   // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
 
   process sync_variables {
-    exectutor = 'local'  // This takes 1 ms, no real calculations
+    exectutor = 'local'
     input:
       val wait1 from wait_queue_1
       val wait2 from wait_queue_2
     output:
-      val 0 into sync_ch
+      val initial_range into sync_ch
     exec:
-      end_depth = max_depth + 1  // Need to add last value in map to prevent crash
-      tree_map[end_depth] = 1  // tree_map should be defined by now
-      println("Processor tree is ${tree_map}")
-      println("Maximum depth = $max_depth")
-      println("Syntax: round_nr:amount_of_parallel_files")  // A map is kind of like a dict in python
+     end_depth = max_depth + 1
+     tree_map[end_depth] = 1
+     tree_map[-1] = tree_map[0]  // Initializiation of first values
+     initial_range = 0..<tree_map[0]
+     println("Tree map is $tree_map")
   }
 
-  condition = { 1 == 0 }  // Never stop. It will do so automatically when the files run out
+  condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
   feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
-  feedback_ch_copy = Channel.create()  // This channel loop until max_depth has been reached
 
   /* Okay, this one is tricky and needs an explanation
   The problem was that I need to create a processing tree. Any amount of files in each round can be processed in parallel,
@@ -228,16 +227,22 @@ if (params.parallel_quandenser == true){
   The solution is to create a feedback loop, so the process will loop until the file queue is empty (until command). However, since all processes
   run async and will each input a value into the feedback channel, it will spawn the exact amount of processes which were started from
   the beginning. I solved the issue by creating a tree map, which countains all the rounds and how many processes it can run in parallel.
-  Each process will submit a value, which is the next round that should be processed. The unique command takes the list and outputs only 1
-  value (important). This is then piped to a function that creates list that is flattened, spawning the exact amount of processes needed before
-  the next batch.
+  Each process will submit a value, which is the next round that should be processed. The buffer command will wait for all processes
+  to finish before starting the next batch.
+  This is then piped to a function that creates list that is flattened, spawning the exact amount of processes needed before the next batch.
+
   Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
   */
   // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
-  input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined and last round added
-  .mix( feedback_ch.until(condition).unique() )  // Continously add
+  current_depth = -1
+  current_width = 0
+  input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
+  .flatten()
+  .mix( feedback_ch.until(condition) )  // Continously add
+  .map { it -> current_width++; }
+  .buffer { it >= tree_map[current_depth] - 1}
+  .map { it -> current_depth++; current_width = 0; current_depth}
   .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
-
 } else {
   // Empty dummy channels if not parallel
   processing_tree = Channel.create()
