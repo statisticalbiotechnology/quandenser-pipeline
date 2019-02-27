@@ -127,7 +127,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
-  maxForks params.parallel_quandenser_max_forks  // Defaults to the amount of cores
+  maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
    file 'list.txt' from file_def
    file('mzML/*') from combined_channel_parallel_1
@@ -254,6 +254,7 @@ process quandenser_parallel_3 {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
   publishDir params.output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
+  maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
     file 'list.txt' from file_def
     set val(depth), val(filepair) from processing_tree  // Get a filepair from a round
