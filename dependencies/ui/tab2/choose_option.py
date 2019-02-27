@@ -61,6 +61,10 @@ class choose_option(QComboBox):
         for child in children:
             if hasattr(child, "hidden_object"):
                 child.layout().setCurrentIndex(current_stack)
+                stack = child.layout().currentWidget()
+                for w in stack.children():
+                    if hasattr(w, 'default'):
+                        w.default()
 
     def parallel_option(self):  # Will trigger on tab change
         if not hasattr(self, 'max_forks_widget'):
