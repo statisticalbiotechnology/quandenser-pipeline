@@ -10,7 +10,7 @@ class choose_option(QComboBox):
         super(choose_option,self).__init__(parent = None)
         self.parameter = parameter
         if self.parameter == 'workflow':
-            self.addItems(["Full", "MSconvert"])
+            self.addItems(["Full", "MSconvert", "Quandenser"])
         elif 'parallel' in self.parameter:
             self.addItems(["true", "false"])
         elif self.parameter == 'profile':
