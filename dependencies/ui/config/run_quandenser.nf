@@ -4,7 +4,7 @@ echo true
 file_def = file(params.batch_file)  // batch_file
 
 // change the path to where the database is and the batch file is if you are only doing msconvert
-if( params.workflow == "MSconvert" ) {
+if( params.workflow == "MSconvert" || params.workflow = "Quandenser" ) {
   db_file = params.batch_file  // Will not be used, so junk name
 } else {
   db_file = params.db
@@ -109,13 +109,13 @@ process quandenser {
   publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
-  file 'list.txt' from file_def
-  file('mzML/*') from combined_channel_normal.collect()
+    file 'list.txt' from file_def
+    file('mzML/*') from combined_channel_normal.collect()
   output:
-	file("Quandenser_output/consensus_spectra/**") into spectra_normal
-	file "Quandenser_output/*" into quandenser_out_normal
+	  file("Quandenser_output/consensus_spectra/**") into spectra_normal
+	  file "Quandenser_output/*" into quandenser_out_normal
   when:
-    params.workflow == "Full" && params.parallel_quandenser == false
+    (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == false
   script:
 	"""
 	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments}
@@ -129,12 +129,12 @@ process quandenser_parallel_1 {  // About 3 min/run
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
-   file 'list.txt' from file_def
-   file('mzML/*') from combined_channel_parallel_1
+    file 'list.txt' from file_def
+    file('mzML/*') from combined_channel_parallel_1
   output:
-	 file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
+	  file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
   when:
-    params.workflow == "Full" && params.parallel_quandenser == true
+    (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
 	"""
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
@@ -148,17 +148,18 @@ percolator_workdir = file("${params.output_path}/work/percolator_${params.random
 result = percolator_workdir.mkdir()  // Create the directory
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
+  publishDir "$params.output_path/Quandenser_output/maracluster/*",
+  mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
   containerOptions "$params.custom_mounts"
   input:
-   file 'list.txt' from file_def
-   file('mzML/*') from combined_channel_parallel_2.collect()
-   file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
+    file 'list.txt' from file_def
+    file('mzML/*') from combined_channel_parallel_2.collect()
+    file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
   output:
-	 file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
-   file "alignRetention_queue.txt" into alignRetention_queue
+	  file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
+    file "alignRetention_queue.txt" into alignRetention_queue
   when:
-    params.workflow == "Full" && params.parallel_quandenser == true
+    (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
 	"""
 	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments}
@@ -252,7 +253,8 @@ if (params.parallel_quandenser == true){
 
 process quandenser_parallel_3 {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
-  publishDir params.output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/percolator/*"
+  publishDir "$params.output_path/Quandenser_output/percolator/*",
+  mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
@@ -267,7 +269,7 @@ process quandenser_parallel_3 {  // About 3 min/run
     // This is the magic that makes the process loop
     val feedback_val from input_ch
   when:
-    params.workflow == "Full" && params.parallel_quandenser == true
+    (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   output:
     val depth into feedback_ch
     val 0 into percolator_1_completed
@@ -281,12 +283,13 @@ process quandenser_parallel_3 {  // About 3 min/run
   ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
   ln -s ${prev_percolator} Quandenser_output/percolator
   quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${depth} ${params.quandenser_additional_arguments}
-	"""
+  """
 }
 
 process quandenser_parallel_4 {  // About 30 seconds
   // Parallel 4: Run through maracluster extra features. Non-parallel
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
+  publishDir "$params.output_path/Quandenser_output/maracluster_extra_features/*",
+  mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
@@ -296,7 +299,7 @@ process quandenser_parallel_4 {  // About 30 seconds
   output:
 	 file "Quandenser_output/*" into quandenser_out_4_to_5 includeInputs true
   when:
-    params.workflow == "Full" && params.parallel_quandenser == true
+    (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
 	"""
   ln -s ${prev_percolator} Quandenser_output/percolator  # Create link to publishDir
@@ -316,7 +319,7 @@ process quandenser_parallel_5 {
 	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
 	 file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
   when:
-    params.workflow == "Full" && params.parallel_quandenser == true
+    (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
 	"""
   rm -rf Quandenser_output/percolator
