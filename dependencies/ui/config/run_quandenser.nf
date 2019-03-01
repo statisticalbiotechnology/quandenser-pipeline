@@ -157,6 +157,9 @@ process quandenser_parallel_1 {  // About 3 min/run
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
     cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mzML_file=\$(basename -s .mzML mzML/*)
+    echo "FILE IS \$mzML_file"
+    find Quandenser_output/dinosaur/* ! -name "\$mzML_file*" -delete
   fi
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
@@ -199,7 +202,7 @@ process quandenser_parallel_2 {  // About 30 seconds
 	"""
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
-    cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
 	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
