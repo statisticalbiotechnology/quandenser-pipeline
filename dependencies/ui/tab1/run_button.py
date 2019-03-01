@@ -7,6 +7,7 @@ from shutil import copyfile
 import time
 from colorama import Fore, Back, Style
 import secrets
+import re
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
@@ -53,6 +54,7 @@ class run_button(QPushButton):
         # Check if label has been set
         label = self.sh_parser.get('OUTPUT_PATH_LABEL')
         if label != '':
+            label = re.sub("_*", '', label)  # Remove previous indexing
             index = 0
             while True:
                 if os.path.isdir(output_path + label + "_" + str(index)):
