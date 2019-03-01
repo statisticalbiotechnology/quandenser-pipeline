@@ -4,6 +4,7 @@ from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QFormLayout, QL
 from tab3.additional_arguments import additional_arguments
 from tab3.parameter_setter import parameter_setter_double, parameter_setter_single
 from tab3.reset_button import reset_button
+from tab3.label_writer import label_writer
 from tab3.resume_chooser import resume_chooser
 from tab3.resume_folder_viewer import resume_folder_viewer
 
@@ -49,7 +50,7 @@ def init_tab3(paths):
     tab3_leftbox_layout.addRow(QLabel('<b>Triqler'), QLabel())
     tab3_leftbox_layout.addRow(QLabel('Fold change evaluation'), tab3_parameter_fold_change_eval)
     tab3_leftbox_layout.addRow(QLabel('Triqler additional arguments'), tab3_triqler_arguments)
-    tab3_leftbox_layout.addWidget(tab3_reset_button)
+    tab3_leftbox_layout.addRow(tab3_reset_button)
 
     # Right box
     tab3_rightbox = QWidget()
@@ -57,7 +58,7 @@ def init_tab3(paths):
     tab3_rightbox.setLayout(tab3_rightbox_layout)
 
     tab3_rightbox_layout.addRow(QLabel('<b>Quandenser-pipeline'), QLabel())
-    tab3_output_dir_label = QLineEdit()
+    tab3_output_dir_label = label_writer(paths['sh'])
     tooltip_label_dir_label = tooltip_label('Output directory label',
     """If you are running multiple runs in the same directory, this label will allow you to
     run many runs in the same output directory without overwriting the outputs""")
