@@ -11,7 +11,7 @@ class resume_folder_viewer(QLineEdit):
         self.type = type
         self.id = id
         self.nf_settings_parser = custom_config_parser()
-        self.nf_settings_paerser.load(nf_settings_path)
+        self.nf_settings_parser.load(nf_settings_path)
         self.textChanged.connect(self.check_text)
 
     def check_text(self):
