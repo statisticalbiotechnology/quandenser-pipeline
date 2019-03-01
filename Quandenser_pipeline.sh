@@ -148,6 +148,8 @@ do
     PIPE_write "disable-opengl" "true"
   elif [[ "$var" = "--enable-opengl" ]]; then  # Check if user wants to enable opengl
     PIPE_write "disable-opengl" "false"
+  elif [[ "$var" = "--disable-nvidia" ]]; then  # Check if user wants to disable nvidia drivers
+    graphics=""
   fi
 done
 
