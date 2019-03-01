@@ -33,4 +33,4 @@ class resume_folder_viewer(QLineEdit):
 
     def default(self):
         txt = self.nf_settings_parser.get('params.resume_directory')
-        seelf.setText(txt)
+        self.setText(txt)

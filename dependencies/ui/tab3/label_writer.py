@@ -29,5 +29,5 @@ class label_writer(QLineEdit):
             self.sh_parser.write('OUTPUT_PATH_LABEL', '')
 
     def default(self):
-        txt = self.nf_settings_parser.get('OUTPUT_PATH_LABEL')
-        seelf.setText(txt)
+        txt = self.sh_parser.get('OUTPUT_PATH_LABEL')
+        self.setText(txt)
