@@ -30,3 +30,7 @@ class resume_folder_viewer(QLineEdit):
             self.setStyleSheet("color: red;") # Check if path
             self.setText(txt)
             self.nf_settings_parser.write('params.resume_directory', '')
+
+    def default(self):
+        txt = self.nf_settings_parser.get('params.resume_directory')
+        seelf.setText(txt)
