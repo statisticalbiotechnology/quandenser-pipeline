@@ -1,6 +1,10 @@
 #!/usr/bin/env nextflow
 echo true
 
+// Since we can add labels to the directories, the output path of the files are
+// different compared to work
+publish_output_path = params.output_path + params.output_label
+
 file_def = file(params.batch_file)  // batch_file
 
 // change the path to where the database is and the batch file is if you are only doing msconvert
@@ -76,7 +80,7 @@ process msconvert {
   The symlinks are fast to write + they point to complete files + we know the symlinks location --> fixed :)
   */
   publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "*"
-  publishDir "$params.output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
+  publishDir "$publish_output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_msconvert_max_forks
   input:
@@ -106,7 +110,7 @@ combined_channel.into {
 // Normal, non-parallel process
 process quandenser {
   // The normal process, no parallelization
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
@@ -125,7 +129,7 @@ process quandenser {
 
 process quandenser_parallel_1 {  // About 3 min/run
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
@@ -148,7 +152,7 @@ percolator_workdir = file("${params.output_path}/work/percolator_${params.random
 result = percolator_workdir.mkdir()  // Create the directory
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
-  publishDir "$params.output_path/Quandenser_output/maracluster/*",
+  publishDir "$publish_output_path/Quandenser_output/maracluster/*",
   mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
   containerOptions "$params.custom_mounts"
   input:
@@ -253,7 +257,7 @@ if (params.parallel_quandenser == true){
 
 process quandenser_parallel_3 {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
-  publishDir "$params.output_path/Quandenser_output/percolator/*",
+  publishDir "$publish_output_path/Quandenser_output/percolator/*",
   mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
@@ -288,7 +292,7 @@ process quandenser_parallel_3 {  // About 3 min/run
 
 process quandenser_parallel_4 {  // About 30 seconds
   // Parallel 4: Run through maracluster extra features. Non-parallel
-  publishDir "$params.output_path/Quandenser_output/maracluster_extra_features/*",
+  publishDir "$publish_output_path/Quandenser_output/maracluster_extra_features/*",
   mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
   containerOptions "$params.custom_mounts"
   input:
@@ -309,7 +313,7 @@ process quandenser_parallel_4 {  // About 30 seconds
 
 process quandenser_parallel_5 {
   // Parallel 5: Create the consensus_spectra + clustering. Non-parallel
-  publishDir params.output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
@@ -339,7 +343,7 @@ c2 = spectra_parallel
 spectra = c1.concat(c2)
 
 process tide_search {
-  publishDir params.output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
+  publishDir publish_output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
   containerOptions "$params.custom_mounts"
   input:
 	file 'seqdb.fa' from db
@@ -358,7 +362,7 @@ process tide_search {
 }
 
 process triqler {
-  publishDir params.output_path, mode: 'copy', pattern: "proteins.*",overwrite: true
+  publishDir publish_output_path, mode: 'copy', pattern: "proteins.*",overwrite: true
   containerOptions "$params.custom_mounts"
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
