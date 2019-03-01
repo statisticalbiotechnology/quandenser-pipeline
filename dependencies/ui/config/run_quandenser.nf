@@ -8,8 +8,9 @@ publish_output_path = params.output_path + params.output_label
 // Check if resume folder has been set
 if (params.resume_directory != "") {
   resume_directory = file(params.resume_directory)
+  println("Resuming from directory: ${resume_directory}")
 } else {
-  resume_directory = ""
+  resume_directory = file("NULL")
 }
 
 file_def = file(params.batch_file)  // batch_file
@@ -111,7 +112,6 @@ combined_channel.into {
   combined_channel_normal
   combined_channel_parallel_1
   combined_channel_parallel_2
-  combined_channel_parallel_3
 }
 
 // Normal, non-parallel process
@@ -122,9 +122,7 @@ process quandenser {
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_normal.collect()
-    if (resume_directory != "") {
-      file('Quandenser_output') from resume_directory  // optional
-    }
+    file('Quandenser_output_resume') from resume_directory  // optional
   output:
 	  file("Quandenser_output/consensus_spectra/**") into spectra_normal includeInputs true
 	  file("Quandenser_output/*") into quandenser_out_normal includeInputs true
@@ -132,6 +130,10 @@ process quandenser {
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == false
   script:
 	"""
+  if [ -n "${params.resume_directory}" ]; then
+    mkdir -p Quandenser_output
+    cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+  fi
 	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
 }
@@ -145,15 +147,17 @@ process quandenser_parallel_1 {  // About 3 min/run
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_1
-    if (resume_directory != "") {
-      file('Quandenser_output') from resume_directory  // optional
-    }
+    file('Quandenser_output_resume') from resume_directory  // optional
   output:
 	  file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
 	"""
+  if [ -n "${params.resume_directory}" ]; then
+    mkdir -p Quandenser_output
+    cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+  fi
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
@@ -165,7 +169,7 @@ percolator_workdir = file("${params.output_path}/work/percolator_${params.random
 result = percolator_workdir.mkdir()  // Create the directory
 
 // Copy old percolator files to work directory
-if (resume_directory != "") {
+if (params.resume_directory != "") {
   percolator_resume_files = file("${resume_directory}/percolator/*")  // Path to working percolator directory
   if ( percolator_resume_files.isEmpty() ) {
     // pass
@@ -185,9 +189,7 @@ process quandenser_parallel_2 {  // About 30 seconds
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_2.collect()
     file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
-    if (resume_directory != "") {
-      file('Quandenser_output') from resume_directory  // optional
-    }
+    file('Quandenser_output_resume') from resume_directory  // optional
   output:
 	  file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
     file "alignRetention_queue.txt" into alignRetention_queue
@@ -195,6 +197,10 @@ process quandenser_parallel_2 {  // About 30 seconds
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
 	"""
+  if [ -n "${params.resume_directory}" ]; then
+    mkdir -p Quandenser_output
+    cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+  fi
 	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
 }
