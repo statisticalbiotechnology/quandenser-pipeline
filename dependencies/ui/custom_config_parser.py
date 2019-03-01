@@ -17,7 +17,7 @@ class custom_config_parser():
     def get_index(self, parameter, settings, additional_information=''):
         index = [settings.index(i) for i in settings if i.lstrip().startswith(parameter)]
         if len(index) == 0:
-            print("ERROR, not such parameter found")
+            print("ERROR, no such parameter found")
             return None
         elif len(index) == 1:
             index = index[0]
