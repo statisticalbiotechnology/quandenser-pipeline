@@ -17,18 +17,15 @@ class label_writer(QLineEdit):
     def check_text(self):
         self.blockSignals(True)
         all_txt = self.text()  # Copy, dont use
-        self.clear()
         self.pick_color(all_txt)
         self.blockSignals(False)
 
     def pick_color(self, txt):
-        if not '/' in self.text():
+        if self.text() != '' and not '/' in self.text():
             self.setStyleSheet("color: rgb(0, 255, 150);") # Check if path
-            self.setText(txt)
             self.sh_parser.write('OUTPUT_PATH_LABEL', '/' + self.text())
         else:
             self.setStyleSheet("color: red;") # Check if path
-            self.setText(txt)
             self.sh_parser.write('OUTPUT_PATH_LABEL', '')
 
     def default(self):
