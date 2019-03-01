@@ -8,7 +8,6 @@ class resume_chooser(QPushButton):
 
     def __init__(self, pipe_path):
         super(resume_chooser,self).__init__(parent = None)
-        self.setFixedWidth(300)
         self.type = type
         self.id = id
         self.pipe_parser = custom_config_parser()
