@@ -50,6 +50,19 @@ class run_button(QPushButton):
         self.sh_parser.write("OUTPUT_PATH", output_path)  # In sh
         self.nf_settings_parser.write("params.output_path", output_path)  # In sh
 
+        # Check if label has been set
+        label = self.sh_parser.get('OUTPUT_PATH_LABEL')
+        if label != '':
+            index = 0
+            while True:
+                if os.path.isdir(output_path + label + "_" + str(index)):
+                    index += 1
+                else:
+                    label = label + "_" + str(index)
+                    self.nf_settings_parser.write("params.output_label", label)
+                    self.sh_parser.write('OUTPUT_PATH_LABEL', label)
+                    break
+
         # Fix batch_file
         child = parent.findChildren(QTableWidget)[0]
         full_table = []
