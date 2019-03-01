@@ -70,6 +70,8 @@ def check_running(config_path):
         pipe_parser.write("started", "")  # Reset
         pid = pipe_parser.get("pid")
         output_path = sh_parser.get("OUTPUT_PATH")
+        output_label = sh_parser.get("OUTPUT_PATH_LABEL")
+        output_path = output_path + output_label
         if pid == "":
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
