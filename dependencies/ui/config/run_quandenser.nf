@@ -5,6 +5,13 @@ echo true
 // different compared to work
 publish_output_path = params.output_path + params.output_label
 
+// Check if resume folder has been set
+if (params.resume_directory != "") {
+  resume_directory = file(params.resume_directory)
+} else {
+  resume_directory = ""
+}
+
 file_def = file(params.batch_file)  // batch_file
 
 // change the path to where the database is and the batch file is if you are only doing msconvert
@@ -115,9 +122,12 @@ process quandenser {
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_normal.collect()
+    if (resume_directory != "") {
+      file('Quandenser_output') from resume_directory  // optional
+    }
   output:
-	  file("Quandenser_output/consensus_spectra/**") into spectra_normal
-	  file "Quandenser_output/*" into quandenser_out_normal
+	  file("Quandenser_output/consensus_spectra/**") into spectra_normal includeInputs true
+	  file("Quandenser_output/*") into quandenser_out_normal includeInputs true
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == false
   script:
@@ -135,6 +145,9 @@ process quandenser_parallel_1 {  // About 3 min/run
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_1
+    if (resume_directory != "") {
+      file('Quandenser_output') from resume_directory  // optional
+    }
   output:
 	  file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
   when:
@@ -150,6 +163,19 @@ process quandenser_parallel_1 {  // About 3 min/run
 
 percolator_workdir = file("${params.output_path}/work/percolator_${params.random_hash}")  // Path to working percolator directory
 result = percolator_workdir.mkdir()  // Create the directory
+
+// Copy old percolator files to work directory
+if (resume_directory != "") {
+  percolator_resume_files = file("${resume_directory}/percolator/*")  // Path to working percolator directory
+  if ( percolator_resume_files.isEmpty() ) {
+    // pass
+  } else {
+    percolator_resume_dir = file("${resume_directory}/percolator")  // Path to working percolator directory
+    percolator_workdir.deleteDir()  // Delete workdir
+    percolator_resume_dir.copyTo("${params.output_path}/work/percolator_${params.random_hash}")
+  }
+}
+
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   publishDir "$publish_output_path/Quandenser_output/maracluster/*",
@@ -159,6 +185,9 @@ process quandenser_parallel_2 {  // About 30 seconds
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_2.collect()
     file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
+    if (resume_directory != "") {
+      file('Quandenser_output') from resume_directory  // optional
+    }
   output:
 	  file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
     file "alignRetention_queue.txt" into alignRetention_queue
