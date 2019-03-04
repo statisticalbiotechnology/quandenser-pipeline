@@ -54,7 +54,7 @@ class running_jobs(QTableWidget):
         self.fix_header()
         processes = []
         jobs = []
-        for line in open(self.jobs_path, 'r'):
+        for line in reversed(list(open(self.jobs_path, 'r'))):
             job = line.split('\t')  # First is pid
             jobs.append(job)
             process = subprocess.Popen([f"ps aux | grep {job[0]}"],
