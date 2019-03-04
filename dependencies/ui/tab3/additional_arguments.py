@@ -11,6 +11,8 @@ class additional_arguments(QLineEdit):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.argument = argument
+        if "password" in self.argument:
+            self.setEchoMode(QLineEdit.Password)  # Hide password
         self.setText('')
         self.default()
         self.textChanged.connect(self.check_text)
