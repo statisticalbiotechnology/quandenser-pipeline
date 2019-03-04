@@ -16,13 +16,13 @@ class parameter_setter_single(QSpinBox):
 
     def check_value(self):
         self.blockSignals(True)
-        self.nf_settings_parser.write(f"params.{self.parameter}",
+        self.nf_settings_parser.write(f"{self.parameter}",
                                       self.value(),
                                       isString=False)
         self.blockSignals(False)
 
     def default(self):
-        value = int(self.nf_settings_parser.get(f"params.{self.parameter}"))
+        value = int(self.nf_settings_parser.get(f"{self.parameter}"))
         self.setValue(value)
 
 class parameter_setter_double(QDoubleSpinBox):
@@ -38,7 +38,7 @@ class parameter_setter_double(QDoubleSpinBox):
     def check_value(self):
         self.blockSignals(True)
         value = round(self.value(), 4)  # Prevents weird behavior with 0.0000001
-        self.nf_settings_parser.write(f"params.{self.parameter}",
+        self.nf_settings_parser.write(f"{self.parameter}",
                                       value,
                                       isString=False)
         self.blockSignals(False)
@@ -48,5 +48,5 @@ class parameter_setter_double(QDoubleSpinBox):
             self.setSuffix(" ppm")
         if self.parameter == "fold_change_eval":  # Triqler
             self.setSingleStep(0.05)
-        value = float(self.nf_settings_parser.get(f"params.{self.parameter}"))
+        value = float(self.nf_settings_parser.get(f"{self.parameter}"))
         self.setValue(value)
