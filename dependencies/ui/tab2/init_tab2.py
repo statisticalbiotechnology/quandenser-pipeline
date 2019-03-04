@@ -33,12 +33,11 @@ def init_tab2(paths):
     tab2_choose_option_profile = choose_option('profile', paths['sh'])
 
     # Always visible
-    tab2_leftbox_top_layout.addRow(QLabel('Choose pipeline'), tab2_choose_option_workflow)
+    tab2_leftbox_top_layout.addRow(QLabel('Choose workflow'), tab2_choose_option_workflow)
     tab2_leftbox_top_layout.addRow(QLabel('Profile'), tab2_choose_option_profile)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel MSconvert'), tab2_choose_option_parallel_msconvert)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel quandenser'), tab2_choose_option_parallel_quandenser)
     tab2_leftbox_layout.addWidget(tab2_leftbox_top)
-
 
     # Bottom, these will be hidden or shown depending on profile option
     tab2_hidden = QWidget()
@@ -68,9 +67,9 @@ def init_tab2(paths):
     tab2_parameter_triqler_cpus_stack_2 = set_cpus("triqler_cpus", paths['nf'])
     tab2_parameter_triqler_time_stack_2 = set_time("triqler_time", paths['nf'])
 
-    tab2_hidden_stack_2_layout.addRow(QLabel('Cluster type'), tab2_cluster_type_stack_2)
-    tab2_hidden_stack_2_layout.addRow(QLabel('Cluster arguments'), tab2_cluster_arguments_stack_2)
-    tab2_hidden_stack_2_layout.addRow(QLabel('Cluster queue'), tab2_cluster_queue_stack_2)
+    tab2_hidden_stack_2_layout.addRow(tooltips('cluster-type'), tab2_cluster_type_stack_2)
+    tab2_hidden_stack_2_layout.addRow(tooltips('cluster-arguments'), tab2_cluster_arguments_stack_2)
+    tab2_hidden_stack_2_layout.addRow(tooltips('cluster-queue'), tab2_cluster_queue_stack_2)
     tab2_hidden_stack_2_layout.addRow(QLabel('MSconvert cpus'), tab2_parameter_msconvert_cpus_stack_2)
     tab2_hidden_stack_2_layout.addRow(QLabel('MSconvert time'), tab2_parameter_msconvert_time_stack_2)
     tab2_hidden_stack_2_layout.addRow(QLabel('Quandenser cpus'), tab2_parameter_quandenser_cpus)
@@ -110,9 +109,9 @@ def init_tab2(paths):
     tab2_parameter_triqler_cpus_stack_3 = set_cpus("triqler_cpus", paths['nf'])
     tab2_parameter_triqler_time_stack_3 = set_time("triqler_time", paths['nf'])
 
-    tab2_hidden_stack_3_layout.addRow(QLabel('Cluster type'), tab2_cluster_type_stack_3)
-    tab2_hidden_stack_3_layout.addRow(QLabel('Cluster arguments'), tab2_cluster_arguments_stack_3)
-    tab2_hidden_stack_3_layout.addRow(QLabel('Cluster queue'), tab2_cluster_queue_stack_3)
+    tab2_hidden_stack_3_layout.addRow(tooltips('cluster-type'), tab2_cluster_type_stack_3)
+    tab2_hidden_stack_3_layout.addRow(tooltips('cluster-arguments'), tab2_cluster_arguments_stack_3)
+    tab2_hidden_stack_3_layout.addRow(tooltips('cluster-queue'), tab2_cluster_queue_stack_3)
     tab2_hidden_stack_3_layout.addRow(QLabel('MSconvert cpus'), tab2_parameter_msconvert_cpus_stack_3)
     tab2_hidden_stack_3_layout.addRow(QLabel('MSconvert time'), tab2_parameter_msconvert_time_stack_3)
     tab2_hidden_stack_3_layout.addRow(QLabel('Quandenser parallel 1 cpus'), tab2_parameter_quandenser_parallel_1_cpus)
@@ -158,3 +157,15 @@ def init_tab2(paths):
     tab2_layout.addWidget(tab2_leftbox)
     tab2_layout.addWidget(tab2_rightbox)
     return tab2
+
+def tooltips(what):
+    # Tooltips
+    tooltips_dict = {'cluster-type': tooltip_label('Cluster type',
+    """Defaults to "slurm". More types of clusters might be available in the future"""),
+    'cluster-arguments': tooltip_label('Cluster arguments',
+    """This is where you input any additional arguments. Note that -A <account> is often needed for slurm"""),
+    'cluster-queue': tooltip_label('Cluster queue',
+    """Defaults to "node". This depends on which queue you want to use.
+    NOTE: Please look up how many cores each node has and set the cpu setting to match the amount
+    on each node. If you set it too low, you will waste computation time!""")}
+    return tooltips_dict[what]
