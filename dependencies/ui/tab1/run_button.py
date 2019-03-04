@@ -36,24 +36,22 @@ class run_button(QPushButton):
         # Read parent
         parent = self.parentWidget()
 
-        # output directory
+        # OUTPUT_DIRECTORY #
         children = parent.findChildren(QLineEdit)
         for child in children:  # This is so I can have whatever order in widgets I want
             if child.type == 'directory':
                 break  # Will keep child
-
-        # Change output parameters
         output_path = child.text()
         if not os.path.isdir(output_path):
             ERROR('Not a valid output path')
             return 1
-
+        # Change output parameters in both nf_settings and sh
         self.sh_parser.write("OUTPUT_PATH", output_path)  # In sh
         self.nf_settings_parser.write("params.output_path", output_path)  # In sh
 
-        # Check if label has been set
+        # OUTPUT_LABEL #
         label = self.sh_parser.get('OUTPUT_PATH_LABEL')
-        if label != '':
+        if label != '':  # Check if label has been set
             label = re.sub("_*", '', label)  # Remove previous indexing
             index = 0
             while True:
@@ -67,7 +65,7 @@ class run_button(QPushButton):
         else:
             self.nf_settings_parser.write("params.output_label", '')
 
-        # Fix batch_file
+        # BATCH_FILE #
         child = parent.findChildren(QTableWidget)[0]
         full_table = []
         for row in range(child.rowCount()):
@@ -84,18 +82,16 @@ class run_button(QPushButton):
                     label = child.item(row, 1).text()
                 input_string = child.item(row, 0).text() + '\t' + label + '\n'
                 full_table.append(input_string)
-
         if full_table == []:
             ERROR('No files choosen')
             return 1
-
         with open(f"{output_path}/file_list.txt", 'w') as file:
             for line in full_table:
                 file.write(line)
         batch_file_path = f"{output_path}/file_list.txt"
         self.nf_settings_parser.write("params.batch_file", batch_file_path)
 
-        # Fix database file
+        # DATABASE_FILE #
         children = parent.findChildren(QLineEdit)
         for child in children:  # This is so I can have whatever order in widgets I want
             if child.type == 'file':
@@ -107,7 +103,15 @@ class run_button(QPushButton):
             ERROR("You must choose an database if you are running the full pipeline")
             return 1
 
-        # Custom mounts
+        # EMAIL #
+        email = self.nf_settings_parser.get("smtp.user")
+        if email != '':
+            # Need to add -N here, since without it, nextflow will display a warning
+            self.sh_parser.write("EMAIL_NOTIFICATION", f"-N {email}")
+        else:
+            self.sh_parser.write("EMAIL_NOTIFICATION", f"")
+
+        # CUSTOM MOUNTS #
         custom_mounts = self.pipe_parser.get('custom_mounts').replace('\r', '').replace('\n', '')
         self.nf_settings_parser.write('params.custom_mounts', custom_mounts)
 
