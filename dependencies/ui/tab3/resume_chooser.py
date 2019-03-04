@@ -12,7 +12,7 @@ class resume_chooser(QPushButton):
         self.id = id
         self.pipe_parser = custom_config_parser()
         self.pipe_parser.load(pipe_path)
-        self.setText('Choose a previous output directory')
+        self.setText('Resume from directory')
         self.clicked.connect(self.open_window)
 
     def open_window(self):
