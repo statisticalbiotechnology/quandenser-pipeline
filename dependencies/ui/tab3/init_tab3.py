@@ -21,18 +21,18 @@ def init_tab3(paths):
     tab3_leftbox_layout = QFormLayout()
     tab3_leftbox.setLayout(tab3_leftbox_layout)
 
-    tab3_msconvert_arguments = additional_arguments(paths['nf'], type='msconvert_additional_arguments')
-    tab3_parameter_max_missing = parameter_setter_single("max_missing", paths['nf'])  # Quandenser
-    tab3_quandenser_arguments = additional_arguments(paths['nf'], type='quandenser_additional_arguments')
-    tab3_parameter_missed_clevages = parameter_setter_single("missed_clevages", paths['nf'])  # Crux
-    tab3_parameter_precursor_window = parameter_setter_double("precursor_window", paths['nf'])  # Crux
-    tab3_parameter_mods_spec = additional_arguments(paths['nf'], type='mods_spec')  # Crux
-    tab3_crux_arguments = additional_arguments(paths['nf'], type='crux_index_additional_arguments')  # Crux
-    tab3_crux_index_arguments = additional_arguments(paths['nf'], type='crux_index_additional_arguments')  # Crux
-    tab3_crux_search_arguments = additional_arguments(paths['nf'], type='crux_search_additional_arguments')  # Crux
-    tab3_crux_percolator_arguments = additional_arguments(paths['nf'], type='crux_percolator_additional_arguments')  # Crux
-    tab3_parameter_fold_change_eval = parameter_setter_double("fold_change_eval", paths['nf'])  # Triqler
-    tab3_triqler_arguments = additional_arguments(paths['nf'], type='triqler_additional_arguments')  # Triqler
+    tab3_msconvert_arguments = additional_arguments('params.msconvert_additional_arguments', paths['nf'])
+    tab3_parameter_max_missing = parameter_setter_single("params.max_missing", paths['nf'])  # Quandenser
+    tab3_quandenser_arguments = additional_arguments('params.quandenser_additional_arguments', paths['nf'])
+    tab3_parameter_missed_clevages = parameter_setter_single("params.missed_clevages", paths['nf'])  # Crux
+    tab3_parameter_precursor_window = parameter_setter_double("params.precursor_window", paths['nf'])  # Crux
+    tab3_parameter_mods_spec = additional_arguments('params.mods_spec', paths['nf'])  # Crux
+    tab3_crux_arguments = additional_arguments('params.crux_index_additional_arguments', paths['nf'])  # Crux
+    tab3_crux_index_arguments = additional_arguments('params.crux_index_additional_arguments', paths['nf'])  # Crux
+    tab3_crux_search_arguments = additional_arguments('params.crux_search_additional_arguments', paths['nf'])  # Crux
+    tab3_crux_percolator_arguments = additional_arguments('params.crux_percolator_additional_arguments', paths['nf'])  # Crux
+    tab3_parameter_fold_change_eval = parameter_setter_double("params.fold_change_eval", paths['nf'])  # Triqler
+    tab3_triqler_arguments = additional_arguments('params.triqler_additional_arguments', paths['nf'])  # Triqler
     tab3_reset_button = reset_button(paths['config'])
 
     tab3_leftbox_layout.addRow(QLabel('<b>MSconvert'), QLabel())
@@ -62,13 +62,21 @@ def init_tab3(paths):
     tooltip_label_dir_label = tooltip_label('Output directory label',
     """If you are running multiple runs in the same directory, this label will allow you to
     run many runs in the same output directory without overwriting the outputs""")
+    tooltip_email_username = tooltip_label('Gmail username', 'If this field is empty, no email will be sent')
+    tooltip_email_password = tooltip_label('Password/token',
+    """If you have 2-factor authorization on gmail, go to the following website and generate a new token.
+    https://security.google.com/settings/security/apppasswords
+    Paste the token in the password field and you are good to go!""" )
+    tab3_email_username = additional_arguments("smtp.user", paths['nf'])
+    tab3_email_password = additional_arguments("smtp.password", paths['nf'])
 
     tab3_resume_button = resume_chooser(paths['pipe'])
     tab3_resume_folder_viewer = resume_folder_viewer(paths['nf'])
 
     tab3_rightbox_layout.addRow(tooltip_label_dir_label, tab3_output_dir_label)
-    tab3_rightbox_layout.addRow(tab3_resume_button)
-    tab3_rightbox_layout.addRow(tab3_resume_folder_viewer)
+    tab3_rightbox_layout.addRow(tab3_resume_button, tab3_resume_folder_viewer)
+
+
 
     tab3_layout.addWidget(tab3_leftbox)
     tab3_layout.addWidget(tab3_rightbox)
