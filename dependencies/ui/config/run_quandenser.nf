@@ -274,7 +274,7 @@ if (params.parallel_quandenser == true){
   to finish before starting the next batch.
   This is then piped to a function that creates list that is flattened, spawning the exact amount of processes needed before the next batch.
 
-  Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
+  Note: ..< is needed, because if the value is 1 in tree map, I don't want 2 values, only 1 value
   */
   // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
   current_depth = -1
@@ -282,9 +282,9 @@ if (params.parallel_quandenser == true){
   input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
   .flatten()
   .mix( feedback_ch.until(condition) )  // Continously add
-  .map { it -> current_width++; }
-  .buffer { it >= tree_map[current_depth] - 1}
-  .map { it -> current_depth++; current_width = 0; current_depth}
+  .map { it -> current_width++; }  // Add 1 to current width
+  .buffer { it >= tree_map[current_depth] - 1}  // When width is more than width at tree
+  .map { it -> current_depth++; current_width = 0; current_depth}  // Add 1 to depth, pass on current depth
   .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
 } else {
   // Empty dummy channels if not parallel
