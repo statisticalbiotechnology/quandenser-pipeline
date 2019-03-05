@@ -9,22 +9,10 @@ process queue {
   script:
 	"""
   touch alignRetention_queue.txt
-  sleep 2
 	"""
 }
+total_spectras = 9
 
-process test {
-  input:
-    file "alignRetention_queue.txt" from file("alignRetention_queue.txt")
-  output:
-    file "*.txt" into test_queue
-  script:
-	"""
-  touch test.txt
-	"""
-}
-
-// This queue will define maximum depth of the processing tree
 alignRetention_queue
     .collectFile()  // Get file, will wait for process to finish
     .map { it.text }  // Convert file to text
@@ -32,8 +20,8 @@ alignRetention_queue
     .map { it -> it.tokenize('\t')[0] }  // Get first value, it contains the rounds
     .toInteger()  // Convert string to integer for max function
     .max()  // Maximum amount of rounds there is
-    .subscribe { max_depth=it; println("Maximum depth = $max_depth") }  // Add maximum_depth as a variable
-    .map { it -> 0 }  // Depth has now been defined, add 0 to queue to initialize sync
+    .subscribe { max_depth=it; }  // Add maximum_depth as a variable
+    .map{ it -> 0 }
     .into { wait_queue_1; wait_queue_1_copy }
 
 // This queue will create the file pairs
@@ -60,90 +48,41 @@ alignRetention_queue
   .into { wait_queue_2; wait_queue_2_copy }
 // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
 
+
 process sync_variables {
   exectutor = 'local'
   input:
+    file alignRetention_file from alignRetention_queue
     val wait1 from wait_queue_1
     val wait2 from wait_queue_2
-  output:
-    val initial_range into sync_ch
   exec:
-   end_depth = max_depth + 1
-   tree_map[end_depth] = 1
-   tree_map[-1] = tree_map[0]  // Initializiation
-   initial_range = 0..<tree_map[0]
-   println("Tree map is $tree_map")
-}
-
-condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
-feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
-
-/* Okay, this one is tricky and needs an explanation
-The problem was that I need to create a processing tree. Any amount of files in each round can be processed in parallel,
-but we need to wait for all the previous processes to finish before we do the next batch of files. The files from previous rounds
-needs to be accessible to the next rounds.
-The solution is to create a feedback loop, so the process will loop until the file queue is empty (until command). However, since all processes
-run async and will each input a value into the feedback channel, it will spawn the exact amount of processes which were started from
-the beginning. I solved the issue by creating a tree map, which countains all the rounds and how many processes it can run in parallel.
-Each process will submit a value, which is the next round that should be processed. The unique command takes the list and outputs only 1
-value (important). This is then piped to a function that creates list that is flattened, spawning the exact amount of processes needed before
-the next batch.
-
-Note: ..< is needed, because I if the value is 1, I don't want 2 values, only 1
-*/
-// IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
-current_depth = -1
-current_width = 0
-input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
-.flatten()
-.mix( feedback_ch.until(condition) )  // Continously add
-.map { it -> current_width++; }
-.view { it -> "it is $it" }
-.buffer { it >= tree_map[current_depth] - 1}
-.view { it -> "Buffer at $it" }
-.map { it -> current_depth++; current_width = 0; current_depth}
-.view { it -> "Mapped at $it" }
-.flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
-.view { it -> "Processes at $it" }
-
-percolator_workdir = file("work/percolator")  // Path to working percolator directory
-result = percolator_workdir.mkdir()  // Create the directory
-process parallel {
-  publishDir "work/percolator", mode: 'symlink', overwrite: true,  pattern: "*"
-  publishDir "Quandenser_output", mode: 'copy', overwrite: true,  pattern: "*"
-  input:
-    set val(depth), val(filepair) from processing_tree
-    // This will replace percolator directory with a link to work directory percolator
-    each prev_percolator from Channel.fromPath("work/percolator")
-
-    // Access previous files from quandenser. Consider maracluster files as links, takes time to publish
-    //each prev_dinosaur from Channel.fromPath("Quandenser_output/dinosaur")  // Published long before, should not be a problem
-    //each prev_maracluster from Channel.fromPath("Quandenser_output/maracluster")  // Async + publish time might make this problematic
-    file ("*.txt") from test_queue.collect()
-
-    // This is the magic that makes the process loop
-    val feedback_val from input_ch
-  output:
-    val depth into feedback_ch
-    // Just dump the files. This will need rework, since the percolator files are directly written directly to workdir.
-    // Perhaps remove output files completely
-    file("*.txt") into file_completed
-  exec:
-    depth++
-  script:
-  """
-  echo "DEPTH ${depth - 1}"
-  echo "FILES ${filepair[0]} and ${filepair[1]}"
-  mkdir -p pair/file1; mkdir pair/file2
-  ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
-  mkdir Quandenser_output
-  ln -s ${prev_percolator} Quandenser_output/percolator
-  touch ${depth}.txt
-  #tree
-  #cd Quandenser_output/percolator
-  #ls
-  random=\$(shuf -i 2-15 -n 1)
-  sleep \$random
-  echo "Slept for \$random"
-	"""
+   tree_map_reconstructed = [0:1]  // Initialize first value
+   current_depth = 0
+   current_width = 0
+   prev_files = []
+   all_lines = alignRetention_file.readLines()
+   for( line in all_lines ){
+     file1 = line.tokenize('\t')[1].tokenize('/')[-1]
+     file2 = line.tokenize('\t')[2].tokenize('/')[-1]
+     //println("File1: $file1, File2: $file2")
+     if (prev_files.contains(file1) || prev_files.contains(file2) ) {
+        tree_map_reconstructed[current_depth] = current_width
+        //println("WARNING!!! $file1 and $file2 in $prev_files")
+        current_depth++
+        current_width = 1
+        prev_files.clear()
+     } else {
+       current_width++
+     }
+     prev_files << file1
+     prev_files << file2
+   }
+   tree_map_reconstructed[current_depth] = current_width
+   println("Treemap is $tree_map")
+   println("Reconstructed treemap is $tree_map_reconstructed")
+   connections = 2*(total_spectras-1)
+   speed_increase = connections/(current_depth+1) * 100 - 100
+   println("Total connections = $connections")
+   println("Total rounds with parallel = ${current_depth + 1}")
+   println("With the current tree, you will get a ${speed_increase.round(1)}% increase in speed with parallelization")
 }
