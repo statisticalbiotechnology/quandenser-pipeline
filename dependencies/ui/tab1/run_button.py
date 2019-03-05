@@ -73,7 +73,7 @@ class run_button(QPushButton):
                 if not os.path.isfile(child.item(row, 0).text()):
                     ERROR(f"File in row {row} does not exist")
                     return 1
-                elif self.nf_settings_parser.get('params.workflow') == "MSconvert" and child.item(row, 1).text() == '':
+                elif self.nf_settings_parser.get('params.workflow') in ["MSconvert", "Quandenser"] and child.item(row, 1).text() == '':
                     label = 'A'  # Add junk labeling
                 elif child.item(row, 1).text() == '' and self.nf_settings_parser.get('params.workflow') == "Full":
                     ERROR(f"File in row {row} is missing a label (Full workflow enabled)")
