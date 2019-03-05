@@ -97,7 +97,7 @@ process msconvert {
     file("*mzML") into spectra_converted
   script:
 	"""
-  wine msconvert ${f} --mzML --zlib --filter "peakPicking true 1-" ${params.msconvert_additional_arguments}
+  wine msconvert ${f} --mzML --filter "peakPicking true 1-" ${params.msconvert_additional_arguments}
   """
 }
 
@@ -245,19 +245,55 @@ if (params.parallel_quandenser == true){
     .into { wait_queue_2; wait_queue_2_copy }
   // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
 
+  // Initialize first values, so they exist outside process
+  tree_map_reconstructed = [0:1]  // Initialize first value
+  processed_files = [0]  // Value needs to be in list, to preserve changes made in sync variables
   process sync_variables {
     exectutor = 'local'
     input:
+      val alignRetention_file from alignRetention_queue  // Bug: Needs to be val
       val wait1 from wait_queue_1
       val wait2 from wait_queue_2
     output:
       val initial_range into sync_ch
     exec:
-     end_depth = max_depth + 1
-     tree_map[end_depth] = 1
-     tree_map[-1] = tree_map[0]  // Initializiation of first values
-     initial_range = 0..<tree_map[0]
-     println("Tree map is $tree_map")
+     current_depth = 0
+     current_width = 0
+     prev_files = []  // List to store files from previous rounds
+     all_lines = alignRetention_file.readLines()  // Get all lines from maracluster tree
+     for( line in all_lines ){
+       file1 = line.tokenize('\t')[1].tokenize('/')[-1]  // Get file name from file 1
+       file2 = line.tokenize('\t')[2].tokenize('/')[-1]  // Get file name from file 2
+       // When the previous round contains any of the files, create a new round
+       if (prev_files.contains(file1) || prev_files.contains(file2) ) {
+          tree_map_reconstructed[current_depth] = current_width  // Add new round, with width
+          current_depth++  // Add 1 to depth. The files in this loop will be added to that round
+          current_width = 1  // Since we have 1 pair already, do not start from 0
+          prev_files.clear()  // Clear previous files.
+       } else {
+         current_width++  // Just add 1 to width if they are not colliding
+       }
+       prev_files << file1
+       prev_files << file2
+     }
+     tree_map_reconstructed[current_depth] = current_width
+     println("Treemap is $tree_map")
+     println("Reconstructed treemap is $tree_map_reconstructed")
+
+     end_depth = current_depth + 1
+     tree_map_reconstructed[end_depth] = 1  // Add 1 to the last value, to prevent premature stop
+     tree_map_reconstructed[-1] = tree_map_reconstructed[0]  // Initializiation of first values
+     initial_range = 0..<tree_map_reconstructed[0]  // Initial range
+
+     // Note: since we are starting with 0 processed files and we initialize with a range,
+     // set processed files to be exactly 0 for the first batch of files
+     processed_files[0] = -tree_map_reconstructed[0]
+
+     connections = 2*(total_spectras-1)
+     speed_increase = connections/(current_depth+1) * 100 - 100
+     println("Total connections = $connections")
+     println("Total rounds with parallel = ${current_depth + 1}")
+     println("With the current tree, you will get a ${speed_increase.round(1)}% increase in speed with parallelization")
   }
 
   condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
@@ -280,12 +316,14 @@ if (params.parallel_quandenser == true){
   current_depth = -1
   current_width = 0
   input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
-  .flatten()
-  .mix( feedback_ch.until(condition) )  // Continously add
-  .map { it -> current_width++; }  // Add 1 to current width
-  .buffer { it >= tree_map[current_depth] - 1}  // When width is more than width at tree
+  .flatten()  // Flatten input list
+  .mix( feedback_ch.until(condition) )  // Continously add until files have run out
+  .map { processed_files[0]++ }  // Add 1 to processed files for each emit from feedback_ch
+  .map { it -> current_width++; }  // Add 1 to current width and emit value to buffer
+  .buffer { it >= tree_map_reconstructed[current_depth] - 1}  // When width is more than width at tree
   .map { it -> current_depth++; current_width = 0; current_depth}  // Add 1 to depth, pass on current depth
-  .flatMap { n -> 0..<tree_map[n] }  // Convert number to parallel processes
+  .flatMap { n -> 0..<tree_map_reconstructed[n] }  // Convert number to a list same size as amount of parallel processes
+  .map { it -> processed_files[0] }  // Convert range 0,1,2.... to processed_files (ex 5,5,5,5...)
 } else {
   // Empty dummy channels if not parallel
   processing_tree = Channel.create()
@@ -313,18 +351,16 @@ process quandenser_parallel_3 {  // About 3 min/run
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   output:
-    val depth into feedback_ch
+    val 0 into feedback_ch
     val 0 into percolator_1_completed
-  exec:
-    depth++
   script:
   """
-  echo "DEPTH ${depth - 1}"
-  echo "FILES ${filepair[0]} and ${filepair[1]}"
+  echo "FILES: ${filepair[0]} and ${filepair[1]}"
+  echo "PROCCESSED FILE BEFORE: ${feedback_val}"
   mkdir -p pair/file1; mkdir pair/file2
-  ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/;
+  ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
   ln -s ${prev_percolator} Quandenser_output/percolator
-  quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${depth} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
