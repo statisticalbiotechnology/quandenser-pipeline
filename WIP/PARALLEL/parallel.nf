@@ -3,9 +3,9 @@ echo true
 
 process queue {
   input:
-    file "alignRetention_queue.txt" from file("alignRetention_queue.txt")
+    file "alignRetention_queue.txt" from file("test/alignRetention_queue.txt")
   output:
-    file "alignRetention_queue.txt" into alignRetention_queue
+    file "*.txt" into alignRetention_queue includeInputs true
   script:
 	"""
   touch alignRetention_queue.txt
@@ -53,47 +53,48 @@ processed_files = [0]
 process sync_variables {
   exectutor = 'local'
   input:
-    file alignRetention_file from alignRetention_queue
+    val alignRetention_file from alignRetention_queue  // Bug: Needs to be val
     val wait1 from wait_queue_1
     val wait2 from wait_queue_2
   output:
     val initial_range into sync_ch
   exec:
-   current_depth = 0
-   current_width = 0
-   prev_files = []
-   all_lines = alignRetention_file.readLines()
-   for( line in all_lines ){
-     file1 = line.tokenize('\t')[1].tokenize('/')[-1]
-     file2 = line.tokenize('\t')[2].tokenize('/')[-1]
-     if (prev_files.contains(file1) || prev_files.contains(file2) ) {
-        tree_map_reconstructed[current_depth] = current_width
-        println("WARNING!!! $file1 and $file2 in $prev_files")
-        current_depth++
-        current_width = 1
-        prev_files.clear()
-     } else {
-       current_width++
-       println("File1: $file1, File2: $file2")
+    current_depth = 0
+    current_width = 0
+    prev_files = []
+    all_lines = alignRetention_file.toAbsolutePath().readLines()
+    println("$alignRetention_file")
+    for( line in all_lines ){
+      file1 = line.tokenize('\t')[1].tokenize('/')[-1]
+      file2 = line.tokenize('\t')[2].tokenize('/')[-1]
+      if (prev_files.contains(file1) || prev_files.contains(file2) ) {
+         tree_map_reconstructed[current_depth] = current_width
+         println("WARNING!!! $file1 and $file2 in $prev_files")
+         current_depth++
+         current_width = 1
+         prev_files.clear()
+      } else {
+        current_width++
+        println("File1: $file1, File2: $file2")
+      }
+      prev_files << file1
+      prev_files << file2
      }
-     prev_files << file1
-     prev_files << file2
-   }
-   tree_map_reconstructed[current_depth] = current_width
-   println("Treemap is $tree_map")
-   println("Reconstructed treemap is $tree_map_reconstructed")
+     tree_map_reconstructed[current_depth] = current_width
+     println("Treemap is $tree_map")
+     println("Reconstructed treemap is $tree_map_reconstructed")
 
-   end_depth = current_depth + 1
-   tree_map_reconstructed[end_depth] = 1
-   tree_map_reconstructed[-1] = tree_map_reconstructed[0]  // Initializiation of first values
-   initial_range = 0..<tree_map_reconstructed[0]
-   processed_files[0] = -tree_map_reconstructed[0]
+     end_depth = current_depth + 1
+     tree_map_reconstructed[end_depth] = 1
+     tree_map_reconstructed[-1] = tree_map_reconstructed[0]  // Initializiation of first values
+     initial_range = 0..<tree_map_reconstructed[0]
+     processed_files[0] = -tree_map_reconstructed[0]
 
-   connections = 2*(total_spectras-1)
-   speed_increase = connections/(current_depth+1) * 100 - 100
-   println("Total connections = $connections")
-   println("Total rounds with parallel = ${current_depth + 1}")
-   println("With the current tree, you will get a ${speed_increase.round(1)}% increase in speed with parallelization")
+     connections = 2*(total_spectras-1)
+     speed_increase = connections/(current_depth+1) * 100 - 100
+     println("Total connections = $connections")
+     println("Total rounds with parallel = ${current_depth + 1}")
+     println("With the current tree, you will get a ${speed_increase.round(1)}% increase in speed with parallelization")
 }
 
 condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
