@@ -43,6 +43,13 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     offset=1
     ln -fs /usr/share/zoneinfo/Etc/GMT$offset /etc/localtime
 
+    echo "Placing ui files in the correct directories"
+    rm -rf /var/local/quandenser_ui  # Clear prev folder, if it exist
+    mkdir -p /var/local/quandenser_ui
+    mv /ui/* /var/local/quandenser_ui
+    rm -r ui/
+    chmod -R a+x /var/local/quandenser_ui/*  # So everybody can access the files
+
     echo "Installling packages with apt-get"
     apt-get update
     apt-get -y install wget
@@ -51,13 +58,6 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     apt-get update
     apt-get -y install default-jre git unzip bzip2 nano curl
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
-
-    echo "Placing ui files in the correct directories"
-    rm -rf /var/local/quandenser_ui  # Clear prev folder, if it exist
-    mkdir -p /var/local/quandenser_ui
-    mv /ui/* /var/local/quandenser_ui
-    rmdir ui
-    chmod -R a+x /var/local/quandenser_ui/*  # So everybody can access the files
 
     echo "Updating nextflow"
     curl -s https://get.nextflow.io | bash
@@ -108,6 +108,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
     dpkg -i quandenser-v0-01-linux-amd64.deb
     dpkg -i /quandenser-v0-01-linux-amd64_MODIFIED_repack.deb
+    chmod a+rx /usr/bin/quandenser-modified
     apt-get install -f
 
     echo "Installling crux"
@@ -133,5 +134,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="0.032"
+    VERSION="0.04"
     printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
