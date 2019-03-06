@@ -24,14 +24,18 @@ if( params.workflow == "MSconvert" || params.workflow == "Quandenser" ) {
 db = file(db_file)  // Sets "db" as the file defined above
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 
-// Preprocessing file_list
-Channel  // mzML files with proper labeling
-  .from(file_def.readLines())
-  .map { it -> it.tokenize('\t') }
-  .filter { it.size() > 1 }  // filters any input that is not <path> <label>
-  .filter { it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
-  .map { it -> file(it[0]) }
-  .into { spectra_in; spectra_in_q }  // Puts the files into spectra_in
+if (params.workflow != "MSconvert") {
+  // Preprocessing file_list
+  Channel  // mzML files with proper labeling
+    .from(file_def.readLines())
+    .map { it -> it.tokenize('\t') }
+    .filter { it.size() > 1 }  // filters any input that is not <path> <label>
+    .filter { it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
+    .map { it -> file(it[0]) }
+    .into { spectra_in; spectra_in_q }  // Puts the files into spectra_in
+} else {
+  spectra_in = Channel.create()  // This prevents name collision crash
+}
 
 if (params.workflow != "MSconvert") {
   Channel  // non-mzML files with proper labeling which will be converted
@@ -107,7 +111,7 @@ process msconvert {
   script:
 	"""
   mkdir -p converted
-  wine msconvert ${f} --mzML --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} 2>&1 | tee -a stdout.txt
+  wine msconvert ${f} --mzML --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
   """
 }
 
