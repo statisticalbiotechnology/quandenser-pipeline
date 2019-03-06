@@ -34,7 +34,7 @@ if (params.workflow != "MSconvert") {
     .map { it -> file(it[0]) }
     .into { spectra_in; spectra_in_q }  // Puts the files into spectra_in
 } else {
-  spectra_in = Channel.create()  // This prevents name collision crash
+  spectra_in = Channel.from(1)  // This prevents name collision crash
 }
 
 if (params.workflow != "MSconvert") {
@@ -54,7 +54,6 @@ if (params.workflow != "MSconvert") {
     .into { spectra_convert; spectra_convert_bool }
 }
 
-
 // Replaces the lines of non-mzML with their corresponding converted mzML counterpart
 count = 0
 amount_of_non_mzML = 0
@@ -65,6 +64,8 @@ for( line in all_lines ){
   file_name = (file_path.tokenize('/')[-1]).tokenize('.')[0]  // Split '/', take last. Split '.', take first
   file_extension = file_path.tokenize('.')[-1]
   if( file_extension != "mzML" ){
+    // Note: if you are running only msconvert on mzML files, the path will be wrong. However, since msconvert+quandenser
+    // is not integrated yet, I can let it slide
     all_lines[count] = params.output_path + "/work/converted_${params.random_hash}/" + file_name + ".mzML" + '\t' + file_label
     count++
     amount_of_non_mzML++
@@ -101,7 +102,7 @@ process msconvert {
   The symlinks are fast to write + they point to complete files + we know the symlinks location --> fixed :)
   */
   publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "converted/*"
-  publishDir "$publish_output_path/converted", mode: 'copy', overwrite: true, pattern: "converted/*"
+  publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "converted/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_msconvert_max_forks
   input:
