@@ -45,7 +45,7 @@ not be shown.
 
 If you are running on a cluster with nvidia cards and you do not have an nvidia card on your local machine (ex if you are running the software in virtualbox on a cluster). Add the following command to disable nvidia drivers
 
-./Quandenser_pipeline.sh /path/to/directory1 ... *--disable-nvidia*
+    ./Quandenser_pipeline.sh /path/to/directory1 ... *--disable-nvidia*
 
 
 ## Description
