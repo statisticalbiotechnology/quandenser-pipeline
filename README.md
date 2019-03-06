@@ -23,8 +23,33 @@ The pipeline can be run on a SLURM cluster if Singularity is installed. Just don
 settings!
 
 
+## Known issues
+
+>*** stack smashing detected***: python terminated
+
+Sometimes when running on a computer with nvidia drivers locally, this error message will be shown. It will not harm your computer, so just keep trying to start the program. Usually, it stabilizes after a couple of runs.
+I've been trying to find the cause of this bug, but it seems to be correlated to the creation of the GUI window through Singularity. If you have any ideas about the bug, please let me know!
+
+
+>WebEngineContext used before QtWebEngine::initialize() or OpenGL context creation failed.
+
+This usually happens when you are running on a cluster. Sometimes, the nvidia drivers on your computer is not compatible
+with the drivers on the cluster. Please add the following command when running the start script.
+Note: disabling opengl will not hinder the performance of the software. The workflow display and the about tab will
+not be shown.
+
+    ./Quandenser_pipeline.sh /path/to/directory1 ... *--disable-opengl*
+
+
+>Glx related crashes
+
+If you are running on a cluster with nvidia cards and you do not have an nvidia card on your local machine (ex if you are running the software in virtualbox on a cluster). Add the following command to disable nvidia drivers
+
+./Quandenser_pipeline.sh /path/to/directory1 ... *--disable-nvidia*
+
+
 ## Description
-*Quandenser-pipeline* is a tool that combines *Quandenser*, a tool which condenses label-free MS data and *Triqler*, a tool which finds differentially expressed proteins using both MS1 and MS2 data. *Quandenser-pipeline* streamlines the process, by accepting almost any vendor format alongside a fasta database containing proteins, which are then run through a Singularity image containing all the necessary parts to do the analysis. 
+*Quandenser-pipeline* is a tool that combines *Quandenser*, a tool which condenses label-free MS data and *Triqler*, a tool which finds differentially expressed proteins using both MS1 and MS2 data. *Quandenser-pipeline* streamlines the process, by accepting almost any vendor format alongside a fasta database containing proteins, which are then run through a Singularity image containing all the necessary parts to do the analysis.
 
 
 
