@@ -38,14 +38,14 @@ with the drivers on the cluster. Please add the following command when running t
 Note: disabling opengl will not hinder the performance of the software. The workflow display and the about tab will
 not be shown.
 
-    ./Quandenser_pipeline.sh /path/to/directory1 ... *--disable-opengl*
+    ./Quandenser_pipeline.sh /path/to/directory1 ... --disable-opengl
 
 
 >Glx related crashes
 
 If you are running on a cluster with nvidia cards and you do not have an nvidia card on your local machine (ex if you are running the software in virtualbox on a cluster). Add the following command to disable nvidia drivers
 
-    ./Quandenser_pipeline.sh /path/to/directory1 ... *--disable-nvidia*
+    ./Quandenser_pipeline.sh /path/to/directory1 ... --disable-nvidia
 
 
 ## Description
