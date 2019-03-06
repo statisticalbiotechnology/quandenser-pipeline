@@ -103,7 +103,7 @@ process msconvert {
   input:
     file f from spectra_convert_channel
   output:
-    file("*.mzML") into spectra_converted
+    file("converted/*.mzML") into spectra_converted
   script:
 	"""
   mkdir -p converted
