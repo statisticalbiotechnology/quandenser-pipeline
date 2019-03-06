@@ -28,18 +28,28 @@ seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 Channel  // mzML files with proper labeling
   .from(file_def.readLines())
   .map { it -> it.tokenize('\t') }
-  .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+  .filter { it.size() > 1 }  // filters any input that is not <path> <label>
   .filter { it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
   .map { it -> file(it[0]) }
   .into { spectra_in; spectra_in_q }  // Puts the files into spectra_in
 
-Channel  // non-mzML files with proper labeling which will be converted
-  .from(file_def.readLines())
-  .map { it -> it.tokenize('\t') }
-  .filter { it.size() > 1 }  // filters any input that is not <path> <X>
-  .filter{ it[0].tokenize('.')[-1] != "mzML" }  // filters any input that is .mzML
-  .map { it -> file(it[0]) }
-  .into { spectra_convert; spectra_convert_bool }
+if (params.workflow != "MSconvert") {
+  Channel  // non-mzML files with proper labeling which will be converted
+    .from(file_def.readLines())
+    .map { it -> it.tokenize('\t') }
+    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+    .filter{ it[0].tokenize('.')[-1] != "mzML" }  // filters any input that is .mzML
+    .map { it -> file(it[0]) }
+    .into { spectra_convert; spectra_convert_bool }
+} else {
+  Channel  // non-mzML files with proper labeling which will be converted
+    .from(file_def.readLines())
+    .map { it -> it.tokenize('\t') }
+    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+    .map { it -> file(it[0]) }
+    .into { spectra_convert; spectra_convert_bool }
+}
+
 
 // Replaces the lines of non-mzML with their corresponding converted mzML counterpart
 count = 0
@@ -69,7 +79,6 @@ for( line in all_lines ){
   total_spectras++
 }
 
-
 println("Total spectras = " + total_spectras)
 println("Spectras that will be converted = " + amount_of_non_mzML)
 
@@ -87,17 +96,18 @@ process msconvert {
   while we point in the file_list to the files in the work directory with symlinks.
   The symlinks are fast to write + they point to complete files + we know the symlinks location --> fixed :)
   */
-  publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "*"
-  publishDir "$publish_output_path/converted", mode: 'copy', overwrite: true, pattern: "*"
+  publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "converted/*"
+  publishDir "$publish_output_path/converted", mode: 'copy', overwrite: true, pattern: "converted/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_msconvert_max_forks
   input:
     file f from spectra_convert_channel
   output:
-    file("*mzML") into spectra_converted
+    file("*.mzML") into spectra_converted
   script:
 	"""
-  wine msconvert ${f} --mzML --filter "peakPicking true 1-" ${params.msconvert_additional_arguments}
+  mkdir -p converted
+  wine msconvert ${f} --mzML --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
