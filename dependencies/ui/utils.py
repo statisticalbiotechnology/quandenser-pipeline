@@ -76,16 +76,35 @@ def check_running(config_path):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
             msg.setWindowTitle("Critical fail")
-            msg.setText("Unable to start quandenser. Check console output for more information")
+            msg.setText(f"Unable to start nextflow. Check console output or stdout.txt at \n{output_path}\nfor more information")
             msg.exec_()
         else:
             now = datetime.datetime.now()
             with open(f"{config_path}/jobs.txt", 'a') as job_file:
                 job_file.write(pid + '\t' + output_path + '\t' + now.strftime("%Y-%m-%d %H:%M") + ' ' + time.localtime().tm_zone + '\n')
             pipe_parser.write('pid', '', isString=False)  # Reset pid
+            crash = False
+            time.sleep(2)  # Wait 2 seconds for initalizing
+            try:
+                with open(output_path + '/' + 'stdout.txt', 'r') as stdout_file:
+                    all_lines = stdout_file.readlines()
+                    for line in all_lines:
+                        if "Error executing process" in line:
+                            crash = True
+                    if len(all_lines) == 0:  # File doesn't exist/not started
+                        crash = True
+            except Exception as e:
+                print(e)
+                crash = True
+
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setWindowTitle("Started")
-            msg.setText("Quandenser successfully started")
-            msg.setDetailedText(f"PID of the process is: {pid}")
+            if not crash:
+                msg.setIcon(QMessageBox.Information)
+                msg.setWindowTitle("Started")
+                msg.setText("Quandenser started. P")
+                msg.setDetailedText(f"PID of the process is: {pid}")
+            else:
+                msg.setIcon(QMessageBox.Warning)
+                msg.setWindowTitle("Nextflow crash")
+                msg.setText(f"Something went wrong after nextflow was started. Please look in stdout.txt at \n{output_path}")
             msg.exec_()
