@@ -129,4 +129,19 @@ venv.bak/
 *.SIF
 
 # Output folder (for testing)
-output/**
+output*/**
+
+# Latex temp files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.nlo
+*.fls
+*.nlg
+*.out
+*.toc
+*.run.xml
+*.synctex.gz
+*.fdb_latexmk
+*.nls
