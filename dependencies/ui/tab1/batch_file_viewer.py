@@ -121,20 +121,16 @@ class batch_file_viewer(QTableWidget):
             all_labels.append(label)
 
         # Assign labels
-        current_label = [65]
+        current_label = 1  # start with 1, because rows start with 1
         for row in range(self.rowCount()):
             label = self.item(row, 1).text()
             file = self.item(row, 0).text()
             if label == '' and file != '':
                 while True:
-                    added_label = ''.join([chr(i) for i in current_label])
+                    added_label = str(current_label)
                     if added_label in all_labels:
-                        current_label[-1] += 1
-                        if current_label[-1] >= 122:  # aka "z"
-                            current_label.append(65)  # aka "A"
+                        current_label += 1
                     else:
                         break
                 self.item(row, 1).setText(added_label)
-                current_label[-1] += 1
-                if current_label[-1] >= 122:  # aka "z"
-                    current_label.append(65)  # aka "A"
+                current_label += 1
