@@ -11,6 +11,7 @@ class parameter_setter_single(QSpinBox):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.parameter = parameter
+        self.setMaximum(9999999)
         self.default()
         self.valueChanged.connect(self.check_value)
 

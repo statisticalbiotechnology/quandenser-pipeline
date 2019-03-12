@@ -41,7 +41,7 @@ not be shown.
     ./Quandenser_pipeline.sh /path/to/directory1 ... --disable-opengl
 
 
->Glx related crashes
+>Glx related crashes (ex qt.glx: qglx_findConfig: Failed to finding matching FBConfig (8 8 8 0))
 
 If you are running on a cluster with nvidia cards and you do not have an nvidia card on your local machine (ex if you are running the software in virtualbox on a cluster). Add the following command to disable nvidia drivers
 

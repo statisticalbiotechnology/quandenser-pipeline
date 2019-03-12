@@ -1,0 +1,96 @@
+%Imports and headers
+\documentclass[a4paper]{article}  %Or use titlepage
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{float} %makes you be able to use H option, places fig there and only there. VERY useful
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages for graphics and colors
+\usepackage{amsmath}
+\usepackage{graphicx, wrapfig}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+%% Extra packages
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage[some]{background}
+
+%% Header, foot and page number in bottom right corner
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+
+%% For long comments
+\usepackage{comment}
+
+% nomenclature
+\usepackage{nomencl}
+\makenomenclature
+%ABCDEFGHIJKLMNOPQRSTUVXYZ
+\nomenclature{$GUI$}{Graphical User Interface}
+\nomenclature{$HPC$}{High Performance Computing}
+\nomenclature{$LFQ$}{Label-Free Quantification}
+\nomenclature{$MS$}{Mass Spectrometry}
+
+
+% Turn on the style
+\pagestyle{fancy}
+% Clear the header and footer
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}  % Remove head bar
+\fancyfoot{}
+
+% The file containing our references, in BibTeX format
+\usepackage{csquotes} % Recommended by biblatex
+\usepackage[style=numeric,sorting=none,backend=biber]{biblatex}
+\addbibresource{references.bib}
+
+%%%%% Title page
+\begin{document}
+\thispagestyle{empty}
+\input{chapters/title.tex}
+\newpage
+
+%%%%% Abstract
+\input{chapters/abstract.tex}
+\newpage
+
+%%%%% Table of contents
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+
+%%%% Nomenclature
+\printnomenclature
+\newpage
+
+%%%%% Chapters
+% set footer
+% Set the right side of the footer to be the page number
+\fancyfoot[R]{\thepage}  % Page number
+\fancyfoot[L]{\date{\today}}  % date on footer
+\setcounter{page}{1}
+
+\input{chapters/1.0_introduction.tex}
+\newpage
+\input{chapters/2.0_method.tex}
+\newpage
+\input{chapters/3.0_results.tex}
+\newpage
+\input{chapters/4.0_discussion.tex}
+\newpage
+\input{chapters/5.0_conclusion.tex}
+\newpage
+\input{chapters/6.0_acknowledgements.tex}
+\newpage
+\printbibliography
+\newpage
+\input{chapters/7.0_appendix.tex}
+
+\end{document}
