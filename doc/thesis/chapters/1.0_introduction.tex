@@ -1,1 +1,9 @@
 \section{Introduction}
+
+Mass spectrometry-based Proteomics is currently the most comprehensive technique to analyze protein content in biological samples. Modern MS generate vast amounts of data and the analysis of such data is generally considered as a bottleneck, both due to the volume of data but also as the methods for processing the data are complex and need manual intervention. As it is hard to recreate the exact software environment used during processing, the majority of all results produced with mass spectrometers cannot be accurately reproduced outside of the lab where it was initially generated.
+
+Containerization and workflow management is a way to remedy the situation. Containerization is a technique to install software, not into a particular computer, but into a virtual container environment, in a so-called image. The image can be distributed to several separate computers, yet is guaranteed to execute in the exact same way regardless of the operating system. There are several such containerization techniques available. Here, we will focus on one named \textit{Singularity}, as it is the preferred solution of most High Performance Computing (HPC) clusters, such as UPPMAX.
+
+The second concept, workflow management, deals with how different pieces of dependent software can be consequently executed in a particular environment. Again, there are several workflow managers available, but the one used was \textit{NextFlow}, as it currently is a preferred solution for sequencing data at SciLifeLab.
+
+The aim of the project is to utilize containerization to embed a software named \textit{Quandenser}, a software created in SciLifeLab which condenses quantification data from label-free mass spectrometry experiments \cite{quandenser}. Comparison between established methods, which uses similar workflow management systems were also compared to the created workflow pipeline.
