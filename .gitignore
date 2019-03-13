@@ -145,3 +145,4 @@ output*/**
 *.synctex.gz
 *.fdb_latexmk
 *.nls
+**main.pdf
