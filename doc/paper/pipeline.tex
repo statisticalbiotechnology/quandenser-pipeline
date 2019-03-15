@@ -1,0 +1,88 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2cm,a4paper]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{authblk}
+
+\usepackage[outdir=./img/]{epstopdf}
+\usepackage{epsfig}
+\usepackage{url}
+\usepackage[nomarkers,nolists,tablesfirst]{endfloat}
+
+\usepackage{xr}
+\externaldocument{supplement}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning}
+\usetikzlibrary{arrows}
+
+\setlength\parindent{0pt}
+
+\input{./title.tex}
+
+\begin{document}
+
+\maketitle
+
+{ {\bf Running Title -- } Parallelization and containerization of quantative protoeomics data processing pipelines}
+
+\begin{abstract}
+
+
+\end{abstract}
+
+\section*{Introduction}
+
+Mass spectrometry-based proteomics is currently seen as the most comprehensive technique to analyze protein content in biological samples. Modern MS generate vast amounts of data and the analysis of such data is generally considered as a bottleneck. This has its reasons. The methods for processing the data are complex and are not always straight forward to operate. need manual intervention. As it is hard to recreate the exact software environment used during processing, the majority of all results produced with mass spectrometers cannot be accurately reproduced outside of the lab where it was initially generated. Also, due to the volume of data but also as
+
+There is also a missmatch between the bioinformaticians who often develop methods operating under Unix, and the fact that the instrument manufaturers' software with few exception operate under Windows. In practice this means that many mass spectrometry labs keep them selves with Windows computers, just for making format conversions between vendor specific raw file formats and non-proprietary file formats that can be read under windows.
+
+The proteowizard comunity have created an windows executable that does such conversions. The system can be executed under the windows emulation program wine, however, the installation process is complicated and such installation are brittle and stop working over time.
+
+New technology, so called containerization, provides means to install software, not into a particular computer, but into a virtual container environment, in a so-called container. The container can be distributed to several separate computers, yet is guaranteed to execute in the exact same way regardless of the operating system. There are several such containerization techniques available. The perhaps most poular one, docker, have a wide variety of available libraries of contsainers, and e.g. biocontainers\cite{}. However, docker containers, due to their nature, are executed with systems administrator priveledges, and could be utilized for malisious purpose.  In this work we will focus on one named \textit{Singularity}, as it does not execute under root priveledges and hence is the preferred solution of most computer cluster and High Performance Computing (HPC) clusters, particulsarly the ones in an academic environment.
+
+Recently, the ggdg-consortium developed a docker-container for msconvert.
+
+
+
+We recently introduced a new method, {\em Quandenser} (QUANtification by
+Distillation for ENhanced Signals with Error Regulation), that increase the sensitivity of the LFQ
+analysis pipeline. Just as any proteomics data analysis method, the processing consist of multiple steps, coded in separate executables. Among other tools it contains Dinosaur\cite{teleman2016dinosaur} for feature finding, MaRaCluster\cite{the2016maracluster} for clustering, Crux\cite{mcilwain2014} for database searching, and qvality\cite{kall2008non} as well as Triqler\cite{the2018integrated} for error assesments. To facilitate the installation of the method we placed these components in a  Singularity container.
+
+To further facilitate the processing we used a workflow managing system, deals with how different pieces of dependent software can be consequently executed in a particular environment. Again, there are several workflow managers available, but the one used was \textit{NextFlow}\cite{di2017nextflow}.
+
+The aim of the project was to utilize containerization to embed a software named \textit{Quandenser}, a software created in SciLifeLab which condenses quantification data from label-free MS experiments \cite{quandenser} in unison with Nextflow, to create a workflow from MS generated data to protein quantification results.
+
+
+
+
+
+Quandenser condenses the quantification data by applying
+unsupervised clustering on both MS1 and MS2 level and thereby paves the way for
+a quantification-first approach. The algorithm combines the unknowns from both
+levels into a condensed set of MS1 features and MS2 spectra that are likely to
+be interesting for further investigation. Specifically, Quandenser incorporates
+MBR for MS1 features to increase sensitivity and uses MS2 spectrum clustering
+to decrease the number of spectra to be searched. Importantly, it also provides
+{\em feature-feature match} error rates which can be used as input to Triqler
+to account for the errors as a result of the MBR step.
+
+
+
+\section*{Methods}
+
+\subsection*{Data sets}
+
+\section*{Results}
+
+To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale datasets.
+
+\subsection*{User Interface}
+
+
+\section*{Discussion}
+
+\bibliographystyle{plain}
+\bibliography{pipeline}
+
+\end{document}
