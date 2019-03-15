@@ -92,7 +92,7 @@ If everything fails or you can't run the GUI for some reason, there is a last re
     - *params.db* = Path to the fasta file used as the protein database. Note that only the "Full" workflow requires this.
     - *params.output_path* = Output path, which needs to be the same as the output path in the .sh file
     - *params.batch_file* = Path to the batch file. The syntax of the batch file is:
-    `/full/path/to/ms/file label` where "label" could be any combination of ascii characters
+    `/full/path/to/ms/file label` where "label" could be any combination of ascii characters. Note that the delimiter between the file path and the label needs to be a tab character. For each file, add another row. Replicates should have the same label assigned.
     - *params.custom_mounts* = Custom mounts used for Nextflow. the syntax should be:
     ` --bind /path/to/mount:/path/to/mount`. Note the blank space before " --bind"
     - *params.workflow* = Can be "Full", "MSconvert" or "Quandenser"
