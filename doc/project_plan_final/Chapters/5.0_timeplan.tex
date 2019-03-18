@@ -17,7 +17,7 @@ A gantt chart is shown in the figure below, explaining the time plan of the proj
     canvas/.append style={fill=none, draw=black!5, line width=.75pt},
     hgrid style/.style={draw=black!5, line width=.75pt},
     vgrid={*1{draw=black!5, line width=.75pt}},
-    today=2,
+    today=10,
     today rule/.style={
       draw=black!64,
       dash pattern=on 3.5pt off 4.5pt,
@@ -46,26 +46,26 @@ A gantt chart is shown in the figure below, explaining the time plan of the proj
   ]{1}{20}
   \gantttitle[title label node/.append style={below left=7pt and -3pt}]{WEEKS:\quad1}{1}
   \gantttitlelist{2,...,20}{1} \\
-  \ganttgroup[progress=75]{Creating the container}{1}{10} \\
+  \ganttgroup[progress=100]{Creating the container}{1}{10} \\
   \ganttbar[progress=100, name=WBS1A]{\textbf{Creating a container with ubuntu}}{1}{1} \\
   \ganttbar[progress=100,name=WBS1B]{\textbf{Add quandenser to the container}}{2}{3} \\
   \ganttbar[progress=100,name=WBS1C]{\textbf{Add msconvert to the container}}{2}{3} \\
-  \ganttbar[progress=30,name=WBS1D]{\textbf{Debug the container}}{3}{7} \\[grid]
+  \ganttbar[progress=100,name=WBS1D]{\textbf{Debug the container}}{3}{7} \\[grid]
   \ganttlink[link type=f-s]{WBS1A}{WBS1B}
-  \ganttgroup[progress=25]{Creating the pipeline}{1}{10} \\
+  \ganttgroup[progress=100]{Creating the pipeline}{1}{10} \\
   \ganttbar[progress=100, name=WBS2A]{\textbf{Create a basic pipeline for MS data}}{1}{3} \\
-  \ganttbar[progress=10, name=WBS2B]{\textbf{Create a GUI for the pipeline}}{3}{6} \\
-  \ganttbar[progress=0, name=WBS2C]{\textbf{Options to restrict pipeline}}{7}{9} \\
-  \ganttbar[progress=0, name=WBS2D]{\textbf{Create an installer for the pipeline}}{9}{10} \\[grid]
+  \ganttbar[progress=100, name=WBS2B]{\textbf{Create a GUI for the pipeline}}{3}{6} \\
+  \ganttbar[progress=100, name=WBS2C]{\textbf{Options to restrict pipeline}}{7}{9} \\
+  \ganttbar[progress=100, name=WBS2D]{\textbf{Create an installer for the pipeline}}{9}{10} \\[grid]
   \ganttlink[link type=f-f]{WBS2B}{WBS2D}
-  \ganttgroup[progress=5]{Analysing the data}{10}{20} \\
-  \ganttbar[progress=10, name=WBS3A]{\textbf{Run the example data}}{11}{11} \\
-  \ganttbar[progress=0, name=WBS3B]{\textbf{Run the cyanobacterial data set}}{12}{17} \\
-  \ganttbar[progress=0, name=WBS3C]{\textbf{Run the other lithotrophic bacterial data set}}{12}{17} \\
-  \ganttbar[progress=0, name=WBS3D]{\textbf{Compare results with established methods}}{13}{17} \\[grid]
+  \ganttgroup[progress=35]{Analysing the data}{11}{20} \\
+  \ganttbar[progress=100, name=WBS3A]{\textbf{Run the example data}}{11}{11} \\
+  \ganttbar[progress=90, name=WBS3B]{\textbf{Run the cyanobacterial data set}}{12}{17} \\
+  \ganttbar[progress=10, name=WBS3C]{\textbf{Run the other lithotrophic bacterial data set}}{12}{17} \\
+  \ganttbar[progress=20, name=WBS3D]{\textbf{Compare results with established methods}}{13}{17} \\[grid]
   \ganttlink[link type=f-f]{WBS3B}{WBS3D}
   \ganttgroup[progress=0]{Thesis and opposition}{11}{20} \\
-  \ganttbar[progress=0, name=WBS4A]{\textbf{Write the thesis}}{10}{19} \\
+  \ganttbar[progress=5, name=WBS4A]{\textbf{Write the thesis}}{10}{19} \\
   \ganttbar[progress=0, name=WBS4B]{\textbf{Write opposition}}{19}{19} \\
   \ganttbar[progress=0, name=WBS4C]{\textbf{Prepare presentation}}{15}{20} \\
   \ganttlink[link type=s-f]{WBS4A}{WBS4C}
