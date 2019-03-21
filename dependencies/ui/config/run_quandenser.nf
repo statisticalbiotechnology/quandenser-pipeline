@@ -153,7 +153,6 @@ process quandenser {
 	"""
 }
 
-
 process quandenser_parallel_1 {  // About 3 min/run
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
   publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
@@ -200,7 +199,7 @@ if (params.resume_directory != "") {
 
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
-  publishDir "$publish_output_path/Quandenser_output/maracluster/*", mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
+  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
@@ -209,7 +208,7 @@ process quandenser_parallel_2 {  // About 30 seconds
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
 	  file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
-    file "alignRetention_queue.txt" into alignRetention_queue
+    file "maracluster/featureAlignmentQueue.txt" into alignRetention_queue
     file "Quandenser_output/maracluster/*" into maracluster_publish
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
@@ -348,7 +347,6 @@ if (params.parallel_quandenser == true){
 
 process quandenser_parallel_3 {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
-  publishDir "$publish_output_path/Quandenser_output/percolator/*", mode: 'copy', overwrite: true,  pattern: "Quandenser_output/percolator/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
@@ -380,7 +378,7 @@ process quandenser_parallel_3 {  // About 3 min/run
 
 process quandenser_parallel_4 {  // About 30 seconds
   // Parallel 4: Run through maracluster extra features. Non-parallel
-  publishDir "$publish_output_path/Quandenser_output/maracluster_extra_features/*", mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
+  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster_extra_features/*"
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
@@ -450,7 +448,7 @@ process tide_search {
 }
 
 process triqler {
-  publishDir publish_output_path, mode: 'copy', pattern: "proteins.*",overwrite: true
+  publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "proteins.*",overwrite: true
   containerOptions "$params.custom_mounts"
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
