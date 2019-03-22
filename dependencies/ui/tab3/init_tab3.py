@@ -76,6 +76,7 @@ def init_tab3(paths):
 
     tab3_rightbox_layout.addRow(tooltip_label_dir_label, tab3_output_dir_label)
     tab3_rightbox_layout.addRow(tab3_resume_button, tab3_resume_folder_viewer)
+    tab3_rightbox_layout.addRow(QLabel('<b>Email notifications'), QLabel())
     tab3_rightbox_layout.addRow(tooltip_email_username, tab3_email_username)
     tab3_rightbox_layout.addRow(tooltip_email_password, tab3_email_password)
 
