@@ -10,7 +10,11 @@ from PySide2.QtWidgets import QMessageBox
 from custom_config_parser import custom_config_parser
 
 def ERROR(message):
-    print(Fore.RED + f"ERROR: {message}" + Fore.RESET)
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setWindowTitle("ERROR")
+    msg.setText(message)
+    msg.exec_()
 
 def WARNING(message):
     print(Fore.YELLOW + f"WARNING: {message}" + Fore.RESET)
@@ -101,7 +105,7 @@ def check_running(config_path):
             if not crash:
                 msg.setIcon(QMessageBox.Information)
                 msg.setWindowTitle("Started")
-                msg.setText("Quandenser started. P")
+                msg.setText("Quandenser started")
                 msg.setDetailedText(f"PID of the process is: {pid}")
             else:
                 msg.setIcon(QMessageBox.Warning)
