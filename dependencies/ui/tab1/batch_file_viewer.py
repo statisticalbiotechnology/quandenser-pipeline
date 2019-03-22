@@ -1,6 +1,6 @@
 import sys
 from PySide2.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QMenu, QAction
-from PySide2.QtGui import QColor, QKeySequence, QClipboard
+from PySide2.QtGui import QColor, QKeySequence, QClipboard, QGuiApplication
 from PySide2 import QtCore
 import os
 from difflib import SequenceMatcher
@@ -23,12 +23,12 @@ class batch_file_viewer(QTableWidget):
                 self.setItem(row, column, item)
 
         self.original_background = item.background()
+        self.clipboard = QGuiApplication.clipboard()
 
         self.cellChanged.connect(self.check_cell)  # Needs to be after "filling for loop" above
         self.header = self.horizontalHeader()
         self.header.setSectionResizeMode(0, QHeaderView.Stretch)
         self.setHorizontalHeaderLabels(["MS files", "Label"])
-
         self.header.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.header.customContextMenuRequested.connect( self.right_click_menu )
 
@@ -38,6 +38,10 @@ class batch_file_viewer(QTableWidget):
         if column == 1:
             menu = QMenu(self)
             menu.addAction('Auto label', self.auto_label)
+            menu.popup(self.header.mapToGlobal(point))
+        elif column == 0:
+            menu = QMenu(self)
+            menu.addAction('Remove empty rows', self.remove_empty_rows)
             menu.popup(self.header.mapToGlobal(point))
 
     def keyPressEvent(self, event):
@@ -50,7 +54,45 @@ class batch_file_viewer(QTableWidget):
                 pass
             else:
                 index = self.selectedIndexes()[0]  # Take last
+                if index.row() + 1 > self.rowCount() - 1:
+                    self.addRow_with_items()
                 self.setCurrentCell(index.row() + 1, index.column())
+        else:
+            modifiers = QGuiApplication.keyboardModifiers()
+            if modifiers == QtCore.Qt.ControlModifier and event.key() == 67:  # Copy
+                self.saved_text = ''
+                new_row = False
+                for index in self.selectedIndexes():
+                    if index.column() == 0:
+                        if new_row:
+                            self.saved_text += '\n'
+                        new_row = True
+                        self.saved_text += self.item(index.row(), index.column()).text()
+                        self.saved_text += '\t'
+                    elif index.column() == 1:
+                        self.saved_text += self.item(index.row(), index.column()).text()
+                        self.saved_text += '\n'
+                        new_row = False
+                #self.clipboard.setText(self.saved_text)
+            elif modifiers == QtCore.Qt.ControlModifier and event.key() == 86:  # Paste
+                #clipboard_text = self.clipboard.text()
+                clipboard_text = self.saved_text
+                clipboard_text = clipboard_text.split('\n')
+                paste_index = self.selectedIndexes()[0]
+                row = paste_index.row()
+                for text, index in zip(clipboard_text, range(len(clipboard_text))):
+                    text = text.split('\t')
+                    column = paste_index.column()
+                    for input in text:
+                        if input == '':
+                            continue
+                        if column > self.columnCount() - 1:
+                            pass
+                        else:
+                            self.item(row, column).setText(input)
+                        column += 1
+                    row += 1
+
         super().keyPressEvent(event)  # Propagate to built in methods
 
     def check_cell(self, row, column):
@@ -58,6 +100,15 @@ class batch_file_viewer(QTableWidget):
         self.blockSignals(True)
         self.pick_color(row, column)
         self.blockSignals(False)
+
+    def addRow_with_items(self):
+        item = QTableWidgetItem()
+        item.setText('')
+        self.setRowCount(self.rowCount() + 1)
+        self.setItem(self.rowCount() - 1, 0, item)    # Note: new rowcount here
+        label = QTableWidgetItem()
+        label.setText('')
+        self.setItem(self.rowCount() - 1, 1, label)
 
     def pick_color(self, row, column):
         """Triggered by check_cell"""
@@ -102,15 +153,9 @@ class batch_file_viewer(QTableWidget):
 
         # If we get here, add more rows
         self.blockSignals(True)
-        item = QTableWidgetItem()
-        item.setText(file)
-        self.setRowCount(self.rowCount() + 1)
-        self.setItem(row + 1, 0, item)    # Note: new rowcount here
-        label = QTableWidgetItem()
-        label.setText('')
-        self.setItem(row + 1, 1, label)
-        self.pick_color(row + 1, 0)
-        self.pick_color(row + 1, 1)
+        self.addRow_with_items()
+        self.item(self.rowCount() - 1, 0).setText(file)
+        self.pick_color(self.rowCount() - 1, 0)
         self.blockSignals(False)
 
     def auto_label(self):
@@ -134,3 +179,23 @@ class batch_file_viewer(QTableWidget):
                         break
                 self.item(row, 1).setText(added_label)
                 current_label += 1
+
+    def remove_empty_rows(self):
+        row = 0
+        for _ in range(5000):
+            file = self.item(row, 0)
+            label = self.item(row, 1)
+            if file is None or label is None:
+                self.removeRow(row)
+            elif file.text() == '' and label.text() == '':
+                self.removeRow(row)
+            else:
+                row += 1
+        if self.rowCount() == 0:
+            item = QTableWidgetItem()
+            self.setRowCount(self.rowCount() + 1)
+            row = self.rowCount() - 1
+            self.setItem(row, 0, item)    # Note: new rowcount here
+            label = QTableWidgetItem()
+            label.setText('')
+            self.setItem(row, 1, label)
