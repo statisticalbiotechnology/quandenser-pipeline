@@ -1,3 +1,0 @@
-0	mzML/A2.mzML	mzML/A1.mzML
-1	mzML/A3.mzML	mzML/A2.mzML
-1	mzML/A3.mzML	mzML/A2.mzML
