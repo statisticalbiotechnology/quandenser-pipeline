@@ -178,7 +178,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
-  quandenser-modified --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  quandenser --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
 }
 
@@ -220,7 +220,7 @@ process quandenser_parallel_2 {  // About 30 seconds
     mkdir -p Quandenser_output
     cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
 }
 
@@ -374,7 +374,7 @@ process quandenser_parallel_3 {  // About 3 min/run
   mkdir -p pair/file1; mkdir pair/file2
   ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
   ln -s ${prev_percolator} Quandenser_output/percolator
-  quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
@@ -395,7 +395,7 @@ process quandenser_parallel_4 {  // About 30 seconds
   script:
 	"""
   ln -s ${prev_percolator} Quandenser_output/percolator  # Create link to publishDir
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} --parallel-4 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-4 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
 }
 
@@ -416,7 +416,7 @@ process quandenser_parallel_5 {
 	"""
   rm -rf Quandenser_output/percolator
   ln -s ${prev_percolator} Quandenser_output/percolator
-	quandenser-modified --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
 	"""
 }
 
