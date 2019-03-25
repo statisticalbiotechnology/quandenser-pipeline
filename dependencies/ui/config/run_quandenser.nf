@@ -66,7 +66,7 @@ for( line in all_lines ){
   if( file_extension != "mzML" ){
     // Note: if you are running only msconvert on mzML files, the path will be wrong. However, since msconvert+quandenser
     // is not integrated yet, I can let it slide
-    all_lines[count] = params.output_path + "/work/converted_${params.random_hash}/" + file_name + ".mzML" + '\t' + file_label
+    all_lines[count] = params.output_path + "/work/converted_${params.random_hash}/converted/" + file_name + ".mzML" + '\t' + file_label
     count++
     amount_of_non_mzML++
   } else {
@@ -200,6 +200,7 @@ if (params.resume_directory != "") {
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
+  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
@@ -208,7 +209,8 @@ process quandenser_parallel_2 {  // About 30 seconds
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
 	  file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
-    file "maracluster/featureAlignmentQueue.txt" into alignRetention_queue
+    file "Quandenser_output/maracluster/featureAlignmentQueue.txt" into alignRetention_queue
+    file "Quandenser_output/dinosaur/allFeatures.txt" into allFeatures_queue
     file "Quandenser_output/maracluster/*" into maracluster_publish
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
