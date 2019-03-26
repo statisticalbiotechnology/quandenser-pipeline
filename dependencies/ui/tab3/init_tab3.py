@@ -7,6 +7,7 @@ from tab3.reset_button import reset_button
 from tab3.label_writer import label_writer
 from tab3.resume_chooser import resume_chooser
 from tab3.resume_folder_viewer import resume_folder_viewer
+from tab3.choose_option import choose_option
 
 from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
@@ -32,6 +33,7 @@ def init_tab3(paths):
     tab3_crux_search_arguments = additional_arguments('params.crux_search_additional_arguments', paths['nf'])  # Crux
     tab3_crux_percolator_arguments = additional_arguments('params.crux_percolator_additional_arguments', paths['nf'])  # Crux
     tab3_parameter_fold_change_eval = parameter_setter_double("params.fold_change_eval", paths['nf'])  # Triqler
+    tab3_raw_intensities_output = choose_option("params.raw_intensities", paths['nf'])
     tab3_triqler_arguments = additional_arguments('params.triqler_additional_arguments', paths['nf'])  # Triqler
     tab3_reset_button = reset_button(paths['config'])
 
@@ -49,6 +51,7 @@ def init_tab3(paths):
     tab3_leftbox_layout.addRow(QLabel('Crux percolator additional arguments'), tab3_crux_percolator_arguments)
     tab3_leftbox_layout.addRow(QLabel('<b>Triqler'), QLabel())
     tab3_leftbox_layout.addRow(QLabel('Fold change evaluation'), tab3_parameter_fold_change_eval)
+    tab3_leftbox_layout.addRow(QLabel('Output raw intensities'), tab3_raw_intensities_output)
     tab3_leftbox_layout.addRow(QLabel('Triqler additional arguments'), tab3_triqler_arguments)
     tab3_leftbox_layout.addRow(tab3_reset_button)
 
