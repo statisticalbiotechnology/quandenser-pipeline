@@ -457,13 +457,18 @@ process triqler {
 	file("crux-output/*") from id_files.collect()
 	file 'list.txt' from file_def
   output:
-	file("proteins.*") into triqler_output
+	file("*proteins.*") into triqler_output
   when:
     params.workflow == "Full"
   script:
+  if (params.raw_intensities) {
+    triqler_raw = '--raw_intensities'
+  } else {
+    triqler_raw = ''
+  }
 	"""
 	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-	triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments}
+	triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw}
   """
 }
 
