@@ -1,4 +1,4 @@
-# Quandenser-pipeline <img align='right' src="/images/logo.png" height="50">
+# Quandenser-pipeline <img align='right' src="/images/logo.svg" height="50">
 
 ## A Nextflow/Singularity pipeline for Quandenser
 
@@ -116,5 +116,5 @@ Feel free to mail me at "timothy.bergstrom@gmail.com" if you have any questions 
 
 
 
-<img src="/images/logo.png" height="128">
+<img src="/images/logo.svg" height="128">
  <small>&copy; Copyright 2019, Timothy Bergström</small>
