@@ -450,7 +450,7 @@ process tide_search {
 }
 
 process triqler {
-  publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "proteins.*",overwrite: true
+  publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "*proteins.*",overwrite: true
   containerOptions "$params.custom_mounts"
   input:
 	file("Quandenser_output/*") from quandenser_out.collect()
