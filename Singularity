@@ -36,7 +36,10 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    # A script that links all file in wineprefix64 to a directory owned by you --> anybody can use wine
    dependencies/link_wine.sh /usr/local/bin/link_wine.sh
    dependencies/ui /
-   dependencies/quandenser-v0-01-linux-amd64_MODIFIED_repack.deb /
+   # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
+   # This comes from quandenser-pipeline branch of quandenser
+   dependencies/quandenser-v0-01-linux-amd64.deb /
+
 
 %post
     echo "Fixing timezones"
@@ -87,7 +90,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     ln -sf /usr/local/bin/pip /usr/local/bin/pip3
 
     echo "Installling packages with pip"
-    pip install triqler
+    #pip install triqler  # Using different version of triqler down below
     pip install PySide2
     pip install colorama
     pip install qdarkstyle
@@ -105,11 +108,16 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     cd $(mktemp -d)
 
     echo "Installling quandenser"
-    wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
-    dpkg -i quandenser-v0-01-linux-amd64.deb
-    dpkg -i /quandenser-v0-01-linux-amd64_MODIFIED_repack.deb
-    chmod a+rx /usr/bin/quandenser-modified
+    # Use wget when quandenser has fixed the bugs
+    #wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
+    dpkg -i /quandenser-v0-01-linux-amd64.deb
     apt-get install -f
+
+    echo "Installling triqler (quandenser-pipeline version)"
+    git clone -b quandenser-pipeline https://github.com/statisticalbiotechnology/triqler.git
+    cd triqler
+    pip install .
+    cd ..
 
     echo "Installling crux"
     wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
@@ -134,5 +142,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="0.041"
+    VERSION="0.05"
     printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
