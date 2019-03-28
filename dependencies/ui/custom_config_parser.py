@@ -15,7 +15,10 @@ class custom_config_parser():
         return settings
 
     def get_index(self, parameter, settings, additional_information=''):
-        index = [settings.index(i) for i in settings if i.lstrip().startswith(parameter)]
+        index = []
+        for i, line in enumerate(settings):
+            if line.lstrip().startswith(parameter):
+                index.append(i)
         if len(index) == 0:
             print("ERROR, no such parameter found")
             return None
@@ -33,6 +36,16 @@ class custom_config_parser():
                     index = i
                     break
         return index
+
+    def get_indices(self, parameter, settings):
+        indices = []
+        for i, line in enumerate(settings):
+            if line.lstrip().startswith(parameter):
+                indices.append(i)
+        if len(indices) == 0:
+            print("ERROR, no such parameter found")
+            return None
+        return indices
 
     def get(self, parameter, additional_information=''):
         settings = self.read_lines()
@@ -61,6 +74,27 @@ class custom_config_parser():
         if isString:  # Need "
             value = '"' + value + '"'
         settings[index] = f'{intendation}{parameter}={value}\n'  # Need to add \n here
+        with open(self.settings_file, 'w') as file:
+            for line in settings:
+                file.write(line)
+        return True
+
+    def write_all(self, parameter, value, isString=True):
+        settings = self.read_lines()
+        value = str(value)
+        indices = self.get_indices(parameter, settings)
+        if isString:  # Need "
+            value = '"' + value + '"'
+        for index in indices:
+            intendation = 0
+            for char in settings[index]:
+                if char == ' ':
+                    intendation += 1
+                else:
+                    break
+            intendation = intendation * ' '
+            settings[index] = f'{intendation}{parameter}={value}\n'  # Need to add \n here
+
         with open(self.settings_file, 'w') as file:
             for line in settings:
                 file.write(line)
