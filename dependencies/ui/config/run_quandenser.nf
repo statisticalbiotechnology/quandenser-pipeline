@@ -453,11 +453,12 @@ process triqler {
   publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "*proteins.*",overwrite: true
   containerOptions "$params.custom_mounts"
   input:
-	file("Quandenser_output/*") from quandenser_out.collect()
-	file("crux-output/*") from id_files.collect()
-	file 'list.txt' from file_def
+	  file("Quandenser_output/*") from quandenser_out.collect()
+	  file("crux-output/*") from id_files.collect()
+	  file 'list.txt' from file_def
   output:
-	file("*proteins.*") into triqler_output
+	  file("*proteins.*") into triqler_output
+    file("triqler.zip") into triqler_zip_output
   when:
     params.workflow == "Full"
   script:
@@ -469,7 +470,16 @@ process triqler {
 	"""
 	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
 	triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw}
+  zip triqler.zip *proteins.*
   """
 }
 
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
+
+workflow.onComplete {
+    if (params.email != "" && params.sendfiles == true) {
+      sendMail{to params.email
+               subject "Workflow ${workflow.runName} output files"
+               attach triqler_zip_output}
+    }
+}

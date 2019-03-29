@@ -71,8 +71,9 @@ def init_tab3(paths):
     https://security.google.com/settings/security/apppasswords
     Paste the token in the password field and you are good to go!
     Note: Since all files you create are only readable by you (chmod 700), your password is secure""" )
-    tab3_email_username = additional_arguments("smtp.user", paths['nf'])
+    tab3_email_username = additional_arguments("params.email", paths['nf'])
     tab3_email_password = additional_arguments("smtp.password", paths['nf'])
+    tab3_email_send_files = choose_option("params.sendfiles", paths['nf'])
 
     tab3_resume_button = resume_chooser(paths['pipe'])
     tab3_resume_folder_viewer = resume_folder_viewer(paths['nf'])
@@ -82,6 +83,7 @@ def init_tab3(paths):
     tab3_rightbox_layout.addRow(QLabel('<b>Email notifications'), QLabel())
     tab3_rightbox_layout.addRow(tooltip_email_username, tab3_email_username)
     tab3_rightbox_layout.addRow(tooltip_email_password, tab3_email_password)
+    tab3_rightbox_layout.addRow(QLabel("Send files"), tab3_email_send_files)
 
     tab3_layout.addWidget(tab3_leftbox)
     tab3_layout.addWidget(tab3_rightbox)
