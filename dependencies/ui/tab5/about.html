@@ -2,15 +2,52 @@
 <body style="background-color:rgb(25, 35, 45);">
 <font color="white" face="rockwell">
 <center>
-
 <h1 style=font-size:56px>Quandenser-pipeline</h1>
-
 <h2>Created by Timothy Bergström</h2>
+</center>
 
 <p>
-  Science for Life Laboratory, School of Engineering Sciences in Chemistry, Biotechnology and
-  Health, KTH – Royal Institute of Technology, Box 1031, 17121 Solna, Sweden
+  Quandenser-pipeline is a pipeline which aims to improve the user friendliness and usability of MS analysis software.
+  <b>Quandenser</b> is a newly created software made in SciLifeLab by Lukas Käll and Matthew The, which condenses quantification data from label-free MS experiments.
+  and is the cornerstone of the pipeline.
+
+  <br>
+  <br>
+  The following software were used to create the pipeline:<br>
+  <a href="https://github.com/sylabs/singularity" style="color: #00ff96">Singularity</a>:
+  Singularity is an open source container platform used to embed the software used in the pipeline  <br>
+
+  <a href="https://github.com/nextflow-io/nextflow" style="color: #00ff96">Nextflow</a>:
+  Nextflow is a workflow manager, which was used to create the pipeline  <br>
+
+  <a href="https://github.com/statisticalbiotechnology/quandenser" style="color: #00ff96">Quandenser</a>:
+  A recent software which condenses quantification data from label-free mass spectrometry experiments, written by Lukas Käll and Matthew The at ScilifeLab <br>
+
+  <a href="https://github.com/crux-toolkit/crux-toolkit" style="color: #00ff96">Crux toolkit</a>:
+  An open-source mass spectrometry analysis toolkit used to analyze MS2 spectra from Quandeser  <br>
+
+  <a href="https://github.com/statisticalbiotechnology/triqler" style="color: #00ff96">Triqler</a>:
+  A combined identification and quantification error model of label-free protein quantification, written by Lukas Käll and Matthew The at ScilifeLab.
+  It is used as the final analysis software, utilizing the output from Crux and Quandenser  <br>
+
+  The GUI is built with the open source GUI
+  <a href="https://pypi.org/project/PySide2/" style="color: #00ff96">PySide2</a>
+  with
+  <a href="https://github.com/ColinDuquesnoy/QDarkStyleSheet" style="color: #00ff96">ColinDuqesnoy's dark theme </a> <br>
 </p>
+
+<br>
+<br>
+
+<center>
+<p>
+  Science for Life Laboratory <br>
+  School of Engineering Sciences in Chemistry, Biotechnology and Health <br>
+  KTH – Royal Institute of Technology <br>
+  Box 1031, 17121 Solna, Sweden
+</p>
+
+
 
 <style>
 .brighten {
