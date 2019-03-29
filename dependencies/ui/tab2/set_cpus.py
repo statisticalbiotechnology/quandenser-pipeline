@@ -16,13 +16,16 @@ class set_cpus(QSpinBox):
 
     def check_value(self):
         self.blockSignals(True)
-        #additional_information = self.parameter.replace('_cpus', '')  # Get name of process
-        #additional_information = "withName: " + additional_information
-        self.nf_settings_parser.write_all(f"cpus",
-                                         self.value(),
-                                         isString=False)
+        additional_information = self.parameter.replace('_cpus', '')  # Get name of process
+        additional_information = "withName: " + additional_information
+        self.nf_settings_parser.write(f"cpus",
+                                      self.value(),
+                                      isString=False,
+                                      additional_information=additional_information)
         self.blockSignals(False)
 
     def default(self):
-        value = int(self.nf_settings_parser.get(f"cpus"))
+        additional_information = self.parameter.replace('_cpus', '')  # Get name of process
+        additional_information = "withName: " + additional_information
+        value = int(self.nf_settings_parser.get(f"cpus", additional_information=additional_information))
         self.setValue(value)
