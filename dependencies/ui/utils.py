@@ -95,8 +95,6 @@ def check_running(config_path):
                     for line in all_lines:
                         if "Error executing process" in line:
                             crash = True
-                    if len(all_lines) == 0:  # File doesn't exist/not started
-                        crash = True
             except Exception as e:
                 print(e)
                 crash = True
