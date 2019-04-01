@@ -12,7 +12,7 @@ class about(QWebEngineView):
         #self.setHtml(html_file.read())  # THIS WILL NOT LOAD IMAGES
         self.urlChanged.connect(self.check_url)
         self.return_button = QPushButton()
-        self.return_button.setText('BACK TO ABOUT')
+        self.return_button.setText('BACK TO ABOUT PAGE')
         self.return_button.clicked.connect(self.return_to_about)
         self.return_button.setStyleSheet('QPushButton {color: #00ff96;}')
         self.load(QUrl.fromLocalFile(f"{self.current_dir}/tab5/about.html"))
