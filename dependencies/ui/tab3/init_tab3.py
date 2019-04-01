@@ -34,6 +34,7 @@ def init_tab3(paths):
     tab3_crux_percolator_arguments = additional_arguments('params.crux_percolator_additional_arguments', paths['nf'])  # Crux
     tab3_parameter_fold_change_eval = parameter_setter_double("params.fold_change_eval", paths['nf'])  # Triqler
     tab3_raw_intensities_output = choose_option("params.raw_intensities", paths['nf'])
+    tab3_returnDistributions_output = choose_option("params.returnDistributions", paths['nf'])
     tab3_triqler_arguments = additional_arguments('params.triqler_additional_arguments', paths['nf'])  # Triqler
     tab3_reset_button = reset_button(paths['config'])
 
@@ -52,6 +53,7 @@ def init_tab3(paths):
     tab3_leftbox_layout.addRow(QLabel('<b>Triqler'), QLabel())
     tab3_leftbox_layout.addRow(QLabel('Fold change evaluation'), tab3_parameter_fold_change_eval)
     tab3_leftbox_layout.addRow(QLabel('Output raw intensities'), tab3_raw_intensities_output)
+    tab3_leftbox_layout.addRow(QLabel('Output distributions'), tab3_returnDistributions_output)
     tab3_leftbox_layout.addRow(QLabel('Triqler additional arguments'), tab3_triqler_arguments)
     tab3_leftbox_layout.addRow(tab3_reset_button)
 
