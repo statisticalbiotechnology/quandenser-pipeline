@@ -104,7 +104,7 @@ class run_button(QPushButton):
             return 1
 
         # EMAIL #
-        email = self.nf_settings_parser.get("smtp.user")
+        email = self.nf_settings_parser.get("params.email")
         if email != '':
             # Need to add -N here, since without it, nextflow will display a warning
             self.sh_parser.write("EMAIL_NOTIFICATION", f"-N {email}")
