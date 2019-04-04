@@ -108,11 +108,11 @@ process msconvert {
   input:
     file f from spectra_convert_channel
   output:
-    file("converted/*.mzML") into spectra_converted
+    file("converted/*") into spectra_converted
   script:
 	"""
   mkdir -p converted
-  wine msconvert ${f} --mzML --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
+  wine msconvert ${f} --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
   """
 }
 
@@ -467,19 +467,25 @@ process triqler {
   } else {
     triqler_raw = ''
   }
+  if (params.returnDistributions) {
+    triqler_dist = '--returnDistributions'
+  } else {
+    triqler_dist = ''
+  }
 	"""
-	prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-	triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw}
-  zip triqler.zip *proteins.*
+	python -s /usr/local/bin/prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
+	python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw} ${triqler_dist}
+  zip triqler.zip *.tsv *.csv -x "triqler_input*"
   """
 }
 
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
 
 workflow.onComplete {
-    if (params.email != "" && params.sendfiles == true) {
+    if (params.email != "" && params.sendfiles == true && params.workflow == "Full") {
       sendMail{to params.email
                subject "Workflow ${workflow.runName} output files"
-               attach triqler_zip_output}
+               body "Triqler files"
+               attach triqler_zip_output.getVal()}
     }
 }
