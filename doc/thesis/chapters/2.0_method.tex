@@ -12,9 +12,7 @@ There are a multitude of different types of MS data types, each of which has dif
 Crux is an open source mass spectrometry analysis toolkit available for Linux, Windows and MacOS \cite{crux}. The purpose of integrating Crux into the image was to use three specific tools; tide-index, tide-search and percolator. Tide-index is a pre-search tool that adds indexes and decoys to the protein data base, which is used by the search tool tide-search, that parses fragmentation spectra and creates peptide-to-spectrum matches (PSMs) \cite{tide-search}. Percolator is a post-search tool, that separates peptide targets from decoy PSMs \cite{percolator}. In combination, the tools were used to post-process the output from Quandenser to prepare it for the software triqler, explained in the next section.
 
 \subsubsection{Triqler}
-Triqler is an software which uses using graphical models and Bayesian statistics to find differentially expressed proteins between samples. An important note is that Triqler utilizes both MS2 and MS1 spectra, which improves the overall quantification of proteins \cite{triqler}.
-
-ADD MORE STUFF HERE
+Triqler is an software which uses using graphical models and bayesian statistics to find differentially expressed proteins between samples. An important note is that Triqler utilizes both MS2 and MS1 spectra, which improves the overall quantification of proteins \cite{triqler}.
 
 \subsection{Nextflow}
 
@@ -29,10 +27,8 @@ Nextflow has integrated compatibility with running software inside Singularity i
 
 Nextflow also has the benefit of being able to submit processes to workload managers, which are used on HPC clusters to allocate processing time for users. To be able to run the pipeline on HPC clusters, the pipeline is outfitted with an profile to submit processes via SLURM, the current workload manager on UPPMAX, to allow users of the pipeline to run the pipeline on clusters.
 
-To
-
 \subsection{Quandenser-pipeline GUI}
-To integrate the Singularity image and the Nextflow pipeline, a GUI was created and packed into the image. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. A shell script handling installing Singularity, downloading the image from Singularity Hub and starting the GUI was created to allow users to easily use the pipeline. Figure \ref{fig:GUI_workflow} shows the GUI workflow.
+To integrate the Singularity image and the Nextflow pipeline, a GUI was created and packed into the image. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. A shell script handling installing Singularity, downloading the image from Singularity Hub and starting the GUI was created to allow users to easily use the pipeline. Figure \ref{fig:GUI_workflow} shows the GUI workflow and how it communicates with the host.
 
 \begin{figure}[!htbp]
   \includegraphics[width=\linewidth]{pictures/GUI_workflow.png}
@@ -41,5 +37,30 @@ To integrate the Singularity image and the Nextflow pipeline, a GUI was created 
 \end{figure}
 
 \subsection{Analysing bacterial proteomes}
-Comparison between established methods, which uses similar workflow management systems were also compared to the created workflow pipeline. Another workflow manager \textit{KNIME} in combination with \textit{OpenMS} was used to compare
-After Quandenser has
+
+The two bacterial mass spectrometry data sets used for analysis were generated in SciLifeLab. The first data set was cyanobacteria being grown in five different simulated environments (before dawn, after dawn, noon, before sunset and after sunset) with two replicates each. The second bacterial data set was ralstonia bacteria being grown in a chemostat bioreactor where Formic Acid (FA) was limited during the experiment.
+
+The data sets were run on different established proteomic pipelines to compare the performance of the newly created pipeline. The following table illustrates which programs were used:
+
+\newcommand{\textone}{\small The pipeline created for the thesis, using Quandenser as it's cornerstone. Due to Singularity not supporting non POSIX systems, the Windows OS cannot run the pipeline natively without using a compatibility layer suggested in the Singularity documentation \cite{singularity-documentation}. }
+\newcommand{\texttwo}{\small The custom pipeline tested on the data set was created by the workflow manager \textit{KNIME} in combination with \textit{OpenMS}, creating a custom workflow for analysing mzML data \cite{knime} \cite{openms}. The pipeline was created by Michael Jahn at SciLifeLab and is used to analyse bacterial data \cite{m-jahn-pipeline}. Both KNIME and OpenMS is available for Linux, MacOS and Windows}
+\newcommand{\textthree}{\small MaxQuant is a tool used for quantitative proteomics and is well suited for analysing label-free proteomic data. The tool is available for Windows and at also now for Linux, if the Mono framework is used \cite{maxquant} \cite{maxquant-installation}.}
+\newcommand{\textfour}{\small MetaMorpheus is a search engine software which can find Post-Translational Modifications Modifications (PTMs) and integrates Flash LFQ, a label-free peptide quantification software into the pipeline \cite{metamorpheus}. MetaMorpheus is only available for the Windows OS}
+\newcommand{\textfive}{\small The Trans-Proteomic Pipeline (TPP) is an open-source proteomics data pipleine which includes a multitude of tools for analysing proteomic data \cite{TPP}. The pipeline is available for Windows and a Linux distribution called Ubuntu}
+\newcommand{\textsix}{\small Philosopher is a ... \cite{philosopher}}
+\newcommand{\textseven}{7}
+
+
+\begin{table}[H]
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+Program & Description \\ \hline \hline
+Quandenser-pipeline v0.051 & \textone \\ \hline
+KNIME + OpenMS & \texttwo \\ \hline
+MaxQuant 1.6.5 & \textthree \\ \hline
+MetaMorpheus 0.0.299 & \textfour \\ \hline
+Trans-Proteomic Pipeline 5.2.0 & \textfive \\ \hline
+Philosopher 20190322 & \textsix \\ \hline
+\end{tabular}
+\caption{Different pipelines used to compare Quandenser-pipeline}
+\end{table}
