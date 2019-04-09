@@ -11,6 +11,7 @@ from tab3.choose_option import choose_option
 
 from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
+from utils import get_tooltip
 
 def init_tab3(paths):
     tab3 = QWidget()
@@ -64,15 +65,9 @@ def init_tab3(paths):
 
     tab3_rightbox_layout.addRow(QLabel('<b>Quandenser-pipeline'), QLabel())
     tab3_output_dir_label = label_writer(paths['sh'])
-    tooltip_label_dir_label = tooltip_label('Output directory label',
-    """If you are running multiple runs in the same directory, this label will allow you to
-    run many runs in the same output directory without overwriting the outputs""")
-    tooltip_email_username = tooltip_label('Gmail username', 'If this field is empty, no email will be sent')
-    tooltip_email_password = tooltip_label('Password/token',
-    """If you have 2-factor authorization on gmail, go to the following website and generate a new token.
-    https://security.google.com/settings/security/apppasswords
-    Paste the token in the password field and you are good to go!
-    Note: Since all files you create are only readable by you (chmod 700), your password is secure""" )
+    tooltip_label_dir_label = get_tooltip('dir-label')
+    tooltip_email_username = get_tooltip('email-username')
+    tooltip_email_password = get_tooltip('email-password')
     tab3_email_username = additional_arguments("params.email", paths['nf'])
     tab3_email_password = additional_arguments("smtp.password", paths['nf'])
     tab3_email_send_files = choose_option("params.sendfiles", paths['nf'])

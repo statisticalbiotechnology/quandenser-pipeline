@@ -1,0 +1,9 @@
+{"cluster-type": ["Cluster type","Defaults to 'slurm'. More types of clusters might be available in the future"],
+ "cluster-arguments": ["Cluster arguments","This is where you input any additional arguments. Note that -A <account> is often needed for slurm"],
+ "cluster-queue": ["Cluster queue", "Defaults to 'core'. This depends on which queue you want to use. NOTE: If you set it too high, you will waste computation time!"],
+ "dir-label": ["Output directory label", "If you are running multiple runs in the same directory, this label will allow you to run many runs in the same output directory without overwriting the outputs"],
+ "email-username": ["Gmail username", "If this field is empty, no email will be sent"],
+ "email-password": ["Password/token", "If you have 2-factor authorization on gmail, go to the following website and generate a new token. https://security.google.com/settings/security/apppasswords. Paste the token in the password field and you are good to go! Note: Since all files you create are only readable by you (chmod 700), your password is secure"]
+
+
+}

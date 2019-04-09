@@ -5,9 +5,11 @@ import os
 import shutil
 import filecmp
 from PySide2.QtWidgets import QMessageBox
+import json
 
 # Custom parser
 from custom_config_parser import custom_config_parser
+from tooltip_label import tooltip_label
 
 def ERROR(message):
     msg = QMessageBox()
@@ -110,3 +112,16 @@ def check_running(config_path):
                 msg.setWindowTitle("Nextflow crash")
                 msg.setText(f"Something went wrong after nextflow was started. Please look in stdout.txt at \n{output_path}")
             msg.exec_()
+
+def get_tooltip(key):
+    with open('tooltips.json') as infile:
+        tooltip_dict = json.load(infile)
+    text, tooltip = tooltip_dict[key][0], tooltip_dict[key][1]
+    return tooltip_label(text, tooltip)
+
+def dump_tooltip(key, text, tooltip):
+    with open('tooltips.json') as infile:
+        tooltip_dict = json.load(infile)
+    tooltip_dict[key] = [text, tooltip]
+    with open('tooltips.json', 'w') as outfile:
+        json.dump(tooltip_dict, outfile)
