@@ -196,6 +196,9 @@ if (params.resume_directory != "") {
     percolator_resume_dir.copyTo("${params.output_path}/work/percolator_${params.random_hash}")
   }
 }
+if (params.parallel_quandenser == false){
+  percolator_workdir.deleteDir()  // Delete workdir
+}
 
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
@@ -277,11 +280,16 @@ if (params.parallel_quandenser == true){
      current_width = 0
      prev_files = []  // List to store files from previous rounds
      all_lines = alignRetention_file.readLines()  // Get all lines from maracluster tree
+     println("Execution order:")
      for( line in all_lines ){
        file1 = line.tokenize('\t')[1].tokenize('/')[-1]  // Get file name from file 1
        file2 = line.tokenize('\t')[2].tokenize('/')[-1]  // Get file name from file 2
        // When the previous round contains any of the files, create a new round
        if (prev_files.contains(file1) || prev_files.contains(file2) ) {
+          println("Round $current_depth: ")
+          for (file in prev_files){
+            println(" $file ")
+          }
           tree_map_reconstructed[current_depth] = current_width  // Add new round, with width
           current_depth++  // Add 1 to depth. The files in this loop will be added to that round
           current_width = 1  // Since we have 1 pair already, do not start from 0
@@ -347,13 +355,21 @@ if (params.parallel_quandenser == true){
   input_ch = Channel.create()
 }
 
+if (params.parallel_quandenser_tree == true) {
+  processing_tree_changed = processing_tree
+  input_ch_changed = input_ch
+} else {
+  processing_tree_changed = processing_tree.collect()
+  input_ch_changed = Channel.from( 1 )
+}
+
 process quandenser_parallel_3 {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   input:
     file 'list.txt' from file_def
-    set val(depth), val(filepair) from processing_tree  // Get a filepair from a round
+    set val(depth), val(filepair) from processing_tree_changed  // Get a filepair from a round
     // This will replace percolator directory with a link to work directory percolator
     each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
 
@@ -361,21 +377,28 @@ process quandenser_parallel_3 {  // About 3 min/run
     file "Quandenser_output/*" from quandenser_out_2_to_3.collect()
 
     // This is the magic that makes the process loop
-    val feedback_val from input_ch
+    val feedback_val from input_ch_changed
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   output:
     val 0 into feedback_ch
     val 0 into percolator_1_completed
   script:
-  """
-  echo "FILES: ${filepair[0]} and ${filepair[1]}"
-  echo "PROCESSED FILES BEFORE: ${feedback_val}"
-  mkdir -p pair/file1; mkdir pair/file2
-  ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
-  ln -s ${prev_percolator} Quandenser_output/percolator
-  quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
-  """
+  if (params.parallel_quandenser_tree == false)
+    """
+    echo "FILES: All of them"
+    ln -s ${prev_percolator} Quandenser_output/percolator
+    quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 99999 ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+    """
+  else
+    """
+    echo "FILES: ${filepair[0]} and ${filepair[1]}"
+    echo "PROCESSED FILES BEFORE: ${feedback_val}"
+    mkdir -p pair/file1; mkdir pair/file2
+    ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
+    ln -s ${prev_percolator} Quandenser_output/percolator
+    quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+    """
 }
 
 process quandenser_parallel_4 {  // About 30 seconds
