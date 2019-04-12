@@ -355,10 +355,10 @@ if (params.parallel_quandenser == true){
   input_ch = Channel.create()
 }
 
-if (params.parallel_quandenser_tree == true) {
+if (params.parallel_quandenser_tree == true && params.parallel_quandenser == true) {
   processing_tree_changed = processing_tree
   input_ch_changed = input_ch
-} else {
+} else if (params.parallel_quandenser == true) {
   processing_tree_changed = processing_tree.collect()
   input_ch_changed = Channel.from( 1 )
 }
