@@ -1,8 +1,8 @@
 #!/bin/bash
 config_location="/home/$USER/.quandenser_pipeline"  # Change depending on mac or linux
 GREEN="\033[0;92m"
-RED="\033[0;31m"
-BLUE="\033[0;34m"
+RED="\033[0;91m"
+BLUE="\033[0;94m"
 YELLOW="\033[0;93m"
 RESET="\033[0m\n"
 
@@ -38,13 +38,22 @@ do
     echo ""  # Empty row
     printf "${GREEN}Quandenser-pipeline HELP$RESET"
     printf "Usage:\n"
-    printf "${BLUE}  ./Open_UI.sh <path_to_mount>$RESET"
-    echo ""  # Empty row
+    printf "${BLUE}  ./Quandenser_pipeline.sh <path_to_mount> <options>$RESET"
     printf "Description:\n"
-    printf "${BLUE}  PLACEHOLDER$RESET"
-    printf "Options:\n"
-    printf "${BLUE}  --disable-opengl\t This will disable opengl. Can be useful if the program crashes when switching to Edit Workflow or About tab$RESET"
-    printf "${BLUE}  --enable-opengl\t This will enable opengl. Can be used when the user has disabled opengl and wants to reset$RESET"
+    printf "${BLUE}  Quandenser-pipeline is a tool that combines Quandenser,
+  which condenses label-free MS data and Triqler, which finds differentially expressed proteins using both MS1 and MS2 data.
+  Quandenser-pipeline streamlines the process, by accepting almost any vendor format alongside a fasta database containing
+  proteins, which are then run through a Singularity image containing all the necessary parts to do the analysis.$RESET"
+    printf "Custom mounting points:\n"
+    printf "${BLUE}  <path_to_mount>
+  Full path to custom mounting point. Useful if the directory is not mounted by Singularity by default.
+  Example: ./Quandenser_pipeline.sh /media
+  This will mount the directory /media to the container. Note that mounting directories such as /usr or /var can have unforseen consequenses$RESET"
+    printf "Optional options:\n"
+    printf "${BLUE}  -D or --disable-opengl\t This will disable opengl. Can be useful if the program crashes when switching to Edit Workflow or About tab (will persist through runs)$RESET"
+    printf "${BLUE}  -E or --enable-opengl\t\t This will enable opengl, if you have disabled it before (will persist through runs)$RESET"
+    printf "${BLUE}  -U or --disable-update\t This will disable checking for updates$RESET"
+    printf "${BLUE}  -N or --disable-nvidia\t Disable using nvidia drivers (useful if you are running on a cluster with NVIDIA cards from a computer without NVIDIA drivers)$RESET"
     exit 0
   fi
 done
@@ -105,9 +114,11 @@ done
   done
 }
 
+# Check if the image is installed
 if [ ! -f SingulQuand.SIF ]; then
   while true; do
-    printf "${YELLOW}Singularity container not found. Install stable from Singularity Hub? Y/y or N/n${RESET}"
+    printf "${YELLOW}By downloading and using the pipeline, you are agreeing to the license of Quandenser pipeline and the proteowizard licenses found at this url: ${BLUE}http://proteowizard.sourceforge.net/licenses.html${RESET}"
+    printf "${YELLOW}Singularity container not found. Install stable from Singularity Hub? ${GREEN}Y/y ${YELLOW}or ${RED}N/n${RESET}"
     read accept
     if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
       printf "${GREEN}Installing Singularity container${RESET}"
@@ -128,6 +139,54 @@ if [ ! -f SingulQuand.SIF ]; then
   done
 fi
 
+# Check mount points made by the user
+mount_point=""
+directories=""
+for var in "$@"; do
+  if [[ -d $var ]]; then  # If it is a path, add it to mount list
+    mount_point+=" --bind $var:$var"
+    directories+=" $var"  # This is only used when the pipeline is restarted
+  fi
+done
+
+# Check if user has disabled updates or not
+disable_update="false"
+for var in "$@"; do
+  if [ "$var" = "-U" ] || [ "$var" = "--disable-update" ]; then
+    disable_update="true"
+  fi
+done
+
+# Check for updates
+if [ "$disable_update" == "false" ]; then
+  # Check image version on singularity hub
+  VERSION_SINGHUB=$(GET http://singularity-hub.org/api/container/details/statisticalbiotechnology/quandenser-pipeline/ | jq -r '.metrics.inspect' | grep -m 1 -oP 'VERSION=\\"\K([^"\\]*)')
+  # Check version in container. Superimportant: pipe stdin from singularity to dev/null. Otherwise, suspended tty input and it runs in background
+  VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' v\K([0-9]+[.][0-9]+)')
+  if [ "$VERSION_SINGHUB" != "$VERSION_SIF" ]; then
+    while true; do
+      printf "${YELLOW}A new update has been found ($VERSION_SIF -> $VERSION_SINGHUB). Do you want to install it? ${GREEN}Y/y ${YELLOW}or ${RED}N/n${RESET}"
+      read accept
+      if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
+        singularity pull -F SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline
+        curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest \
+        | jq --raw-output '.assets[0] | .browser_download_url' \
+        | xargs wget -O $(basename $0) \
+        && chmod 744 $(basename $0) \
+        && printf "${GREEN}Installation successfully. Restarting Quandenser_pipeline${RESET}" \
+        && $0 $directories && exit
+      elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
+        printf "${YELLOW}Skipping update${RESET}"
+        break
+      else
+        printf "${RED}Not a valid command${RESET}"
+      fi
+    done
+  else
+    printf "${GREEN}Quandenser-pipeline is up to date (v$VERSION_SIF)${RESET}"
+  fi
+fi
+
 if (( $EUID == 0 )); then
     printf "${YELLOW}You are running as root. Please run the script again as user${RESET}"
     exit 0
@@ -138,21 +197,18 @@ fi
 # The GUI will work without this
 singularity exec --app quandenser_ui SingulQuand.SIF  python -c "from utils import check_corrupt; check_corrupt('${config_location}')"
 
-# Check arguments
-mount_point=""
-for var in "$@"
-do
-  if [[ -d $var ]]; then  # If it is a path, add it to mount list
-    mount_point+=" --bind $var:$var"
-  elif [[ "$var" = "--disable-opengl" ]]; then  # Check if user wants to disable opengl, will remember it for next time
+# Check for more user commands and write to PIPE that has now been created
+for var in "$@"; do
+  if [ "$var" = "--disable-opengl" ] || [ "$var" = "-D" ]; then  # Check if user wants to disable opengl, will remember it for next time
     PIPE_write "disable-opengl" "true"
-  elif [[ "$var" = "--enable-opengl" ]]; then  # Check if user wants to enable opengl
+  elif [ "$var" = "--enable-opengl" ] || [ "$var" = "-E" ]; then  # Check if user wants to enable opengl
     PIPE_write "disable-opengl" "false"
-  elif [[ "$var" = "--disable-nvidia" ]]; then  # Check if user wants to disable nvidia drivers
+  elif [ "$var" = "--disable-nvidia" ] || [ "$var" = "-N" ]; then  # Check if user wants to disable nvidia drivers
     graphics=""
   fi
 done
 
+# Mandatory PIPE writes
 if [ -f $config_location/PIPE ]; then
   PIPE_write "custom_mounts" "$mount_point"
   PIPE_write "exit_code" "2"
@@ -164,6 +220,7 @@ fi
 # Initialize parameters as integer
 declare -i crash_count=0
 
+# Main loop
 while true; do
   singularity run --app quandenser_ui --bind $(pwd):$(pwd)$mount_point$graphics SingulQuand.SIF  # All parameters have to be close
   wait
