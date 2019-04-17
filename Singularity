@@ -22,6 +22,11 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export XDG_CONFIG_HOME=/tmp/runtime-$USER
 
 %labels
+   website https://github.com/statisticalbiotechnology/quandenser-pipeline
+   description Quandenser-pipeline image
+   license http://proteowizard.sourceforge.net/licenses.html
+   tags quandenser
+   documentation https://github.com/statisticalbiotechnology/quandenser-pipeline
    AUTHOR lukas.kall@scilifelab.se and timothy.bergstrom@gmail.com
 
 %files
@@ -42,10 +47,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
 
 %post
-    echo "Fixing timezones"
-    offset=1
-    ln -fs /usr/share/zoneinfo/Etc/GMT$offset /etc/localtime
-
+    export DEBIAN_FRONTEND=noninteractive
     echo "Placing ui files in the correct directories"
     rm -rf /var/local/quandenser_ui  # Clear prev folder, if it exist
     mkdir -p /var/local/quandenser_ui
@@ -59,7 +61,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     wget -nc https://dl.winehq.org/wine-builds/winehq.key  # Add key, since it does not exist in image.
     apt-key add winehq.key  # Add the key to prevent update crash
     apt-get update
-    apt-get -y install default-jre git unzip bzip2 nano curl
+    apt-get -y install default-jre git unzip bzip2 nano curl zip
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
 
     echo "Updating nextflow"
@@ -94,6 +96,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     pip install PySide2
     pip install colorama
     pip install qdarkstyle
+    pip install matplotlib
+    pip install numpy
+    apt-get -y install python3.6-tk
 
     echo "Installling dependencies for OpenGL and X11"
     # X11 dependencies
@@ -124,6 +129,10 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     unzip -uq crux-3.2.Linux.x86_64.zip
     cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
 
+    echo "Fixing timezones"
+    offset=1
+    ln -fs /usr/share/zoneinfo/Etc/GMT$offset /etc/localtime
+
     echo "Cleaning image"
     apt-get clean
 
@@ -142,5 +151,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="0.05"
-    printf "${GREEN}Quandenser-pipeline v${VERSION}${RESET}"
+    VERSION="v0.06"
+    printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
