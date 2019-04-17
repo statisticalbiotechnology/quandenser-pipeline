@@ -162,7 +162,7 @@ if [ "$disable_update" == "false" ]; then
   # Check image version on singularity hub
   VERSION_SINGHUB=$(GET http://singularity-hub.org/api/container/details/statisticalbiotechnology/quandenser-pipeline/ | jq -r '.metrics.inspect' | grep -m 1 -oP 'VERSION=\\"\K([^"\\]*)')
   # Check version in container. Superimportant: pipe stdin from singularity to dev/null. Otherwise, suspended tty input and it runs in background
-  VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' v\K([0-9]+[.][0-9]+)')
+  VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' \K(v[0-9]+[.][0-9]+)')
   if [ "$VERSION_SINGHUB" != "$VERSION_SIF" ]; then
     while true; do
       printf "${YELLOW}A new update has been found ($VERSION_SIF -> $VERSION_SINGHUB). Do you want to install it? ${GREEN}Y/y ${YELLOW}or ${RED}N/n${RESET}"
@@ -183,7 +183,7 @@ if [ "$disable_update" == "false" ]; then
       fi
     done
   else
-    printf "${GREEN}Quandenser-pipeline is up to date (v$VERSION_SIF)${RESET}"
+    printf "${GREEN}Quandenser-pipeline is up to date ($VERSION_SIF)${RESET}"
   fi
 fi
 
