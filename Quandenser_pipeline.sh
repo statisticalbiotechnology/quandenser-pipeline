@@ -163,7 +163,9 @@ if [ "$disable_update" == "false" ]; then
   VERSION_SINGHUB=$(GET http://singularity-hub.org/api/container/details/statisticalbiotechnology/quandenser-pipeline/ | jq -r '.metrics.inspect' | grep -m 1 -oP 'VERSION=\\"\K([^"\\]*)')
   # Check version in container. Superimportant: pipe stdin from singularity to dev/null. Otherwise, suspended tty input and it runs in background
   VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' \K(v[0-9]+[.][0-9]+)')
-  if [ "$VERSION_SINGHUB" != "$VERSION_SIF" ]; then
+  if [[ "$VERSION_SINGHUB" != *"."* ]]; then
+    printf "${YELLOW}Unable connect to SingularityHub. Either a new version is being published or SingularityHub is not reachable at the moment${RESET}"
+  elif [ "$VERSION_SINGHUB" != "$VERSION_SIF" ]; then
     while true; do
       printf "${YELLOW}A new update has been found ($VERSION_SIF -> $VERSION_SINGHUB). Do you want to install it? ${GREEN}Y/y ${YELLOW}or ${RED}N/n. ${BLUE}R/r${YELLOW} to read the changelog${RESET}"
       read accept
