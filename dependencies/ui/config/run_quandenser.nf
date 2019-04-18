@@ -361,6 +361,9 @@ if (params.parallel_quandenser_tree == true && params.parallel_quandenser == tru
 } else if (params.parallel_quandenser == true) {
   processing_tree_changed = processing_tree.collect()
   input_ch_changed = Channel.from( 1 )
+} else {
+  processing_tree_changed = Channel.from( 1 )
+  input_ch_changed = Channel.from( 1 )
 }
 
 process quandenser_parallel_3 {  // About 3 min/run
