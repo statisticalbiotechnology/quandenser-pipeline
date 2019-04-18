@@ -165,7 +165,7 @@ if [ "$disable_update" == "false" ]; then
   VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' \K(v[0-9]+[.][0-9]+)')
   if [ "$VERSION_SINGHUB" != "$VERSION_SIF" ]; then
     while true; do
-      printf "${YELLOW}A new update has been found ($VERSION_SIF -> $VERSION_SINGHUB). Do you want to install it? ${GREEN}Y/y ${YELLOW}or ${RED}N/n${RESET}"
+      printf "${YELLOW}A new update has been found ($VERSION_SIF -> $VERSION_SINGHUB). Do you want to install it? ${GREEN}Y/y ${YELLOW}or ${RED}N/n. ${BLUE}R/r${YELLOW} to read the changelog${RESET}"
       read accept
       if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
         singularity pull -F SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline
@@ -178,6 +178,8 @@ if [ "$disable_update" == "false" ]; then
       elif [ "$accept" = "n" ] || [ "$accept" = "N" ]; then
         printf "${YELLOW}Skipping update${RESET}"
         break
+      elif [ "$accept" = "R" ] || [ "$accept" = "r" ]; then
+        curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest | jq --raw-output '.body'
       else
         printf "${RED}Not a valid command${RESET}"
       fi
