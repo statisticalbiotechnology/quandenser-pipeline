@@ -164,11 +164,10 @@ def merge_spectra(file, mapped_spectra, id=0):
             if check_if_boxcar(ms1_spectra) and ms1_spectra != []:
                 combined = check_missing_ms2(ms1_spectra)
                 for match in combined:
-                    #merged_ms1 = merge_channels(match)
-                    output_spectra.append(match[0])
-                    saved_ms1 = match[0] # Will always be the latest ms1
+                    merged_ms1 = merge_channels(match)
+                    output_spectra.append(merged_ms1)
+                    saved_ms1 = merged_ms1  # Will always be the latest ms1
             elif ms1_spectra != []:
-                ms1_spectra = filter_spectra(ms1_spectra, filter_boxcar=True)
                 output_spectra.extend(ms1_spectra)  # Could be multiple MS1
                 saved_ms1 = ms1_spectra[-1]  # Will always be the latest ms1
             spectrum.change_precursor_spectrumRef(saved_ms1)
