@@ -23,6 +23,9 @@ parser.add_argument("dir",
 parser.add_argument('--verbose',
                     action='store_true',
                     help='Show progressbar')
+parser.add_argument('--discard_boxcar',
+                    action='store_true',
+                    help='Discards all boxcar spectra')
 parser.add_argument('-p',
                     default='parallel',
                     nargs='?',
@@ -173,9 +176,13 @@ def merge_spectra(file, mapped_spectra, id=0):
             if check_if_boxcar(ms1_spectra) and ms1_spectra != []:
                 combined = check_missing_ms2(ms1_spectra)
                 for match in combined:
-                    merged_ms1 = merge_channels(match)
-                    output_spectra.append(merged_ms1)
-                    saved_ms1 = merged_ms1  # Will always be the latest ms1
+                    if not args.discard_boxcar:
+                        merged_ms1 = merge_channels(match)
+                        output_spectra.append(merged_ms1)
+                        saved_ms1 = merged_ms1  # Will always be the latest ms1
+                    else:
+                        output_spectra.append(match[0])
+                        saved_ms1 = match[0]  # Will always be the latest ms1
             elif ms1_spectra != []:
                 output_spectra.extend(ms1_spectra)  # Could be multiple MS1
                 saved_ms1 = ms1_spectra[-1]  # Will always be the latest ms1
