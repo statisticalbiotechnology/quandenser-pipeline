@@ -44,7 +44,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
    # This comes from quandenser-pipeline branch of quandenser
    dependencies/quandenser-v0-01-linux-amd64.deb /
-
+   # Boxcar converter
+   dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -98,6 +99,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     pip install qdarkstyle
     pip install matplotlib
     pip install numpy
+    pip install tqdm
     apt-get -y install python3.6-tk
 
     echo "Installling dependencies for OpenGL and X11"
@@ -151,5 +153,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.061"
+    VERSION="v0.07"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
