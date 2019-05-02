@@ -29,13 +29,15 @@ def init_tab2(paths):
     tab2_leftbox_top.setLayout(tab2_leftbox_top_layout)
 
     tab2_choose_option_workflow = choose_option('workflow', paths['nf'])
+    tab2_choose_option_boxcar_convert = choose_option('boxcar_convert', paths['nf'])
+    tab2_choose_option_profile = choose_option('profile', paths['sh'])
     tab2_choose_option_parallel_msconvert = choose_option('parallel_msconvert', paths['nf'])
     tab2_choose_option_parallel_quandenser = choose_option('parallel_quandenser', paths['nf'])
-    tab2_choose_option_profile = choose_option('profile', paths['sh'])
 
     # Always visible
     tab2_leftbox_top_layout.addRow(QLabel('Choose workflow'), tab2_choose_option_workflow)
     tab2_leftbox_top_layout.addRow(QLabel('Profile'), tab2_choose_option_profile)
+    tab2_leftbox_top_layout.addRow(QLabel('Enable boxcar conversion'), tab2_choose_option_boxcar_convert)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel MSconvert'), tab2_choose_option_parallel_msconvert)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel quandenser'), tab2_choose_option_parallel_quandenser)
     tab2_leftbox_top_layout.addRow(QLabel(''), QLabel(''))  # Empty space
@@ -55,6 +57,7 @@ def init_tab2(paths):
     # Stack 2: Regular quandenser, cluster enabled
     tab2_hidden_stack_2 = QWidget()
     tab2_hidden_stack_2_layout = QFormLayout()
+    tab2_hidden_stack_2_layout.setVerticalSpacing(0)
     tab2_hidden_stack_2.setLayout(tab2_hidden_stack_2_layout)
 
     stack_2_widgets = []
@@ -70,6 +73,9 @@ def init_tab2(paths):
     stack_2_widgets.append(QLabel('MSconvert cpus + time'))
     stack_2_widgets.append(set_cpus("msconvert_cpus", paths['nf']))
     stack_2_widgets.append(set_time("msconvert_time", paths['nf']))
+    stack_2_widgets.append(QLabel('Boxcar convert cpus + time'))
+    stack_2_widgets.append(set_cpus("boxcar_convert_cpus", paths['nf']))
+    stack_2_widgets.append(set_time("boxcar_convert_time", paths['nf']))
     stack_2_widgets.append(QLabel('Quandenser cpus + time'))
     stack_2_widgets.append(set_cpus("quandenser_cpus", paths['nf']))
     stack_2_widgets.append(set_time("quandenser_time", paths['nf']))
@@ -92,6 +98,7 @@ def init_tab2(paths):
     # Stack 3: Parallel quandenser, cluster enabled
     tab2_hidden_stack_3 = QWidget()
     tab2_hidden_stack_3_layout = QFormLayout()
+    tab2_hidden_stack_3_layout.setVerticalSpacing(0)
     tab2_hidden_stack_3.setLayout(tab2_hidden_stack_3_layout)
 
     stack_3_widgets = []
@@ -107,6 +114,9 @@ def init_tab2(paths):
     stack_3_widgets.append(QLabel('MSconvert cpus + time'))
     stack_3_widgets.append(set_cpus("msconvert_cpus", paths['nf']))
     stack_3_widgets.append(set_time("msconvert_time", paths['nf']))
+    stack_3_widgets.append(QLabel('Boxcar convert cpus + time'))
+    stack_3_widgets.append(set_cpus("boxcar_convert_cpus", paths['nf']))
+    stack_3_widgets.append(set_time("boxcar_convert_time", paths['nf']))
     stack_3_widgets.append(QLabel('Quandenser p1 cpus + time'))
     stack_3_widgets.append(set_cpus("quandenser_parallel_1_cpus", paths['nf']))
     stack_3_widgets.append(set_time("quandenser_parallel_1_time", paths['nf']))
