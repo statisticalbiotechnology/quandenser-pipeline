@@ -131,14 +131,30 @@ class Main(QMainWindow):
         self.settings_obj.setValue("State_main", self.saveState())
         children = self.children()
         self.widget_counter = 0  # Reset
-        for child in children:
+        for child in children:  # Save all states during exit
             self.recurse_children(child)
-        # Clean exit
+
+        # Clean exit code
         exit_code = int(self.pipe_parser.get('exit_code'))
         if exit_code == 0:  # This means that it had been modified during runtime --> run button has been pressed
             pass
         else:
             self.pipe_parser.write('exit_code', '1', isString=False)
+
+        # Kill running processes thread
+        def recurse_children(parent):  # not "self.recurse_children"
+            children = parent.children()
+            for child in children:
+                if hasattr(child, 'worker'):
+                    if child.worker.running:
+                        child.worker.wait(2000)  # Wait 2 seconds
+                        if child.worker.running:
+                            child.worker.terminate()
+                            child.worker.wait()  # Wait 2 seconds
+                else:
+                    recurse_children(child)
+
+        recurse_children(self.tab4)
 
     def recurse_children(self, parent, save=True):  # THIS DO NOT CREATE STACK SMASHING
         children = parent.children()

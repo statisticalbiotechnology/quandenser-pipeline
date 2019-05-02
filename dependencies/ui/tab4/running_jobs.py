@@ -1,8 +1,10 @@
 import os
-from PySide2.QtWidgets import QTextBrowser, QTableWidget, QHeaderView, QTableWidgetItem, QPushButton
+from PySide2.QtWidgets import QTextBrowser, QTableWidget, QHeaderView, QTableWidgetItem, QPushButton, QApplication
 import subprocess
 from PySide2.QtGui import QColor
-from PySide2.QtCore import QTimer
+from PySide2.QtCore import QTimer, QThread, Signal
+import time
+import pdb
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
@@ -31,6 +33,8 @@ class running_jobs(QTableWidget):
         self.fix_header()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
+        self.worker = fetch_running()
+        self.worker.job_done.connect(self.on_job_done)
         self.timer.start(10000)  # Update every 10 seconds
 
     def fix_header(self):
@@ -49,47 +53,97 @@ class running_jobs(QTableWidget):
                 self.setCurrentCell(index.row() + 1, index.column())
         super().keyPressEvent(event)  # Propagate to built in methods
 
-    def update(self):
+    def on_job_done(self, done_processes):
         self.clear()
         self.fix_header()
-        processes = []
-        jobs = []
-        for line in reversed(list(open(self.jobs_path, 'r'))):
-            job = line.split('\t')  # First is pid
-            jobs.append(job)
-            process = subprocess.Popen([f"ps aux | grep {job[0]}"],
-                                        stdout=subprocess.PIPE,
-                                        shell=True)
-            processes.append(process)
-
         # If more jobs than rows
-        if len(jobs) >= self.rowCount():
-            self.setRowCount(len(jobs))
+        if len(self.jobs) >= self.rowCount():
+            self.setRowCount(len(self.jobs))
             for row in range(self.rowCount()):
                 for column in range(self.columnCount()):
                     item = QTableWidgetItem()
                     item.setText('')
                     self.setItem(row, column, item)    # Note: new rowcount here
 
+        jobs_check_rows = []
         row = 0
-        for job, process in zip(jobs, processes):
-            out, err = process.communicate()  # Wait for process to terminate
-            out = out.decode("utf-8")
-            out = out.split('\t')
-            for column in range(self.columnCount()):
+        for job in self.jobs:
+            if job in self.jobs_check:
+                jobs_check_rows.append(row)
+            for column in range(self.columnCount() - 1):
                 item = self.item(row, column)
                 if column == self.columnCount() - 2:
-                    if any("run_quandenser.sh" in line for line in out):
-                        item.setForeground(QColor('red'))
-                        item.setText("RUNNING")
-                    else:
-                        item.setForeground(QColor(0,255,150))
-                        item.setText("COMPLETED")
-                elif column == self.columnCount() - 1:  # last columnt
-                    if self.item(row, column - 1).text() == "RUNNING":
-                        button = kill_button(job[0])  # job[0] = pid
-                        self.setCellWidget(row, column, button)
+                    item.setForeground(QColor(0,255,150))
+                    item.setText("COMPLETED")
                 else:
                     item.setText(job[column].replace('\n', ''))
-
             row += 1
+
+        for job, out, row in zip(self.jobs_check, done_processes, jobs_check_rows):
+            out = out.split('\t')
+            second_last_item = self.item(row, self.columnCount() - 2)
+            last_item = self.item(row, self.columnCount() - 1)
+            if any("run_quandenser.sh" in line for line in out):
+                second_last_item.setForeground(QColor('red'))
+                second_last_item.setText("RUNNING")
+            else:
+                second_last_item.setForeground(QColor(0,255,150))
+                second_last_item.setText("COMPLETED")
+                self.update_job_file(job)
+            if second_last_item.text() == "RUNNING":
+                button = kill_button(job[0])  # job[0] = pid
+                self.setCellWidget(row,  self.columnCount() - 1, button)
+
+    def update_job_file(self, job_done):
+        with open(self.jobs_path, 'r') as jobfile:
+            all_jobs = jobfile.readlines()
+
+        for index, job in enumerate(all_jobs):
+            if job == '\t'.join(job_done):
+                job_done = '\t'.join(job_done).replace('\n', '')
+                all_jobs[index] = job_done + '\t' + 'COMPLETED\n'
+
+        with open(self.jobs_path, 'w') as jobfile:
+            for job in all_jobs:
+                jobfile.write(job)
+
+    def update(self):
+        jobs = []
+        jobs_check = []
+        for line in reversed(list(open(self.jobs_path, 'r'))):
+            job = line.split('\t')  # First is pid
+            jobs.append(job)
+            if job[-1] != 'COMPLETED\n':
+                jobs_check.append(job)
+        self.worker.jobs = jobs_check
+        self.jobs = jobs
+        self.jobs_check = jobs_check
+        self.worker.start()
+
+class fetch_running(QThread):
+
+    job_done = Signal(list)
+
+    def __init__(self):
+        super(fetch_running,self).__init__(parent = None)
+        self.jobs = []
+        self.running = False
+
+    def do_work(self):
+        self.running = True
+        processes = []
+        for job in self.jobs:
+            process = subprocess.Popen([f"ps ux | grep {job[0]}"],
+                                        stdout=subprocess.PIPE,
+                                        shell=True)
+            processes.append(process)
+        outputs = []
+        for p in processes:
+            out, err = p.communicate()  # Wait for process to terminate
+            out = out.decode("utf-8")
+            outputs.append(out)
+        self.job_done.emit(outputs)
+        self.running = False
+
+    def run(self):
+        self.do_work()
