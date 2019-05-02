@@ -8,12 +8,14 @@ class kill_button(QPushButton):
     def __init__(self, pid):
         super(kill_button,self).__init__(parent = None)
         self.setText('KILL')
-        self.ppid = pid  # will use pid as ppid
+        self.pid = pid  # will use pid as ppid
         self.setStyleSheet("background-color:red")  # Change color depending on if you can run or not
         self.clicked.connect(self.kill)
 
     def kill(self):
-        process = subprocess.Popen([f"kill -15 -{self.ppid} && echo KILLED PROCESS"],  # Will kill all with pgid
+        # Get pgid
+        pgid = os.getpgid(int(self.pid))
+        process = subprocess.Popen([f"kill -15 -{pgid} && echo KILLED PROCESS"],  # Will kill all with pgid aka whole tree
                                     stdout=subprocess.PIPE,
                                     shell=True)
         out, err = process.communicate()  # Wait for process to terminate
@@ -24,9 +26,9 @@ class kill_button(QPushButton):
             if "KILLED PROCESS" in line:
                 killed = True
         if killed:
-            print(Fore.RED + f"Killed process with pid {self.ppid} and its children" + Fore.RESET)
+            print(Fore.RED + f"Killed process with pid {self.pid} and its children" + Fore.RESET)
         else:
-            print(Fore.RED + f"FAILED to kill process with pid {self.ppid} and its children. Are you on the same login node?" + Fore.RESET)
+            print(Fore.RED + f"FAILED to kill process with pid {self.pid} and its children. Are you on the same login node?" + Fore.RESET)
         parent = self.parentWidget()
         children = parent.children()
         for child in children:
