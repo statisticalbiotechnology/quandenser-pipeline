@@ -20,6 +20,8 @@ class choose_option(QComboBox):
             self.addItems(["local", "cluster"])
         elif self.parameter == 'process.executor':
             self.addItems(["slurm"])
+        else:
+            self.addItems(["true", "false"])
         self.default()
         self.currentIndexChanged.connect(self.selectionchange)
 
@@ -38,6 +40,8 @@ class choose_option(QComboBox):
         elif self.parameter == 'process.executor':
             self.parser.write(f"{self.parameter}", self.currentText(),
                               additional_information="cluster {")
+        else:
+            self.parser.write(f"params.{self.parameter}", self.currentText(), isString=False)
 
     def change_stack(self):
         parent = self.parentWidget()
