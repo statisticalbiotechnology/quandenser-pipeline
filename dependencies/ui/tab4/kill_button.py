@@ -13,7 +13,7 @@ class kill_button(QPushButton):
         self.clicked.connect(self.kill)
 
     def kill(self):
-        process = subprocess.Popen([f"pkill -15 -P {self.ppid} && echo KILLED PROCESS"],
+        process = subprocess.Popen([f"kill -15 -{self.ppid} && echo KILLED PROCESS"],  # Will kill all with pgid
                                     stdout=subprocess.PIPE,
                                     shell=True)
         out, err = process.communicate()  # Wait for process to terminate
