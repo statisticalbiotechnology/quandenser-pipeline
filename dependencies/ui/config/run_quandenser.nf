@@ -63,24 +63,28 @@ for( line in all_lines ){
   file_label = line.tokenize('\t')[-1]
   file_name = (file_path.tokenize('/')[-1]).tokenize('.')[0]  // Split '/', take last. Split '.', take first
   file_extension = file_path.tokenize('.')[-1]
-  if( file_extension != "mzML" ){
+  if ( params.boxcar_convert == true ) {
+    all_lines[count] = params.output_path + "/work/boxcar_converted_${params.random_hash}/mzML/boxcar_converted/" + file_name + ".mzML" + '\t' + file_label
+  } else if ( file_extension != "mzML" ) {
     // Note: if you are running only msconvert on mzML files, the path will be wrong. However, since msconvert+quandenser
     // is not integrated yet, I can let it slide
     all_lines[count] = params.output_path + "/work/converted_${params.random_hash}/converted/" + file_name + ".mzML" + '\t' + file_label
-    count++
     amount_of_non_mzML++
   } else {
     // add as is, no change
-    count++
   }
+  count++
 }
 
 // Create new batch file to use in work directory. Add the "corrected" raw to mzML paths here
 file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")
+file_def_publish = file("$publish_output_path/file_list.txt")
 file_def.text = ""  // Clear file, if it exists
+file_def_publish.text = ""  // Clear file, if it exists
 total_spectras = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
+  file_def_publish << line + '\n'
   total_spectras++
 }
 
@@ -122,8 +126,26 @@ c1 = spectra_in
 c2 = spectra_converted
 combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 
+if ( params.boxcar_convert == true) {
+  process boxcar_convert {
+    publishDir "$params.output_path/work/boxcar_converted_${params.random_hash}", mode: 'symlink', overwrite: true
+    publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "boxcar_converted/*"
+    containerOptions "$params.custom_mounts"
+    input:
+      file('mzML/*') from combined_channel.collect()
+    output:
+      file("mzML/boxcar_converted/*") into boxcar_channel
+    script:
+  	"""
+    python -s /usr/local/bin/boxcar_converter.py mzML/ ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
+    """
+  }
+  } else {
+  boxcar_channel = combined_channel
+}
+
 // Clone channel we created to use in multiple processes (one channel per process, no more)
-combined_channel.into {
+boxcar_channel.into {
   combined_channel_normal
   combined_channel_parallel_1
   combined_channel_parallel_2
@@ -500,7 +522,7 @@ process triqler {
   }
 	"""
 	python -s /usr/local/bin/prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-	python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw} ${triqler_dist}
+	python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw} ${triqler_dist} 2>&1 | tee -a stdout.txt
   zip triqler.zip *.tsv *.csv -x "triqler_input*"
   """
 }
