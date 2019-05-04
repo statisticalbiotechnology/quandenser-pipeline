@@ -47,15 +47,9 @@ Recently, the proteowizard comunity developed a docker-container for the wine im
 
 We recently introduced a new method, {\em Quandenser} (QUANtification by
 Distillation for ENhanced Signals with Error Regulation), that increase the sensitivity of the LFQ
-analysis pipeline. Just as any proteomics data analysis method, the processing consist of multiple steps, coded in separate executables. Among other tools it contains Dinosaur\cite{teleman2016dinosaur} for feature finding, MaRaCluster\cite{the2016maracluster} for clustering, Crux\cite{mcilwain2014} for database searching, and qvality\cite{kall2008non} as well as Triqler\cite{the2018integrated} for error assesments. To facilitate the installation of the method we placed these components in a  Singularity container.
+analysis pipeline. Just as any proteomics data analysis method, the processing consist of multiple steps, coded in separate executables. Among other tools it contains Dinosaur\cite{teleman2016dinosaur} for feature finding, MaRaCluster\cite{the2016maracluster} for clustering, Crux\cite{mcilwain2014} for database searching, and qvality\cite{kall2008non} as well as Triqler\cite{the2018integrated} for error assesments. To facilitate the installation of the method we placed these components in a Singularity container.
 
 To further facilitate the processing we used a workflow managing system, deals with how different pieces of dependent software can be consequently executed in a particular environment. Again, there are several workflow managers available, but the one used was \textit{NextFlow}\cite{di2017nextflow}.
-
-The aim of the project was to utilize containerization to embed a software named \textit{Quandenser}, a software created in SciLifeLab which condenses quantification data from label-free MS experiments \cite{quandenser} in unison with Nextflow, to create a workflow from MS generated data to protein quantification results.
-
-
-
-
 
 Quandenser condenses the quantification data by applying
 unsupervised clustering on both MS1 and MS2 level and thereby paves the way for
@@ -75,7 +69,13 @@ to account for the errors as a result of the MBR step.
 
 \section*{Results}
 
+\subsection*{Parallelization}
+
+\subsection*{Run time comparison}
+
 To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets.
+We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
+
 
 \subsection*{User Interface}
 
