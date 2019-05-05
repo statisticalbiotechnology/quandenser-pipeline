@@ -71,17 +71,41 @@ to account for the errors as a result of the MBR step.
 
 \subsection*{Parallelization}
 In order to further reduce the running time we investigated the possibilities to parallelize the processing within quandenser. Particularly we performed the following optimizations:
-(I) parallelizing
-
+\begin{itemize}
+  \item The conversion of each run from raw file-format into mzML-format is an embarisingly parallalezible problem, in that each file can be processed in independent proceses. We henced just enabled parallel processing by implementing the conversion process as a nextflow node.
+  \item The initial feature finding with Dinosaur\cite{teleman2016dinosaur} can be done independently for each file. Again we could parallize by just putting this into a separate nextflow node.
+  \item Quandenser uses a minimum spanning tree strategy \cite{rost2016tric} to align the retention times of the different mass spectrometry runs. This makes an internal dependency structure. Every node in the minimum spanning tree will have to be aligned together with its sub-nodes, so the alignment process is done from the leafs inwards to the trunk.  However, at every level of the tree each branch can be processed independently. We have hence enabled individual processes to handle the alignment of every sub tree.
+  \item FIXME: complete this list
+\end{itemize}
 
 \subsection*{Run time comparison}
 
-To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets.
-We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
+To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets. We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
+\begin{table}
+  \caption{{\bf Comprison of run time between the different quantification platforms reported in wall time.}}
+  \label{table:walltime}
+\begin{tabular}{lccc}
+& Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
+BoxCar Plasma & 2.23 h & X & X & N/A \\
+Bracht &  & &&  \\
+\end{tabular}
+\end{table}
+
+\begin{table}
+  \caption{{\bf Comprison of run time between the different quantification platforms reported in cpu time.}}
+  \label{table:cputime}
+\begin{tabular}{lccc}
+& Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
+BoxCar Plasma & 2.23 h & X & X & N/A \\
+Bracht &  & &&  \\
+\end{tabular}
+
+\end{table}
 
 
 \subsection*{User Interface}
 
+To facilitate the operation of quandenser, we have provided quandenser with a user interface. A couple of notable features of the user interface are FIXME.
 
 \section*{Discussion}
 
