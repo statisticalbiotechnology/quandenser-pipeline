@@ -9,4 +9,5 @@ if %ERRORLEVEL% == 1 (
 )
 %VBoxManage% sharedfolder remove QP_windows --name share
 %VBoxManage% sharedfolder add QP_windows --name share --hostpath "C:\\" --automount
+%VBoxManage% setextradata QP_windows VBoxInternal2/SharedFoldersEnableSymlinksCreate/share 1
 %VBoxManage% startvm QP_windows
