@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 echo true
-
+println(params)
 // Since we can add labels to the directories, the output path of the files are
 // different compared to work
 publish_output_path = params.output_path + params.output_label
@@ -129,7 +129,7 @@ combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 if ( params.boxcar_convert == true) {
   process boxcar_convert {
     publishDir "$params.output_path/work/boxcar_converted_${params.random_hash}", mode: 'symlink', overwrite: true
-    publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "boxcar_converted/*"
+    publishDir "$publish_output_path", mode: 'copy', overwrite: true
     containerOptions "$params.custom_mounts"
     input:
       file('mzML/*') from combined_channel.collect()
