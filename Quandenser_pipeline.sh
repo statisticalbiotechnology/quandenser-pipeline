@@ -140,8 +140,8 @@ if [ ! -f SingulQuand.SIF ]; then
 fi
 
 # Check mount points made by the user
-mount_point=""
-directories=""
+mount_point=" --bind /mnt:/mnt"  # Always start with mounting "mnt" directory
+directories=" /mnt"
 for var in "$@"; do
   if [[ -d $var ]]; then  # If it is a path, add it to mount list
     mount_point+=" --bind $var:$var"
