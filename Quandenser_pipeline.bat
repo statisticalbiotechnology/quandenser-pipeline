@@ -4,7 +4,7 @@ curl https://download.virtualbox.org/virtualbox/6.0.6/VirtualBox-6.0.6-130049-Wi
 virtualbox.exe)
 %VBoxManage% list vms | findstr QP_windows
 if %ERRORLEVEL% == 1 (
-  curl -L "https://onedrive.live.com/download?cid=608C90DCC6593D31&resid=608C90DCC6593D31%%2192447&authkey=AGIQYfu6_AL7I8M" --output QP_windows.ova
+  curl -L "https://onedrive.live.com/download?cid=608C90DCC6593D31&resid=608C90DCC6593D31%%2193233&authkey=AABHkrO62lXMjI8" --output QP_windows.ova
   %VBoxManage% import QP_windows.ova
 )
 %VBoxManage% sharedfolder remove QP_windows --name share
