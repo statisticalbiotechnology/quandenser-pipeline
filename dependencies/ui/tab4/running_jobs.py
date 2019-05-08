@@ -15,7 +15,7 @@ class running_jobs(QTableWidget):
     def __init__(self, jobs_path):
         super(running_jobs,self).__init__(parent = None)
         self.jobs_path = jobs_path
-
+        self.options = ['COMPLETED', 'FAILED', 'MISSING', 'KILLED']
         jobs = []
         for line in open(self.jobs_path, 'r'):
             job = line.split('\t')  # First is pid
@@ -70,13 +70,17 @@ class running_jobs(QTableWidget):
         for job in self.jobs:
             if job in self.jobs_check:
                 jobs_check_rows.append(row)
+            job = [i.replace('\n', '') for i in job]
             for column in range(self.columnCount() - 1):
                 item = self.item(row, column)
-                if column == self.columnCount() - 2:
-                    item.setForeground(QColor(0,255,150))
-                    item.setText("COMPLETED")
-                else:
-                    item.setText(job[column].replace('\n', ''))
+                if len(job) - 1 >= column:
+                    if job[column] == 'COMPLETED':
+                        item.setForeground(QColor(0,255,150))
+                    elif job[column] in self.options:
+                        item.setForeground(QColor(255,0,0))
+                    else:
+                        pass
+                    item.setText(job[column])
             row += 1
 
         for job, out, row in zip(self.jobs_check, done_processes, jobs_check_rows):
@@ -87,21 +91,26 @@ class running_jobs(QTableWidget):
                 second_last_item.setForeground(QColor('red'))
                 second_last_item.setText("RUNNING")
             else:
-                second_last_item.setForeground(QColor(0,255,150))
-                second_last_item.setText("COMPLETED")
-                self.update_job_file(job)
+                # Check stdout file
+                label = check_stdout(job[1] + '/' + 'stdout.txt')
+                if label == 'COMPLETED':
+                    second_last_item.setForeground(QColor(0,255,150))
+                else:
+                    second_last_item.setForeground(QColor(255,0,0))
+                second_last_item.setText(label)
+                self.update_job_file(job, label)
             if second_last_item.text() == "RUNNING":
-                button = kill_button(job[0])  # job[0] = pid
+                button = kill_button(job[0], self.jobs_path, job)  # job[0] = pid
                 self.setCellWidget(row,  self.columnCount() - 1, button)
 
-    def update_job_file(self, job_done):
+    def update_job_file(self, job_done, label):
         with open(self.jobs_path, 'r') as jobfile:
             all_jobs = jobfile.readlines()
 
         for index, job in enumerate(all_jobs):
             if job == '\t'.join(job_done):
                 job_done = '\t'.join(job_done).replace('\n', '')
-                all_jobs[index] = job_done + '\t' + 'COMPLETED\n'
+                all_jobs[index] = job_done + '\t' + label + '\n'
 
         with open(self.jobs_path, 'w') as jobfile:
             for job in all_jobs:
@@ -113,7 +122,7 @@ class running_jobs(QTableWidget):
         for line in reversed(list(open(self.jobs_path, 'r'))):
             job = line.split('\t')  # First is pid
             jobs.append(job)
-            if job[-1] != 'COMPLETED\n':
+            if job[-1].replace('\n', '') not in self.options:
                 jobs_check.append(job)
         self.worker.jobs = jobs_check
         self.jobs = jobs
@@ -147,3 +156,19 @@ class fetch_running(QThread):
 
     def run(self):
         self.do_work()
+
+def check_stdout(stdout_file):
+    try:
+        with open(stdout_file, 'r') as f:
+            all_lines = f.readlines()
+    except Exception as e:
+        return 'MISSING'
+    error_substring = "Error executing process >"
+    crashed = False
+    for line in all_lines:
+        if error_substring in line:
+            crashed = True
+    if crashed:
+        return 'FAILED'
+    else:
+        return 'COMPLETED'
