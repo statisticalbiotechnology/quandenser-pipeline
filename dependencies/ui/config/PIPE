@@ -12,3 +12,6 @@ custom_mounts=
 started=
 disable-opengl=
 pwd=
+
+# HOST TO HOST
+last-dir=""
