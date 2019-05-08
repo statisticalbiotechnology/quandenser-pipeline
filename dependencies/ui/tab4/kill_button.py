@@ -2,6 +2,7 @@ import os
 from PySide2.QtWidgets import QPushButton
 import subprocess
 from colorama import Fore, Back, Style
+import psutil
 
 class kill_button(QPushButton):
 
@@ -15,23 +16,13 @@ class kill_button(QPushButton):
         self.clicked.connect(self.kill)
 
     def kill(self):
-        # Get pgid
-        pgid = os.getpgid(int(self.pid))
-        process = subprocess.Popen([f"kill -15 -{pgid} && echo KILLED PROCESS"],  # Will kill all with pgid aka whole tree
-                                    stdout=subprocess.PIPE,
-                                    shell=True)
-        out, err = process.communicate()  # Wait for process to terminate
-        out = out.decode("utf-8")
-        out = out.split('\t')
-        killed = False
-        for line in out:
-            if "KILLED PROCESS" in line:
-                killed = True
-        if killed:
-            print(Fore.RED + f"Killed process with pid {self.pid} and its children" + Fore.RESET)
-            self.update_job_file(self.job, 'KILLED')
-        else:
-            print(Fore.RED + f"FAILED to kill process with pid {self.pid} and its children. Are you on the same login node?" + Fore.RESET)
+        # pgid = os.getpgid(int(self.pid))  # Can sometimes kill gui, not good enough
+        p = psutil.Process(int(self.pid))
+        children = p.children(recursive=True)
+        for child in children:
+            child.kill()
+        print(Fore.RED + f"Killed process with pid {self.pid} and its children" + Fore.RESET)
+        self.update_job_file(self.job, 'KILLED')
         parent = self.parentWidget()
         children = parent.children()
         for child in children:
