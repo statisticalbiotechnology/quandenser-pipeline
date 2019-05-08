@@ -530,6 +530,7 @@ process triqler {
 triqler_output.flatten().subscribe{ println "Received: " + it.getName() }
 
 workflow.onComplete {
+    println("QUANDENSER PIPELINE COMPLETED")
     if (params.email != "" && params.sendfiles == true && params.workflow == "Full") {
       sendMail{to params.email
                subject "Workflow ${workflow.runName} output files"

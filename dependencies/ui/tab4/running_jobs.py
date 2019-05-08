@@ -164,11 +164,18 @@ def check_stdout(stdout_file):
     except Exception as e:
         return 'MISSING'
     error_substring = "Error executing process >"
+    done_substring = "QUANDENSER PIPELINE COMPLETED"
     crashed = False
+    completed = False
     for line in all_lines:
         if error_substring in line:
             crashed = True
+        if done_substring in line:
+            completed = True
+
     if crashed:
         return 'FAILED'
-    else:
+    elif completed:
         return 'COMPLETED'
+    else:
+        return "FAILED"
