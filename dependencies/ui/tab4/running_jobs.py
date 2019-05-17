@@ -159,7 +159,7 @@ class fetch_running(QThread):
 
 def check_stdout(stdout_file):
     try:
-        with open(stdout_file, 'r') as f:
+        with open(stdout_file, 'r', encoding='utf-8') as f:
             all_lines = f.readlines()
     except Exception as e:
         return 'MISSING'
