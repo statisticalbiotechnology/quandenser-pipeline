@@ -23,6 +23,9 @@ parser.add_argument("dir",
 parser.add_argument('--verbose',
                     action='store_true',
                     help='Show progressbar')
+parser.add_argument('--discard_boxcar',
+                    action='store_true',
+                    help='Discards all boxcar spectra')
 parser.add_argument('-p',
                     default='parallel',
                     nargs='?',
@@ -38,17 +41,26 @@ parser.add_argument('--exclude',
                     nargs='?',
                     help="""Exclude files with substring""")
 parser.add_argument('-m',
-                    '--merge',
+                    '--merge_method',
                     default='sliding_window',
                     help="""Merging method.
                     sliding_window: Slow but higher resolution and no overlaps (default)
-                    merge_and_sort: Very fast but overlaps exist. Will not use ms1 spectra
-                    matrix_merge: Medium speed, will merge with a custom algorithm""")
+                    merge_and_sort: Very fast but overlaps exist. Will not use ms1 spectra""")
 parser.add_argument('-s',
-                    "--window_size",
+                    "--sliding_window_size",
                     type=int,
                     default=2,
-                    help="""Sliding window range (defaults to 2 m/z)""")
+                    help="""Sliding window: Window range for channel picking (defaults to 2 m/z)""")
+parser.add_argument('-i',
+                    '--intensity_threshold',
+                    type=int,
+                    default=2000,
+                    help="""Merge and sort: Threshold of clearing low intensity values (defaults to 2000)""")
+parser.add_argument('-z',
+                    '--mz_threshold',
+                    type=int,
+                    default=0.01,
+                    help="""Merge and sort: Threshold of mz difference to merge peaks (defaults to 0.01 m/z difference)""")
 args = parser.parse_args()
 
 if args.verbose:
@@ -60,9 +72,12 @@ if args.verbose:
 
 def main():
     assert(args.p in ['non-parallel', 'parallel'])
-    assert(args.merge in ['sliding_window', 'merge_and_sort', 'matrix_merge'])
+    assert(args.merge_method in ['sliding_window', 'merge_and_sort'])
     files = glob.glob(f"{args.dir}/*.mzML")
     files = list(files)
+    new_directory = os.path.dirname(files[0]) + '/boxcar_converted'
+    if not os.path.exists(new_directory):
+        os.mkdir(new_directory)
     if args.exclude != '':
         files_remove = [i for i in files if args.exclude in i]  # REMOVE!!
         files = [i for i in files if i not in files_remove]
@@ -85,10 +100,7 @@ def start_convert(t):
     start_time = time.time()
     # Fix file parameters
     new_directory = os.path.dirname(file) + '/boxcar_converted'
-    if not os.path.exists(new_directory):
-        os.mkdir(new_directory)
     new_filename = new_directory + '/' + os.path.basename(file)
-
     """Main conversion function"""
     if args.verbose: progress = tqdm.tqdm(total=4, desc='Loading mzML (1/4)', postfix=os.path.basename(file), position=id)
     # Fix spectrum
@@ -100,15 +112,15 @@ def start_convert(t):
         if args.verbose: progress.desc=f'Done. Elapsed {round(time.time()-start_time,2)} seconds'; progress.update(4)
         return 0
 
-    mapped_spectra_filtered = merge_spectra(file, mapped_spectra, id=id)
+    mapped_spectra = merge_spectra(file, mapped_spectra, id=id)
 
-    fix_spectrum_indices(mapped_spectra_filtered)
+    fix_spectrum_indices(mapped_spectra)
     spectrumList = find_spectraList(tree.getroot())
-    modify_spectrumList(spectrumList, mapped_spectra_filtered)
+    modify_spectrumList(spectrumList, mapped_spectra)
 
     # Fix indexlist
     spectrum_indexList = find_indexList(tree.getroot())[0]
-    fix_offsets(spectrum_indexList, mapped_spectra_filtered, tree, file=os.path.basename(file), id=id)
+    fix_offsets(spectrum_indexList, mapped_spectra, tree, file=os.path.basename(file), id=id)
 
     # Create file
     if args.verbose: progress.desc='Writing mzML (4/4)'; progress.update(3)
@@ -164,9 +176,13 @@ def merge_spectra(file, mapped_spectra, id=0):
             if check_if_boxcar(ms1_spectra) and ms1_spectra != []:
                 combined = check_missing_ms2(ms1_spectra)
                 for match in combined:
-                    merged_ms1 = merge_channels(match)
-                    output_spectra.append(merged_ms1)
-                    saved_ms1 = merged_ms1  # Will always be the latest ms1
+                    if not args.discard_boxcar:
+                        merged_ms1 = merge_channels(match)
+                        output_spectra.append(merged_ms1)
+                        saved_ms1 = merged_ms1  # Will always be the latest ms1
+                    else:
+                        output_spectra.append(match[0])
+                        saved_ms1 = match[0]  # Will always be the latest ms1
             elif ms1_spectra != []:
                 output_spectra.extend(ms1_spectra)  # Could be multiple MS1
                 saved_ms1 = ms1_spectra[-1]  # Will always be the latest ms1
@@ -195,14 +211,10 @@ def merge_channels(spectrum_list):
         mz_arrays.append(mz)
         intensity_arrays.append(intensity)
 
-    if args.merge == 'sliding_window':
+    if args.merge_method == 'sliding_window':
         merged_mz, merged_intensity = sliding_window(mz_arrays,
                                                      intensity_arrays)
-    elif args.merge == 'matrix_merge':
-        merged_mz, merged_intensity = matrix_merge(mz_arrays,
-                                                   intensity_arrays)
-    elif args.merge == 'merge_and_sort':
-        mz_arrays.pop(0); intensity_arrays.pop(0)  # Remove ms1
+    elif args.merge_method == 'merge_and_sort':
         merged_mz, merged_intensity = merge_and_sort(mz_arrays,
                                                      intensity_arrays)
     new_spectrum = Spectrum()
@@ -216,7 +228,7 @@ def sliding_window(mz_arrays, intensity_arrays):
     merged_mz = []
     merged_intensity = []
     #channels = []
-    window_size = args.window_size
+    window_size = args.sliding_window_size
     min_mz = min([item for sublist in mz_arrays for item in sublist])  # Min in all arrays
     max_mz = max([item for sublist in mz_arrays for item in sublist])  # Max in all arrays
     slide_start = int(math.floor(min_mz/5.0)*5.0)  # Round to closest 5
@@ -253,10 +265,7 @@ def merge_and_sort(mz_arrays, intensity_arrays):
     merged_intensity = merged_i_array[sort_indices]
     # Optional, clear very low intensities
     merged_mz, merged_intensity = remove_low_intensities(merged_mz, merged_intensity)
-    return merged_mz, merged_intensity
-
-def matrix_merge(mz_arrays, intensity_arrays):
-    merged_mz, merged_intensity = merge_and_sort(mz_arrays, intensity_arrays)
+    merged_mz, merged_intensity = merge_close_peaks(merged_mz, merged_intensity)
     return merged_mz, merged_intensity
 
 def sum_chunk(mz_range, mz, intensity):
@@ -295,8 +304,33 @@ def remove_low_intensities(mz, intensity):
     """Finds boxcar boundaries and puts everything outside to 0"""
     indices = []
     for index, i in enumerate(intensity):
-        if abs(i) < 2000:  # Clear very low peaks
+        if abs(i) < args.intensity_threshold:  # Clear very low peaks
             indices.append(index)
+    indices = list(set(indices))  # Remove duplicates
+    mz = np.delete(mz, indices)
+    intensity = np.delete(intensity, indices)
+    return mz, intensity
+
+def merge_close_peaks(mz, intensity):
+    """Finds boxcar boundaries and puts everything outside to 0"""
+    indices = []
+    for index, i in enumerate(intensity):
+        # Prev point
+        if i > 0:
+            if abs(mz[index] - mz[index - 1]) < args.mz_threshold:
+                prev_value = intensity[index - 1]
+                if prev_value > i:
+                    indices.append(index)
+                else:
+                    indices.append(index - 1)
+        # Next value
+        if i < intensity.shape[0] - 1:
+            if abs(mz[index] - mz[index + 1]) <  args.mz_threshold:
+                next_value = intensity[index + 1]
+                if next_value > i:
+                    indices.append(index)
+                else:
+                    indices.append(index + 1)
     indices = list(set(indices))  # Remove duplicates
     mz = np.delete(mz, indices)
     intensity = np.delete(intensity, indices)

@@ -140,7 +140,7 @@ if [ ! -f SingulQuand.SIF ]; then
 fi
 
 # Check mount points made by the user
-mount_point=""
+mount_point=""  # Always start with mounting "mnt" directory
 directories=""
 for var in "$@"; do
   if [[ -d $var ]]; then  # If it is a path, add it to mount list

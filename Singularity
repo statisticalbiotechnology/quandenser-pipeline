@@ -44,7 +44,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
    # This comes from quandenser-pipeline branch of quandenser
    dependencies/quandenser-v0-01-linux-amd64.deb /
-
+   # Boxcar converter
+   dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -61,7 +62,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     wget -nc https://dl.winehq.org/wine-builds/winehq.key  # Add key, since it does not exist in image.
     apt-key add winehq.key  # Add the key to prevent update crash
     apt-get update
-    apt-get -y install default-jre git unzip bzip2 nano curl zip
+    apt-get -y install default-jre git unzip bzip2 nano curl zip gcc
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
 
     echo "Updating nextflow"
@@ -85,7 +86,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     echo "Installing python 3.6"
     add-apt-repository ppa:jonathonf/python-3.6  # Add repo for python 3.6
     apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6
+    DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6 python3.6-dev
     wget -nc https://bootstrap.pypa.io/get-pip.py
     python3.6 get-pip.py
     ln -sf /usr/bin/python3.6 /usr/local/bin/python
@@ -93,11 +94,14 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
     echo "Installling packages with pip"
     #pip install triqler  # Using different version of triqler down below
+    # psutil requires gcc
+    pip install psutil
     pip install PySide2
     pip install colorama
     pip install qdarkstyle
     pip install matplotlib
     pip install numpy
+    pip install tqdm
     apt-get -y install python3.6-tk
 
     echo "Installling dependencies for OpenGL and X11"
@@ -151,5 +155,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.061"
+    VERSION="v0.071"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"

@@ -1,6 +1,7 @@
 import sys
 from PySide2.QtWidgets import QFileDialog, QPushButton, QTextEdit, QLineEdit, QTableWidget, QSizePolicy
 from PySide2.QtGui import QIcon
+import os
 
 from custom_config_parser import custom_config_parser
 
@@ -24,7 +25,9 @@ class file_chooser(QPushButton):
     def open_window(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        path = self.pipe_parser.get('pwd')
+        path = self.pipe_parser.get('last-dir')
+        if path == '':
+            path = self.pipe_parser.get('pwd')
         if self.type=='ms':
             ms_file_types = [" *.mzML",
                              "*.mzml",
@@ -53,6 +56,11 @@ class file_chooser(QPushButton):
                                                       path,
                                                       options=options)
         if output:
+            if type(output) == list:
+                last_dir = os.path.dirname(output[0])
+            else:
+                last_dir = os.path.dirname(output)
+            self.pipe_parser.write('last-dir', last_dir)
             self.display_in_file_viewer(output)
 
     def display_in_file_viewer(self, output):
