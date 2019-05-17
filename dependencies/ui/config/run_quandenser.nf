@@ -534,7 +534,8 @@ workflow.onComplete {
     if (params.email != "" && params.sendfiles == true && params.workflow == "Full") {
       sendMail{to params.email
                subject "Workflow ${workflow.runName} output files"
-               body "Triqler files"
-               attach triqler_zip_output.getVal()}
+               body "$params"
+               attach triqler_zip_output.getVal()
+               attach file_def_publish}
     }
 }
