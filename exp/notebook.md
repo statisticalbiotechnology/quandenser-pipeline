@@ -5,7 +5,7 @@
 I repeated the experiment, but this time just investigating the area around each isolated peak (Assuming > 5Th windows between isolated peaks). No luck this time either.
 [./isolationwindow/isolationwin.py](./isolationwindow/isolationwin.py)
 
-![JointPlot](./isolationwindow/isolationwin.py "JointPlot")
+![JointPlot](./isolationwindow/boxcar_isolation_biases.png "JointPlot")
 
 --LK
 
