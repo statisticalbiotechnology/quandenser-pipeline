@@ -8,3 +8,4 @@ Anecdotal evidence suggested that BoxCar windows are biased, in that they were s
 ![JointPlot](./boxcarbias/boxcar_biases.png "JointPlot")
 
 We saw no particular bias.
+--LK
