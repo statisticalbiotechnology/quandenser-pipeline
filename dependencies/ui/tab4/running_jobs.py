@@ -158,10 +158,10 @@ class fetch_running(QThread):
         self.do_work()
 
 def check_stdout(stdout_file):
-    try:
+    if os.path.isfile(stdout_file):
         with open(stdout_file, 'r', encoding='utf-8') as f:
             all_lines = f.readlines()
-    except Exception as e:
+    else:
         return 'MISSING'
     error_substring = "Error executing process >"
     done_substring = "QUANDENSER PIPELINE COMPLETED"
