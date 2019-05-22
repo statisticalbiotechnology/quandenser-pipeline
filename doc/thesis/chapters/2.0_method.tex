@@ -13,7 +13,7 @@ A modified version of Quandenser was added to the pipeline, which can utilize pa
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{pictures/quandenser-internal.png}
-  \caption{The internal pipeline of quandenser \cite{quandenser}}
+  \caption{The internal pipeline of Quandenser, image taken from the Quandenser paper \cite{quandenser}}
   \label{fig:quandenser-internal-pipeline}
 \end{figure}
 
@@ -65,7 +65,7 @@ To launch the GUI, a shell script handling installing Singularity, downloading t
 Two other pipelines using non-container software were tested on the bacterial proteome data. The following table illustrates which pipelines were used:
 
 \newcommand{\textone}{\small The pipeline created for the thesis, using Quandenser as it's cornerstone. Due to Singularity not supporting non-POSIX systems, the Windows OS cannot run the pipeline natively without using a compatibility layer. An virtual machine wrapper was developed to allow users to run the pipeline in Windows}
-\newcommand{\texttwo}{\small The custom pipeline tested on the data set was created by the workflow manager \textit{KNIME} in combination with \textit{OpenMS}, creating a custom workflow for analyzing mzML data \cite{knime} \cite{openms}. The pipeline was created by Michael Jahn at SciLifeLab and is used to analyze bacterial data \cite{m-jahn-pipeline}. Both KNIME and OpenMS is available for Linux, MacOS and Windows.}
+\newcommand{\texttwo}{\small The custom pipeline tested on the data set was created by the workflow manager \textit{KNIME} in combination with \textit{OpenMS}, creating a custom workflow for analyzing mzML data \cite{knime} \cite{openms}. The pipeline was created by Michael Jahn at Paul Hudson's lab in SciLifeLab and was used to analyze bacterial data \cite{m-jahn-pipeline}. Both KNIME and OpenMS is available for Linux, MacOS and Windows.}
 \newcommand{\textthree}{\small MaxQuant is a tool used for quantitative proteomics and is well suited for analyzing label-free proteomic data. The program can be run natively on Windows and on Linux with the framework \textit{Mono} \cite{maxquant} \cite{maxquant-installation}.}
 
 \begin{table}[H]
