@@ -9,7 +9,7 @@ As explained in the method section \ref{ssec:quandenser-method}, the paralleliza
 
 In summary, by further improving how the modified Quandenser loads and saves data from previous runs and rearranging the minimum depth tree would yield significant improvements of parallel computation times and stability of the parallel Quandenser option of the pipeline.
 
-\subsection{Boxcar spectra}
+\subsection{Analyzing boxcar spectra}
 A novel method of mass spectrometry data acquisition developed by researches at Matthias Mann Lab in Munich, which increases the resolution of MS1 spectra by making one lower resolution MS1 scan and then multiple, smaller high resolution MS1 scans in chunks, thus increasing the overall MS1 resolution of scans \cite{boxcar}. A custom python script was created and integrated into the latest version of Quandenser-pipeline (v0.071) to be able to utilize the new type of data from the data acquisition. The script merges MS1 and Boxcar in mzML files for processing in Quandenser, then restructures and outputs a new mzML file with combined MS1 spectra, with an increased resolution compared to regular MS1 scans. By enabling the option in the pipeline, all mzML files (including any non-mzML mass spectrometry files after conversion) will be analyzed for Boxcar spectra and merged if found.
 
 A data set with boxcar data could possibly be analyzed to test for how well the increased resolution of MS1 spectra would yield for results. One such data set exists with patients before and after gastric bypass surgery, fully with data acquired with Boxcar scans, which would be interesting to analyze in the future \cite{boxcar-data}.
