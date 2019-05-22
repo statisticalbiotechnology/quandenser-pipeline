@@ -12,13 +12,13 @@ The programs were run on a computer with an Intel Core i7-4790k CPU @ 4.0 GHz wi
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/timeline-local.png}
-  \caption{Timeline of parallel processing of the cyanobacteria data set on the local computer. Note that \textit{quandenser\_parallel\_1} is "fully" parallelizable while \textit{quandenser\_parallel\_3} is the partially parallelized, due to the minimum spanning tree. A maximum of two forks was set (aka two processes in parallel)}
+  \caption{Timeline of parallel processing of the cyanobacteria data set on the local computer. Note that \textit{quandenser\_parallel\_1} is "fully" parallelizable while \textit{quandenser\_parallel\_3} is partially parallelized, following a minimum spanning tree explained in section \ref{ssec:quandenser-method}. The rest of the processes are non-parallelizable. A maximum of two forks was set (aka two processes in parallel)}
   \label{fig:timeline-local}
 \end{figure}
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/timeline-cluster.png}
-  \caption{Timeline of parallel processing of the cyanobacteria data set on UPPMAX. Figure \ref{fig:timeline-local} explains the processing names. The grey area of each bar represents SLURM queue time for each process. Unlimited amounts of processes was set, meaning no limit was set to the amount of parallelized processes possible}
+  \caption{Timeline of parallel processing of the cyanobacteria data set on UPPMAX. The caption of figure \ref{fig:timeline-local} explains the processing names. The grey area of each bar represents SLURM queue time for each process. Unlimited amounts of processes was set, meaning no limit was set to the amount of parallelized processes possible}
   \label{fig:timeline-cluster}
 \end{figure}
 
@@ -52,6 +52,6 @@ slr1739 & Photosystem II protein (PsbW) \\ \bottomrule
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/combined.png}
-  \caption{Heatmap of fold changes between groups of the differentially expressed proteins. To interpret the plots, the comparison is \textbf{y}vs\textbf{x} where y is the group at the y-axis and x the group at the x-axis. If you were to look at the first row, second column, it would be the comparison of log2 fold change between AvsB. A higher value would mean that group A has a higher expression that group B}
+  \caption{Heatmap of fold changes between groups of the differentially expressed proteins. To interpret the plots, the comparison is \textbf{y}vs\textbf{x} where y is the group at the y-axis and x the group at the x-axis. If you were to look at the first row, second column, it would be the comparison of the log2 fold change between AvsB. A positive value would mean that group A has a higher expression that group B.}
   \label{fig:heatmap}
 \end{figure}
