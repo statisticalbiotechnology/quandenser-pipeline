@@ -1,0 +1,29 @@
+notes:
+Cyano:
+
+Proteomics cyano
+2019-02-27
+
+
+Day/night experiment (timepoints)
+1-2 = replicates (bioreactor) Light simulation
+Before dawn, after dawn, noon, before sunset, after sunset
+
+
+
+
+Ralstonia dataset:
+4 conditions (limitation)
+FA (formic acid, carbon limitation)
+FRC (fructose, carbon limitation)
+NLIM (ammonium, nitrogen limitation)
+SUC (Succinate, carbon limitation)
+
+5 growthrates (chemostat) 
+0.05
+0.10
+0.15
+0.20
+0.25
+
+80 samples

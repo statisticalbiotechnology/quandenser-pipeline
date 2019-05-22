@@ -1,55 +1,51 @@
-All were run in an virtualbox image with 16GB memory, full access to an
-Intel Core i7-4790k CPU @ 4.0 GHz
+Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb
 
-### Quandenser-pipeline v0.06 (UBUNTU 18.04 LTS image)
+### Quandenser-pipeline v0.071
 
-**Cyano:** 1h12m, 2329 proteins,
+**Cyano:** 1h50m (non-parallel, local), 1h12m (full parallel, local), 3h35m (full parallel, cluster), 
 
-q < 0.01
-1vs2: 1
-1vs3: 2
+
+6*8 + 2*11 (p1), 10 (p2), 4+3+3+3+3+8+7+8+2+3+7+5+6+7+6+5+2+4 (p3) 4+5+5+8 (rest) = 255 m wait time
+
+
+q < 0.05
+1vs2: 2
+1vs3: 8
 1vs4: 4
-1vs5: 0
-2vs3: 3
-2vs4: 0
+1vs5: 1
+2vs3: 4
+2vs4: 4
 2vs5: 0
 3vs4: 0
-3vs5: 0
+3vs5: 1
 4vs5: 0
-Total: 10 diff
+Total: 24 diff, 10 unique
 
-### Custom OpenMS pipeline (UBUNTU 18.04 LTS image)
+**Ralstonia:** 3h21m (non-parallel, local), 3h23m (full parallel, local), 4h30m (partial parallel, cluster)
 
-**Cyano:** ?, 2061 proteins,
-
-
-### Philosopher 20190322 (UBUNTU 18.04 LTS image)
-
-**Cyano:**
-
-
-### MetaMorpheus 0.0.299 (WINDOWS 10 IMAGE)
-
-**Cyano:** 29 minutes, 2146 proteins,
-
-1vs2: ?
-1vs3: ?
-1vs4: ?
-1vs5: ?
-2vs3: ?
-2vs4: ?
-2vs5: ?
-3vs4: ?
-3vs5: ?
-4vs5: ?
-Total: ? diff
+q < 0.05
+1vs2: 35
+1vs3: 127
+1vs4: 200
+1vs5: 219
+2vs3: 19
+2vs4: 64
+2vs5: 74
+3vs4: 10
+3vs5: 11
+4vs5: 1
+Total: 760 diff, 267 unique
 
 
-### TPP 5.2.0 Ubuntu version (WINDOWS 10 IMAGE)
+### Custom OpenMS pipeline
 
-**Cyano:**
+**Cyano:** 1h16m
+
+**Ralstonia:** 3h52min
 
 
-### MaxQuant 1.6.5 (WINDOWS 10 IMAGE)
+### MaxQuant 1.6.3.3 (Using mono)
 
-**Cyano:**
+**Cyano:** 2h41m
+
+**Ralstonia:** 8h11m
