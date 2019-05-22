@@ -18,6 +18,7 @@
 
 %% Extra packages
 \usepackage{geometry}
+\usepackage{threeparttable}
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage[some]{background}
@@ -28,9 +29,11 @@
 
 %% For long comments
 \usepackage{comment}
+\usepackage{csquotes}
 
 % nomenclature
 \usepackage{nomencl}
+\usepackage{booktabs}
 
 % Turn on the style
 \pagestyle{fancy}
@@ -72,19 +75,15 @@
 \setcounter{page}{1}
 
 \input{chapters/1.0_introduction.tex}
-\newpage
 \input{chapters/2.0_method.tex}
-\newpage
 \input{chapters/3.0_results.tex}
-\newpage
 \input{chapters/4.0_discussion.tex}
-\newpage
 \input{chapters/5.0_conclusion.tex}
-\newpage
-\input{chapters/6.0_acknowledgements.tex}
+\input{chapters/6.0_future_work.tex}
+\input{chapters/7.0_acknowledgements.tex}
 \newpage
 \printbibliography[heading=bibnumbered]
 \newpage
-\input{chapters/7.0_appendix.tex}
+\input{chapters/8.0_appendix.tex}
 
 \end{document}

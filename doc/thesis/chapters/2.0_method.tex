@@ -1,9 +1,23 @@
 \section{Method}
 
-\subsection{Singularity}
+\subsection{The singularity image}
 A Singularity image needs a so called "receipt", which is a file that tells Singularity how to create the image and what to include in it. The recipe was added to Singularity Hub, a library were Singularity receipts can be uploaded, then built and shared with other users \cite{singularity-hub}.
 
-To complete the workflow from raw data to protein quantification results, several other software than Quandenser had to be included in the container, which are listed below.
+To complete the workflow from raw data to protein quantification results, several other software had to be included in the container, which are listed below.
+
+\subsection{Quandenser} \label{ssec:quandenser-method}
+Quandenser is a newly created software made in SciLifeLab by Lukas Käll and Matthew The, which condenses quantification data from label-free MS experiments by clustering both data from MS1 and MS2 without assigning identities to the values, thus decouples identification from quantification \cite{quandenser}. The core component in Quandenser-pipeline is Quandenser. Since Quandenser-pipeline can be run on a cluster if singularity is installed, which is the case for UPPMAX, it opens up the possibility for parallelization which can significantly speed up the processing time.
+
+A modified version of Quandenser was added to the pipeline, which can utilize parallel computation in conjunction Nextflow's ability to run multiple processes in parallel. The improvements were integrated into the internal pipeline of Quandenser, which is shown in figure \ref{fig:quandenser-internal-pipeline}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{pictures/quandenser-internal.png}
+  \caption{The internal pipeline of quandenser \cite{quandenser}}
+  \label{fig:quandenser-internal-pipeline}
+\end{figure}
+
+Two parts were able to be parallelized within Quandenser's internal program. The parallelization works by adding stop points in the code to allow Nextflow to run part of the pipeline in parallel. The first parallelizable part was MS1 feature detection with the internal program \textit{Dinosaur}, shown in figure \ref{fig:quandenser-internal-pipeline}. This is the first process in Quandenser and can be "fully" parallelized, meaning that every input file can be process in parallel in the internal pipeline. The second part which was able to be parallelized was MS1 feature grouping, shown in figure \ref{fig:quandenser-internal-pipeline}. This part could be partially parallelized, due to the input files are calculated in a minimum spanning tree. The reaason behind it is that connecting branches cannot be calculated at the same time, while branches that are not directly connected can be processed in parallel. To cluster and process all files, the files must be calculated in a particular order according to the tree, while The Nextflow pipeline utilizes the minimum spanning tree output from Quandenser to create a processing tree that maximizes the amount of files that can be processed in parallel, given the order of the processes of Quandenser.
 
 \subsubsection{MSconvert}
 There exist a multitude of different types of MS data format, which can cause compatibility issues with existing software. The MS format depends on which instrument was used to generate the data, but most software cannot directly use any vendor-specific formatted files, meaning they have to be converted to a general MS data format first, namely files of type mzML \cite{mzml-format}. To combat the problem with incompatible data, a software named \textit{MSconvert} was added to the workflow, which can convert MS data from a multitude of vendor formats to the general MS data format needed to run Quandenser \cite{proteowizard}. Due to conversion from vendor formats with Msconvert only works on Windows operative systems, another solution was needed, since the Singularity image was based on Ubuntu, a Linux operative system. The solution was to use another type of software called \textit{Wine}, which adds an compatibility layer in Portable Operating System Interface (POSIX) systems, which includes Linux, to run Windows software \cite{wine}. The Singularity image was based on another image created by the proteowizard developers, which incorporates all the necessary components to run Wine and MSconvert \cite{docker-image} \cite{docker-howto}.
@@ -16,60 +30,60 @@ Triqler is an software which uses using graphical models and bayesian statistics
 
 \subsection{Nextflow}
 
-\begin{wrapfigure}{r}{4cm}
-  \centering
-  \includegraphics[width=4cm, height=5cm]{pictures/workflow.png}
-  \caption{Workflow of the pipeline}
-  \label{fig:workflow}
-\end{wrapfigure}
-
-Nextflow has integrated compatibility with running software inside Singularity images, which is used to call on the programs contained in the Singularity image. The pipeline is shown in figure \ref{fig:workflow}. Due to Nextflow's capability of running multiple software in parallel, a modified version of Quandenser was added to fully utilize the parallelization. When running the parallelized version of Quandenser in the pipeline, the process is divided into five parts, two of which are parallelizable. The aim was to speed up the calculation time when running large cohorts, since the time scaling of an increased number of files was not a linear relationship to the processing time.
+Nextflow has integrated compatibility with running software inside Singularity images, which is used to call on the programs contained within the Singularity image. The pipeline is shown in figure \ref{fig:workflow}. Due to Nextflow's capability of running multiple software in parallel, a modified version of Quandenser was added to fully utilize the parallelization. When running the parallelized version of Quandenser in the pipeline, the process is divided into five parts, two of which are parallelizable. The aim was to speed up the calculation time when running large cohorts, since the time scaling of an increased number of files was not a linear relationship to the processing time.
 
 Nextflow also has the benefit of being able to submit processes to workload managers, which are used on HPC clusters to allocate processing time for users. To be able to run the pipeline on HPC clusters, the pipeline is outfitted with an option to enable submitting processes via SLURM, the current workload manager on UPPMAX.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{pictures/workflow.png}
+  \caption{Workflow of the pipeline. \textit{Batch file} is a file containing the paths to the mzML files and labels of the files to signify which are replicates}
+  \label{fig:workflow}
+\end{figure}
 
-\subsection{Quandenser-pipeline GUI}
-To integrate the Singularity image and the Nextflow pipeline, a GUI was created and packed into the image to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. A shell script handling installing Singularity, downloading the image from Singularity Hub and starting the GUI inside the image. Figure \ref{fig:GUI_workflow} shows the GUI workflow. The user downloads the shell script and executes it, which installs singularity, downloads the Singularity image, then starts the GUI. The GUI is used to modify the configuration files, which affects how the pipeline is executed. When the user wants to run the pipeline, the GUI communicates to the shell script with a "named pipe", i.e a file which both the GUI and the shell script has access, that tells the shell script to execute the nextflow pipeline. The pipeline loads the configuration files, then calls on the image to execute the programs in the image at a particular order.
+\subsection{Quandenser-pipeline Graphical User Interface (GUI)}
+To integrate the Singularity image and the Nextflow pipeline, a GUI was created and packed into the image to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. Figure \ref{fig:GUI} illustrates how the GUI looks like and shows how different types of files (vendor specific files and mzML), can be used in the same pipeline without any need to convert the files beforehand.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
+  \begin{center}
+  \includegraphics[height=10cm]{pictures/gui.png}
+  \caption{GUI of Quandenser-pipeline}
+  \label{fig:GUI}
+  \end{center}
+\end{figure}
+
+To launch the GUI, a shell script handling installing Singularity, downloading the image from Singularity Hub and starting the GUI inside the image. Figure \ref{fig:GUI_workflow} shows the GUI workflow. The user downloads the shell script and executes it, which installs singularity, downloads the Singularity image, and starts the GUI. The GUI is used to modify the configurations for the pipeline, which affects how the pipeline is executed. When the user starts the pipeline, the GUI communicates to the shell script with a "named pipe", i.e a file which both the GUI and the shell script has access to, which tells the shell script to execute the Nextflow pipeline. The pipeline then calls on the Singularity image and executes the embedded software in the image at a particular order.
+
+\begin{figure}[H]
   \includegraphics[width=\linewidth]{pictures/GUI_workflow.png}
   \caption{GUI workflow of Quandenser-pipeline}
   \label{fig:GUI_workflow}
 \end{figure}
 
+\subsection{Pipelines}
 
-\subsection{Analysing bacterial proteomes}
-The RAW data files for the cyanobacteria data set was on average 0.8 Gb in size and ralstonia data set 1.3 Gb. Both data sets were run on different established proteomic pipelines to compare the performance of the newly created pipeline. The following table illustrates which programs were used:
+Two other pipelines using non-container software were tested on the bacterial proteome data. The following table illustrates which pipelines were used:
 
-\newcommand{\textone}{\small The pipeline created for the thesis, using Quandenser as it's cornerstone. Due to Singularity not supporting non POSIX systems, the Windows OS cannot run the pipeline natively without using a compatibility layer suggested in the Singularity documentation \cite{singularity-documentation}.}
+\newcommand{\textone}{\small The pipeline created for the thesis, using Quandenser as it's cornerstone. Due to Singularity not supporting non-POSIX systems, the Windows OS cannot run the pipeline natively without using a compatibility layer. An virtual machine wrapper was developed to allow users to run the pipeline in Windows}
 \newcommand{\texttwo}{\small The custom pipeline tested on the data set was created by the workflow manager \textit{KNIME} in combination with \textit{OpenMS}, creating a custom workflow for analyzing mzML data \cite{knime} \cite{openms}. The pipeline was created by Michael Jahn at SciLifeLab and is used to analyze bacterial data \cite{m-jahn-pipeline}. Both KNIME and OpenMS is available for Linux, MacOS and Windows.}
-\newcommand{\textthree}{\small MaxQuant is a tool used for quantitative proteomics and is well suited for analyzing label-free proteomic data. The tool is available for Windows and at also now for Linux, if the Mono framework is used \cite{maxquant} \cite{maxquant-installation}.}
-\newcommand{\textfour}{\small MetaMorpheus is a search engine software which can find Post-Translational Modifications Modifications (PTMs) and integrates Flash LFQ, a label-free peptide quantification software into the pipeline \cite{metamorpheus}. MetaMorpheus is only available for the Windows OS.}
-\newcommand{\textfive}{\small The Trans-Proteomic Pipeline (TPP) is an open-source proteomics data pipeline which includes a multitude of tools for analyzing proteomic data \cite{TPP}. The pipeline is available for Windows and a Linux distribution called Ubuntu}
-\newcommand{\textsix}{\small Philosopher is a proteomics newly created toolkit which is available for multiple types of POSIX systems and Windows, which uses modified software used in the TPP pipeline for analysis \cite{philosopher}.}
+\newcommand{\textthree}{\small MaxQuant is a tool used for quantitative proteomics and is well suited for analyzing label-free proteomic data. The program can be run natively on Windows and on Linux with the framework \textit{Mono} \cite{maxquant} \cite{maxquant-installation}.}
 
 \begin{table}[H]
+\caption{Different pipelines used to compare Quandenser-pipeline}
+\begin{center}
 \begin{tabular}{|p{4cm}|p{9cm}|}
 \hline
 Program & Description \\ \hline \hline
-Quandenser-pipeline v0.051 & \textone \\ \hline
+Quandenser-pipeline v0.071 & \textone \\ \hline
 KNIME + OpenMS & \texttwo \\ \hline
-MaxQuant 1.6.5 & \textthree \\ \hline
-MetaMorpheus 0.0.299 & \textfour \\ \hline
-Trans-Proteomic Pipeline 5.2.0 & \textfive \\ \hline
-Philosopher 20190322 & \textsix \\ \hline
+MaxQuant 1.6.3.3 & \textthree \\ \hline
 \end{tabular}
-\caption{Different pipelines used to compare Quandenser-pipeline}
+\end{center}
 \end{table}
 
-The pipelines were compared by the time it took to process the data sets, how many proteins were discovered and also how many proteins the pipeline found to be differentially expressed.
+\subsection{Analyzing bacterial proteomes}
+Two data generated The first data set were generated by letting cyanobacteria grow in five different simulated environments (before dawn, after dawn, noon, before sunset and after sunset) with two replicates each. The second bacterial data set was ralstonia bacteria being grown in a chemostat bioreactor where Formic Acid (FA) was limited during the experiment, in five different conditions (0.05, 0.10, 0.15, 0.20 and 0.25 growth-rate) with four replicates each.
 
-To define a differentially expressed protein,
+The RAW data files for the cyanobacteria data set and ralstonia data set was on average 0.8 Gb respectively 1.3 Gb in size. Both data sets were run on different established proteomic pipelines to compare the performance of the newly created pipeline.
 
-
-\begin{equation}
-E=m
-\end{equation}
-
-
-was defined as any protein which had a q-value less than 0.01 for
+Significantly differentially expressed proteins were also analyzed. To define a differentially expressed protein, a relevant statistical parameter was chosen to represent how statistically significant find is; the q-value. A q-value is an excellent statistical measurement when doing multiple tests, which in this case is for each specific protein \cite{q-value}. The threshold of a differentially expressed protein was set as a q-value less than 0.05. In contrary to the p-value, a p-value threshold of 0.05 means 5\% of all tests will result in a false positives while a q-value threshold of 0.05 will result in in 5\% of all \textit{significant} results being false positives. Triqler, which was included in the pipeline, will automatically calculate q-values of proteins, and a threshold of a q-value of 0.05 was set as "differentially expressed".
