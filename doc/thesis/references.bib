@@ -23,6 +23,27 @@
     year = {2017}
 }
 
+@ARTICLE{biocontainers,
+    autohor = {Leprevost F V. et al},
+    title = {BioContainers: an open-source and community-driven framework for software standardization},
+    journal = {Bioinformatics},
+    volume = {33},
+    number = {16},
+    pages = {2580-2582},
+    DOI = {10.1093/bioinformatics/btx192},
+    year = {2017}
+}
+
+@ARTICLE{docker,
+  author = {Merkel, Dirk},
+  year = {2014},
+  month = {03},
+  pages = {},
+  title = {Docker: lightweight Linux containers for consistent development and deployment},
+  volume = {2014},
+  journal = {Linux Journal}
+}
+
 @ARTICLE{singularity-hub,
     author = {Sochat V. Prybol CJ. Kurtzer GM},
     title = {Enhancing reproducibility in scientific computing: Metrics and registry for Singularity containers},
@@ -144,10 +165,20 @@
 @ARTICLE{openms,
     author = {Röst H.L. et al},
     title = {OpenMS: A flexible open-source software platform for mass spectrometry data analysis},
-    DOI = {110.1038/nmeth.3959},
+    DOI = {10.1038/nmeth.3959},
     journal = {Nature Methods},
     volume = {13},
     year = {2016}
+}
+
+@ARTICLE{openms-hpc,
+    author = {Pfeuffe J. et al},
+    title = {OpenMS–A platform for reproducible analysis of mass spectrometry data},
+    DOI = {10.1016/j.jbiotec.2017.05.016},
+    journal = {Journal of Biotechnology},
+    volume = {261},
+    pages = {142-148},
+    year = {2017}
 }
 
 @MISC{m-jahn-pipeline,
@@ -172,33 +203,6 @@
     note = {Accessed: 2019-04-05}
 }
 
-@ARTICLE{metamorpheus,
-    author = {Solntsev S et al},
-    title = {Enhanced Global Post-translational Modification Discovery with MetaMorpheus},
-    journal = {Journal of Proteome Research},
-    volume = {17},
-    number = {5},
-    pages = {1844-1851},
-    DOI = {10.1021/acs.jproteome.7b00873},
-    year = {2018}
-}
-
-@ARTICLE{TPP,
-    author = {Deutsch EW et al},
-    title = {Trans-Proteomic Pipeline, a standardized data processing pipeline for large-scale reproducible proteomics informatics},
-    journal = {Proteomics Clinical applications},
-    volume = {9},
-    pages = {745 -754},
-    DOI = {10.1002/prca.201400164},
-    year = {2015}
-}
-
-@MISC{philosopher,
-    title = {Philosopher, a data processing toolkit for shotgun proteomics.},
-    howpublished = {\url{https://github.com/Nesvilab/philosopher}},
-    note = {Accessed: 2019-04-05}
-}
-
 @ARTICLE{q-value,
     title = {Philosopher, a data processing toolkit for shotgun proteomics.},
     author = {Käll L. et al},
@@ -210,9 +214,62 @@
     year = {2008}
 }
 
-%% Unused
+@MISC{scipy,
+    author = {Eric Jones and Travis Oliphant and Pearu Peterson and others},
+    title = {{SciPy}: Open source scientific tools for {Python}},
+    year = {2001--},
+    url = "http://www.scipy.org/",
+    note = {[Online; accessed 2019-05-19]}
+}
+
+@MISC{ncbi-search,
+    title = {Gene [Internet]. Bethesda (MD): National Library of Medicine (US), National Center for Biotechnology Information},
+    year = {2004},
+    howpublished = {\url{https://www.ncbi.nlm.nih.gov/gene/}},
+    note = {Accessed: 2019-05-20}
+}
+
+@ARTICLE{cyano-low-light,
+    author = {Golden S.},
+    title = {Light-responsive gene expression in cyanobacteria},
+    journal = {Journal of Bacteriology},
+    volume = {177},
+    number = {7},
+    pages = {1651-1654},
+    DOI = {10.1128/jb.177.7.1651-1654.1995},
+    year = {1995}
+}
+
+@ARTICLE{phytochrome,
+	author = {Yeh, Kuo-Chen and Wu, Shu-Hsing and Murphy, John T. and Lagarias, J. Clark},
+	title = {A Cyanobacterial Phytochrome Two-Component Light Sensory System},
+	volume = {277},
+	number = {5331},
+	pages = {1505--1508},
+	year = {1997},
+	doi = {10.1126/science.277.5331.1505},
+	publisher = {American Association for the Advancement of Science},
+	URL = {https://science.sciencemag.org/content/277/5331/1505},
+	journal = {Science}
+}
+
+@MISC{rayleigh,
+  title = "Rayleigh scattering",
+  howpublished = {\url{https://en.wikipedia.org/wiki/Rayleigh_scattering}},
+  note = {Accessed: 2019-05-21}
+}
+
+@ARTICLE{phycobilisomes,
+    author = {Lu-Ning Liu et al.},
+    title = {Characterization, structure and function of linker polypeptides in phycobilisomes of cyanobacteria and red algae: An overview},
+    DOI = {10.1016/j.bbabio.2005.04.001},
+    volum = {1708},
+    number = {2},
+    pages = {133-142}
+}
+
 @ARTICLE{michael-jahn-cyano,
-    author = "Jahn et al",
+    author = "Jahn M. et al",
     title = "Growth of Cyanobacteria Is Constrained by the Abundance of Light and Carbon Assimilation Proteins",
     journal = "Cell Reports",
     year = "2018",
@@ -221,8 +278,21 @@
     month = "oct"
 }
 
-@MISC{nf-core,
-    title = {nf-core - A community effort to collect a curated set of analysis pipelines built using Nextflow},
-    howpublished = {\url{https://opensource.scilifelab.se/projects/nf-core/}},
-    note = {Accessed: 2019-03-28}
+@ARTICLE{boxcar,
+    author = {Meier F. et al.},
+    title = {BoxCar acquisition method enables single-shot proteomics at a depth of 10,000 proteins in 100 minutes},
+    DOI = {10.1038/s41592-018-0003-5},
+    volume = {15},
+    year = {2017}
+}
+
+@ARTICLE{boxcar-data,
+    author = {Albrechtsen N. et al},
+    title = {Plasma Proteome Profiling Reveals Dynamics of Inflammatory and Lipid Homeostasis Markers after Roux-En-Y Gastric Bypass Surgery},
+    journal = {Cell Systems},
+    volume = {7},
+    number = {6},
+    pages = {601-612},
+    DOI = {10.1016/j.cels.2018.10.012},
+    year = {2018}
 }
