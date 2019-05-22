@@ -67,7 +67,7 @@ def generate_heatmap(file, proteins):
                 data[protein][comb] = fold_change
 
     nrows = int(len(proteins)/2)
-    fig, ax = plt.subplots(nrows=nrows, ncols=2) #,figsize=(20,30))
+    fig, ax = plt.subplots(nrows=nrows, ncols=2, figsize=(20,30))
     fig.subplots_adjust(hspace=0.3)
     groups = list(data.values())[0].keys()
     for num_prot, protein in enumerate(data.keys()):
@@ -101,7 +101,7 @@ def generate_heatmap(file, proteins):
                     annot_kws={"size": 20})
         plt.title(protein, fontsize=26)
         print(f"{num_prot} out of {len(proteins)} done", end='\r')
-    plt.savefig('combined.png')
+    plt.savefig('combined.png', bbox_inches='tight',pad_inches=0)
     plt.close()
 
 def change_label(text):
@@ -123,5 +123,5 @@ def generate_heatmap_layout(keys):
     return matrix, comb_matrix, xlabel, ylabel
 
 if __name__ == "__main__":
-    directory = "data/FA_QP/*"
+    directory = "data/cyano_QP/*"
     main(directory)
