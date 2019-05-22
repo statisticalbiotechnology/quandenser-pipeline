@@ -8,7 +8,7 @@ In figure \ref{fig:processing-local}, the parallelization shows minor improvemen
 
 Another drawback with using parallel computation option of the pipeline is that the waiting time on the SLURM cluster for each process slows down the parallelization, meaning that the non-parallel run could in theory be faster in some cases when the HPC cluster is under a heavy load, thus increasing the waiting time for each process. In figure \ref{fig:timeline-cluster}, the waiting time is illustrated as the grey bars, which are substantially larger than the calculation time of the Quandenser processes (the colored bar). On a powerful enough local computer, the waiting time for each process would be negligible, thus the parallel version would in almost all cases be faster than a non-parallel run.
 
-However, the non-parallel option still remains and does not affect the pipeline's performance, which also show a great performance.
+However, the parallel process execution for the pipeline is only an option, which the user of the pipeline can change. It has also been shown that a non-parallel run of Quandenser does not have a significant SLURM waiting time compared to a parallel run, which negates the drawbacks mentioned above.
 
 \subsection{The biological data}
 The results from the pipeline showed several differentially expressed proteins on both data sets. Analyzing the data yielded from the cyanobacterial data set, we can see some similarities between previous studies of cyanobacteria grown in different conditions.
