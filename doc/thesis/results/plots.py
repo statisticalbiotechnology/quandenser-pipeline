@@ -14,8 +14,8 @@ times_cyano = [1*60 + 12,
                1*60 + 16,
                2*60 + 41]
 times_cyano_core = [90,
-                    78,
-                    1,
+                    251,
+                    195,
                     712.5]
 # Ralstonia
 times_ralstonia = [3*60 + 23,
