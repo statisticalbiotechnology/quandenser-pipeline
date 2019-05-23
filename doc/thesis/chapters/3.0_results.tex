@@ -32,7 +32,7 @@ For the cyanobacteria dataset, a total of 24 proteins between groups were found 
 
 \begin{center}
 \begin{table}[H]
-\caption{Quandenser pipeline cyanobacteria differentially expressed proteins, data gathered from NCBI gene search \cite{ncbi-search}}
+\caption{\textbf{Differentially expressed proteins from the cyanobacteria data set}. Data about the function of the proteins were gathered from NCBI gene search \cite{ncbi-search}}
 \begin{tabular}{ l l }
 \toprule
 Protein & Function \\ \midrule
@@ -54,7 +54,7 @@ slr1739 & Photosystem II protein (PsbW) \\ \bottomrule
 
 % Ta abundances, lägg i tidsaxis
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{results/combined.png}
-  \caption{Heatmap of fold changes between groups of the differentially expressed proteins. To interpret the plots, the comparison is \textbf{y}vs\textbf{x} where y is the group at the y-axis and x the group at the x-axis. If you were to look at the first row, second column, it would be the comparison of the log2 fold change between AvsB. A positive value would mean that group A has a higher expression that group B.}
+  \includegraphics[width=\linewidth]{results/combined_edited.png}
+  \caption{\textbf{Comparing protein expression of differentially expressed proteins.} The expected value of protein expression (output from triqler) from \ref{table:cyano-proteins} are plotted, comparing expression between the five groups (before dawn, after dawn, noon, before sundown and after sundown). The proteins are divided into two plots; the top plot is proteins which has a lower expression in the noon compared to before dawn, while the plot at the bottom is proteins which has a higher expression during noon when comparing to before dawn}
   \label{fig:heatmap}
 \end{figure}
