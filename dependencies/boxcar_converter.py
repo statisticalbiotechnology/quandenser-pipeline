@@ -15,6 +15,8 @@ import time
 import copy
 import math
 import base64
+import matplotlib.pyplot as plt
+import json
 
 # Parser
 parser = argparse.ArgumentParser()
@@ -23,6 +25,9 @@ parser.add_argument("dir",
 parser.add_argument('--verbose',
                     action='store_true',
                     help='Show progressbar')
+parser.add_argument('--save_boxcar',
+                    action='store_true',
+                    help='Saves boxcar spectra, one at a time')
 parser.add_argument('--discard_boxcar',
                     action='store_true',
                     help='Discards all boxcar spectra')
@@ -176,13 +181,17 @@ def merge_spectra(file, mapped_spectra, id=0):
             if check_if_boxcar(ms1_spectra) and ms1_spectra != []:
                 combined = check_missing_ms2(ms1_spectra)
                 for match in combined:
-                    if not args.discard_boxcar:
+                    if args.discard_boxcar:
+                        output_spectra.append(match[0])
+                        saved_ms1 = match[0]  # Will always be the latest ms1
+                    elif args.save_boxcar:
+                        output_spectra.extend(match[1:])
+                        boxcar_per_scan = len(match[1:])
+                        saved_ms1 = match[0]
+                    else:
                         merged_ms1 = merge_channels(match)
                         output_spectra.append(merged_ms1)
                         saved_ms1 = merged_ms1  # Will always be the latest ms1
-                    else:
-                        output_spectra.append(match[0])
-                        saved_ms1 = match[0]  # Will always be the latest ms1
             elif ms1_spectra != []:
                 output_spectra.extend(ms1_spectra)  # Could be multiple MS1
                 saved_ms1 = ms1_spectra[-1]  # Will always be the latest ms1
@@ -193,12 +202,18 @@ def merge_spectra(file, mapped_spectra, id=0):
             print("ERROR: Something wrong in the filter string in spectrum {}".format(index))
             quit()
         if args.verbose: progress.update(1)
-    if args.verbose: progress.close()  # Do not close
-    if args.verbose and 1 == 0:
-        progress.close()
-        print("In file {0}, ms1 scans {1}, msx scans {2}, ms2 scans {3}".format(
-        file, ms1_scan, msx_scan, ms2_scan
-        ))
+    if args.verbose: progress.close()
+    if args.save_boxcar:
+        json_file = os.path.basename(file) + '_boxcar.json'
+        boxcar_spectra = filter_spectra(output_spectra)
+        mz_arrays = [s.parameters['m/z array'] for s in boxcar_spectra]
+        intensity_arrays = [s.parameters['intensity array'] for s in boxcar_spectra]
+        data = []
+        for i in range(0, len(mz_arrays), boxcar_per_scan):
+            data.append(([m.tolist() for m in mz_arrays[i:i+boxcar_per_scan]],
+                         [i.tolist() for i in intensity_arrays[i:i+boxcar_per_scan]]))
+        with open(json_file, 'w') as f:
+            json.dump(data, f)
     return output_spectra
 
 def merge_channels(spectrum_list):
@@ -217,6 +232,7 @@ def merge_channels(spectrum_list):
     elif args.merge_method == 'merge_and_sort':
         merged_mz, merged_intensity = merge_and_sort(mz_arrays,
                                                      intensity_arrays)
+
     new_spectrum = Spectrum()
     new_spectrum.parse_xml(copy.deepcopy(spectrum_list[0].spectrum_xml))  # Use first spectrum as template
     new_spectrum.parameters['intensity array'] = merged_intensity
