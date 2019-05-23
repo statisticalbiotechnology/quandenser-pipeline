@@ -1,0 +1,332 @@
+<!--
+  ~ Copyright 2013-2019, Centre for Genomic Regulation (CRG)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+
+    <head>
+        <title>Nextflow Cytoscape.js with Dagre</title>
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+        <script type="text/javascript">
+        var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+        document.write(unescape("%3Cscript src='" + prot + "code.jquery.com/jquery-2.0.3.min.js' type='text/javascript' %3E%3C/script%3E"));
+        document.write(unescape("%3Cscript src='" + prot + "cdnjs.cloudflare.com/ajax/libs/cytoscape/2.6.12/cytoscape.min.js' type='text/javascript' %3E%3C/script%3E"));
+        document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js' type='text/javascript' %3E%3C/script%3E"));
+        document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.1.2/cytoscape-dagre.js' type='text/javascript' %3E%3C/script%3E"));
+        </script>
+
+        <style>
+            body {
+                font-family: helvetica;
+                font-size: 14px;
+            }
+
+            #cy {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 999;
+            }
+
+            h1 {
+                opacity: 0.5;
+                font-size: 1em;
+            }
+        </style>
+
+        <script>
+            $(function(){
+                var cy = window.cy = cytoscape({
+                    container: document.getElementById('cy'),
+                    boxSelectionEnabled: false,
+                    autounselectify: true,
+
+                    layout: {
+                        name: 'dagre'
+                    },
+
+                    style: cytoscape.stylesheet()
+                        .selector( 'node')
+                            .css({
+                                'width': 10,
+                                'height': 10,
+                                'content': 'data(label)',
+                                'text-valign': 'center',
+                                'text-halign': 'center',
+                                'text-opacity': 0.5,
+                            })
+                        .selector('node.PROCESS')
+                            .css({
+                                'width': 100,
+                                'height': 50,
+                                'text-opacity': 0.9,
+                                'background-color': '#009911'
+                            })
+                        .selector('node.OPERATOR')
+                            .css({
+                                'background-color': '#11479e',
+                                'text-halign': 'right',
+                            })
+                        .selector('node.ORIGIN')
+                            .css({
+                                'background-color': '#999999',
+                                'text-halign': 'right',
+                            })
+                        .selector('node.TERMINATION')
+                            .css({
+                                'background-color': '#999999',
+                                'text-halign': 'right',
+                            })
+                        .selector('edge')
+                            .css({
+                                'content': 'data(label)',
+                                'text-opacity': 0.5,
+                                'width': 4,
+                                'target-arrow-shape': 'triangle',
+                                'line-color': '#9dbaea',
+                                'target-arrow-color': '#9dbaea'
+                            }),
+
+elements: {
+nodes: [
+{ data: { id: 'p0', label: 'Channel.from'}, classes: 'ORIGIN' },
+{ data: { id: 'p1', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p2', label: 'filter'}, classes: 'OPERATOR' },
+{ data: { id: 'p3', label: 'filter'}, classes: 'OPERATOR' },
+{ data: { id: 'p4', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p5', label: 'into'}, classes: 'OPERATOR' },
+{ data: { id: 'p6'}, classes: 'NODE' },
+{ data: { id: 'p7', label: 'Channel.from'}, classes: 'ORIGIN' },
+{ data: { id: 'p8', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p9', label: 'filter'}, classes: 'OPERATOR' },
+{ data: { id: 'p10', label: 'filter'}, classes: 'OPERATOR' },
+{ data: { id: 'p11', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p12', label: 'into'}, classes: 'OPERATOR' },
+{ data: { id: 'p13'}, classes: 'NODE' },
+{ data: { id: 'p14', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p15', label: 'msconvert'}, classes: 'PROCESS' },
+{ data: { id: 'p16', label: 'concat'}, classes: 'OPERATOR' },
+{ data: { id: 'p17', label: 'into'}, classes: 'OPERATOR' },
+{ data: { id: 'p18', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p19'}, classes: 'ORIGIN' },
+{ data: { id: 'p20'}, classes: 'ORIGIN' },
+{ data: { id: 'p21', label: 'quandenser'}, classes: 'PROCESS' },
+{ data: { id: 'p22'}, classes: 'ORIGIN' },
+{ data: { id: 'p23'}, classes: 'ORIGIN' },
+{ data: { id: 'p24', label: 'quandenser_parallel_1'}, classes: 'PROCESS' },
+{ data: { id: 'p25', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p26', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p27'}, classes: 'ORIGIN' },
+{ data: { id: 'p28'}, classes: 'ORIGIN' },
+{ data: { id: 'p29', label: 'quandenser_parallel_2'}, classes: 'PROCESS' },
+{ data: { id: 'p30'}, classes: 'NODE' },
+{ data: { id: 'p31'}, classes: 'NODE' },
+{ data: { id: 'p32', label: 'collectFile'}, classes: 'OPERATOR' },
+{ data: { id: 'p33', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p34', label: 'splitText'}, classes: 'OPERATOR' },
+{ data: { id: 'p35', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p36', label: 'toInteger'}, classes: 'OPERATOR' },
+{ data: { id: 'p37', label: 'max'}, classes: 'OPERATOR' },
+{ data: { id: 'p38', label: 'subscribe'}, classes: 'OPERATOR' },
+{ data: { id: 'p39', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p40', label: 'into'}, classes: 'OPERATOR' },
+{ data: { id: 'p41'}, classes: 'NODE' },
+{ data: { id: 'p42', label: 'collectFile'}, classes: 'OPERATOR' },
+{ data: { id: 'p43', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p44', label: 'splitText'}, classes: 'OPERATOR' },
+{ data: { id: 'p45', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p46', label: 'groupTuple'}, classes: 'OPERATOR' },
+{ data: { id: 'p47', label: 'transpose'}, classes: 'OPERATOR' },
+{ data: { id: 'p48', label: 'into'}, classes: 'OPERATOR' },
+{ data: { id: 'p49'}, classes: 'NODE' },
+{ data: { id: 'p50', label: 'collectFile'}, classes: 'OPERATOR' },
+{ data: { id: 'p51', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p52', label: 'splitText'}, classes: 'OPERATOR' },
+{ data: { id: 'p53', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p54', label: 'countBy'}, classes: 'OPERATOR' },
+{ data: { id: 'p55', label: 'subscribe'}, classes: 'OPERATOR' },
+{ data: { id: 'p56', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p57', label: 'into'}, classes: 'OPERATOR' },
+{ data: { id: 'p58'}, classes: 'NODE' },
+{ data: { id: 'p59', label: 'sync_variables'}, classes: 'PROCESS' },
+{ data: { id: 'p60', label: 'flatten'}, classes: 'OPERATOR' },
+{ data: { id: 'p61', label: 'until'}, classes: 'OPERATOR' },
+{ data: { id: 'p62', label: 'mix'}, classes: 'OPERATOR' },
+{ data: { id: 'p63', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p64', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p65', label: 'buffer'}, classes: 'OPERATOR' },
+{ data: { id: 'p66', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p67', label: 'flatMap'}, classes: 'OPERATOR' },
+{ data: { id: 'p68', label: 'map'}, classes: 'OPERATOR' },
+{ data: { id: 'p69', label: 'Channel.fromPath'}, classes: 'ORIGIN' },
+{ data: { id: 'p70'}, classes: 'NODE' },
+{ data: { id: 'p71', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p72'}, classes: 'ORIGIN' },
+{ data: { id: 'p73'}, classes: 'ORIGIN' },
+{ data: { id: 'p74', label: 'quandenser_parallel_3'}, classes: 'PROCESS' },
+{ data: { id: 'p75', label: 'Channel.fromPath'}, classes: 'ORIGIN' },
+{ data: { id: 'p76'}, classes: 'NODE' },
+{ data: { id: 'p77', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p78', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p79'}, classes: 'ORIGIN' },
+{ data: { id: 'p80'}, classes: 'ORIGIN' },
+{ data: { id: 'p81', label: 'quandenser_parallel_4'}, classes: 'PROCESS' },
+{ data: { id: 'p82'}, classes: 'NODE' },
+{ data: { id: 'p83', label: 'Channel.fromPath'}, classes: 'ORIGIN' },
+{ data: { id: 'p84'}, classes: 'NODE' },
+{ data: { id: 'p85', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p86'}, classes: 'ORIGIN' },
+{ data: { id: 'p87'}, classes: 'ORIGIN' },
+{ data: { id: 'p88', label: 'quandenser_parallel_5'}, classes: 'PROCESS' },
+{ data: { id: 'p89', label: 'concat'}, classes: 'OPERATOR' },
+{ data: { id: 'p90', label: 'concat'}, classes: 'OPERATOR' },
+{ data: { id: 'p91', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p92'}, classes: 'ORIGIN' },
+{ data: { id: 'p93', label: 'tide_search'}, classes: 'PROCESS' },
+{ data: { id: 'p94'}, classes: 'NODE' },
+{ data: { id: 'p95', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p96', label: 'collect'}, classes: 'OPERATOR' },
+{ data: { id: 'p97'}, classes: 'ORIGIN' },
+{ data: { id: 'p98', label: 'triqler'}, classes: 'PROCESS' },
+{ data: { id: 'p99', label: 'flatten'}, classes: 'OPERATOR' },
+{ data: { id: 'p100', label: 'subscribe'}, classes: 'OPERATOR' },
+],
+edges: [
+{ data: { source: 'p0', target: 'p1'} },
+{ data: { source: 'p1', target: 'p2'} },
+{ data: { source: 'p2', target: 'p3'} },
+{ data: { source: 'p3', target: 'p4'} },
+{ data: { source: 'p4', target: 'p5'} },
+{ data: { source: 'p5', target: 'p16', label: 'spectra_in' } },
+{ data: { source: 'p5', target: 'p6', label: 'spectra_in_q' } },
+{ data: { source: 'p7', target: 'p8'} },
+{ data: { source: 'p8', target: 'p9'} },
+{ data: { source: 'p9', target: 'p10'} },
+{ data: { source: 'p10', target: 'p11'} },
+{ data: { source: 'p11', target: 'p12'} },
+{ data: { source: 'p12', target: 'p14', label: 'spectra_convert' } },
+{ data: { source: 'p12', target: 'p13', label: 'spectra_convert_bool' } },
+{ data: { source: 'p14', target: 'p15', label: 'spectra_convert_channel' } },
+{ data: { source: 'p15', target: 'p16', label: 'spectra_converted' } },
+{ data: { source: 'p16', target: 'p17', label: 'combined_channel' } },
+{ data: { source: 'p17', target: 'p18', label: 'combined_channel_normal' } },
+{ data: { source: 'p17', target: 'p24', label: 'combined_channel_parallel_1' } },
+{ data: { source: 'p17', target: 'p25', label: 'combined_channel_parallel_2' } },
+{ data: { source: 'p18', target: 'p21'} },
+{ data: { source: 'p19', target: 'p21', label: 'list.txt' } },
+{ data: { source: 'p20', target: 'p21', label: 'Quandenser_output_resume' } },
+{ data: { source: 'p21', target: 'p90', label: 'c1' } },
+{ data: { source: 'p21', target: 'p89', label: 'quandenser_out_normal' } },
+{ data: { source: 'p22', target: 'p24', label: 'list.txt' } },
+{ data: { source: 'p23', target: 'p24', label: 'Quandenser_output_resume' } },
+{ data: { source: 'p24', target: 'p26', label: 'quandenser_out_1_to_2_dinosaur' } },
+{ data: { source: 'p25', target: 'p29'} },
+{ data: { source: 'p26', target: 'p29'} },
+{ data: { source: 'p27', target: 'p29', label: 'list.txt' } },
+{ data: { source: 'p28', target: 'p29', label: 'Quandenser_output_resume' } },
+{ data: { source: 'p29', target: 'p71', label: 'quandenser_out_2_to_3' } },
+{ data: { source: 'p29', target: 'p77', label: 'quandenser_out_2_to_4' } },
+{ data: { source: 'p29', target: 'p32', label: 'alignRetention_queue' } },
+{ data: { source: 'p29', target: 'p31', label: 'allFeatures_queue' } },
+{ data: { source: 'p29', target: 'p30', label: 'maracluster_publish' } },
+{ data: { source: 'p32', target: 'p33'} },
+{ data: { source: 'p33', target: 'p34'} },
+{ data: { source: 'p34', target: 'p35'} },
+{ data: { source: 'p35', target: 'p36'} },
+{ data: { source: 'p36', target: 'p37'} },
+{ data: { source: 'p37', target: 'p38'} },
+{ data: { source: 'p37', target: 'p39'} },
+{ data: { source: 'p39', target: 'p40'} },
+{ data: { source: 'p40', target: 'p59', label: 'wait_queue_1' } },
+{ data: { source: 'p40', target: 'p41', label: 'wait_queue_1_copy' } },
+{ data: { source: 'p29', target: 'p42', label: 'alignRetention_queue' } },
+{ data: { source: 'p42', target: 'p43'} },
+{ data: { source: 'p43', target: 'p44'} },
+{ data: { source: 'p44', target: 'p45'} },
+{ data: { source: 'p45', target: 'p46'} },
+{ data: { source: 'p46', target: 'p47'} },
+{ data: { source: 'p47', target: 'p48'} },
+{ data: { source: 'p48', target: 'p74', label: 'processing_tree' } },
+{ data: { source: 'p48', target: 'p49', label: 'processing_tree_copy' } },
+{ data: { source: 'p29', target: 'p50', label: 'alignRetention_queue' } },
+{ data: { source: 'p50', target: 'p51'} },
+{ data: { source: 'p51', target: 'p52'} },
+{ data: { source: 'p52', target: 'p53'} },
+{ data: { source: 'p53', target: 'p54'} },
+{ data: { source: 'p54', target: 'p55'} },
+{ data: { source: 'p54', target: 'p56'} },
+{ data: { source: 'p56', target: 'p57'} },
+{ data: { source: 'p57', target: 'p59', label: 'wait_queue_2' } },
+{ data: { source: 'p57', target: 'p58', label: 'wait_queue_2_copy' } },
+{ data: { source: 'p29', target: 'p59', label: 'alignRetention_queue' } },
+{ data: { source: 'p59', target: 'p60', label: 'sync_ch' } },
+{ data: { source: 'p60', target: 'p62'} },
+{ data: { source: 'p74', target: 'p61', label: 'feedback_ch' } },
+{ data: { source: 'p61', target: 'p62'} },
+{ data: { source: 'p62', target: 'p63'} },
+{ data: { source: 'p63', target: 'p64'} },
+{ data: { source: 'p64', target: 'p65'} },
+{ data: { source: 'p65', target: 'p66'} },
+{ data: { source: 'p66', target: 'p67'} },
+{ data: { source: 'p67', target: 'p68'} },
+{ data: { source: 'p68', target: 'p74', label: 'input_ch' } },
+{ data: { source: 'p69', target: 'p70'} },
+{ data: { source: 'p71', target: 'p74'} },
+{ data: { source: 'p72', target: 'p74', label: 'list.txt' } },
+{ data: { source: 'p73', target: 'p74'} },
+{ data: { source: 'p74', target: 'p78', label: 'percolator_1_completed' } },
+{ data: { source: 'p75', target: 'p76'} },
+{ data: { source: 'p77', target: 'p81'} },
+{ data: { source: 'p78', target: 'p81'} },
+{ data: { source: 'p79', target: 'p81', label: 'list.txt' } },
+{ data: { source: 'p80', target: 'p81'} },
+{ data: { source: 'p81', target: 'p85', label: 'quandenser_out_4_to_5' } },
+{ data: { source: 'p81', target: 'p82', label: 'maracluster_extra_features_publish' } },
+{ data: { source: 'p83', target: 'p84'} },
+{ data: { source: 'p85', target: 'p88'} },
+{ data: { source: 'p86', target: 'p88', label: 'list.txt' } },
+{ data: { source: 'p87', target: 'p88'} },
+{ data: { source: 'p88', target: 'p90', label: 'c2' } },
+{ data: { source: 'p88', target: 'p89', label: 'quandenser_out_parallel' } },
+{ data: { source: 'p89', target: 'p95', label: 'quandenser_out' } },
+{ data: { source: 'p90', target: 'p91', label: 'spectra' } },
+{ data: { source: 'p91', target: 'p93'} },
+{ data: { source: 'p92', target: 'p93', label: 'seqdb.fa' } },
+{ data: { source: 'p93', target: 'p96', label: 'id_files' } },
+{ data: { source: 'p93', target: 'p94', label: 'index_files' } },
+{ data: { source: 'p95', target: 'p98'} },
+{ data: { source: 'p96', target: 'p98'} },
+{ data: { source: 'p97', target: 'p98', label: 'list.txt' } },
+{ data: { source: 'p98', target: 'p99', label: 'triqler_output' } },
+{ data: { source: 'p99', target: 'p100'} },
+],
+},
+
+                });
+
+            });
+        </script>
+    </head>
+
+    <body>
+        <h1>Nextflow Cytoscape.js with Dagre</h1>
+        <div id="cy"></div>
+    </body>
+
+</html>
