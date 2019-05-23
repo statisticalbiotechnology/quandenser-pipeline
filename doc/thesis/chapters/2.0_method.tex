@@ -6,18 +6,19 @@ A Singularity image needs a so called "receipt", which is a file that tells Sing
 To complete the workflow from raw data to protein quantification results, several other software had to be included in the container, which are listed below.
 
 \subsection{Quandenser} \label{ssec:quandenser-method}
- The core component in Quandenser-pipeline is Quandenser, which is a newly created software made in SciLifeLab by Lukas Käll and Matthew The, which condenses quantification data from label-free MS experiments by clustering both data from MS1 and MS2 without assigning identities to the values, thus decouples identification from quantification \cite{quandenser}. Due to Quandenser-pipeline can be run on clusters where singularity is installed (which is the case for UPPMAX), it opens up the possibility for parallelization which can in most cases significantly speed up the processing time.
+ The core component in Quandenser-pipeline is Quandenser, which is a newly created software made in the lab of Statistical Biology at SciLifeLab, which condenses quantification data from label-free MS experiments by clustering both data from MS1 and MS2 without assigning identities to the values, thus decouples identification from quantification \cite{quandenser}. Due to Quandenser-pipeline can be run on clusters where singularity is installed (which is the case for UPPMAX), it opens up the possibility for parallelization which can in most cases significantly speed up the processing time.
 
 A modified version of Quandenser was added to the pipeline, which can utilize parallel computation in conjunction with Nextflow's ability to run multiple processes in parallel. The improvements were integrated into the internal pipeline of Quandenser, which is shown in figure \ref{fig:quandenser-internal-pipeline}.
 
+% ADD ILLUSTRATIONS (RED RINGS WHERE THEY ARE relevant)
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{pictures/quandenser-internal.png}
-  \caption{The internal pipeline of Quandenser (image from the Quandenser paper \cite{quandenser})}
+  \caption{The internal pipeline of Quandenser (image from The M. and Käll L. \cite{quandenser})}
   \label{fig:quandenser-internal-pipeline}
 \end{figure}
 
-Two parts were able to be parallelized within Quandenser's internal program. The parallelization works by adding stop points in the code to allow Nextflow to run part of the pipeline in parallel, spawning a new process of Quandenser each time. The first parallelizable part was "MS1 feature detection" with the internal program \textit{Dinosaur}, shown in figure \ref{fig:quandenser-internal-pipeline}. This is the first step in Quandenser's internal pipeline and was able to be "fully" parallelized, meaning that every process can be processed in parallel. The second part which was able to be parallelized was "MS1 feature grouping", shown in figure \ref{fig:quandenser-internal-pipeline}. This part of Quandenser could only be partially parallelized, due to the input files are calculated in a minimum spanning tree, a way to minimize the amount of connections and weights in a tree \cite{min-span-tree}. The reason behind why this is the case is that connecting branches cannot be calculated at the same time, while branches that are not directly connected can be processed in parallel. To cluster and process all files, the files must be calculated in a particular order according to the tree, while the Nextflow pipeline utilizes the minimum spanning tree output from Quandenser to create a processing tree that maximizes the amount of files that can be processed in parallel, given the order of the processes of Quandenser.
+Two parts were able to be parallelized within Quandenser's internal pipeline. The parallelization works by adding stop points in the code to allow Nextflow to run part of the pipeline in parallel, spawning a new process of Quandenser each time. The first parallelizable part was "MS1 feature detection" with the internal program \textit{Dinosaur}, shown in figure \ref{fig:quandenser-internal-pipeline}. This is the first step in Quandenser's internal pipeline and was able to be "fully" parallelized, meaning that every process can be processed in parallel. The second part which was able to be parallelized was "MS1 feature grouping", shown in figure \ref{fig:quandenser-internal-pipeline}. This part of Quandenser could only be partially parallelized, due to the input files are calculated in a minimum spanning tree, a way to minimize the amount of connections and weights in a tree \cite{min-span-tree}. The reason behind why this is the case is that connecting branches cannot be calculated at the same time, while branches that are not directly connected can be processed in parallel. To cluster and process all files, the files must be calculated in a particular order according to the tree, while the Nextflow pipeline utilizes the minimum spanning tree output from Quandenser to create a processing tree that maximizes the amount of files that can be processed in parallel, given the order of the processes of Quandenser.
 
 \subsubsection{MSconvert}
 There exist a multitude of different types of MS data format, which can cause compatibility issues with existing software. The MS format depends on which instrument was used to generate the data, but most software cannot directly use any vendor-specific formatted files, meaning they have to be converted to a general MS data format first, most commonly files of type mzML \cite{mzml-format}. To combat the problem with incompatible data, a software named \textit{MSconvert} was added to the workflow, which can convert MS data from a multitude of vendor formats to the general MS data format needed to run Quandenser \cite{proteowizard}. Due to conversion from vendor formats with Msconvert only works on Windows operative systems, another solution was needed, since the Singularity image was based on Ubuntu, a Linux operative system. The solution was to use another type of software called \textit{Wine}, which adds an compatibility layer in Portable Operating System Interface (POSIX) systems, to run Windows software \cite{wine}. The Singularity image was based on another image created by the proteowizard developers, which incorporates all the necessary components to run Wine and MSconvert \cite{docker-image} \cite{docker-howto}.
@@ -28,7 +29,9 @@ Crux is an open source mass spectrometry analysis toolkit available for Linux, W
 \subsubsection{Triqler}
 Triqler is an software which uses using graphical models and bayesian statistics to find differentially expressed proteins between samples. The main benefit with using Triqler in combination with Quandenser is that it utilizes both MS2 and MS1 spectra from the files, which improves the overall quantification of proteins \cite{triqler}.
 
-% Add more here
+% Add more here, mer om varför statistiken är viktig!
+
+% Läs mer i triqler pappret, och ge bättre förklaring
 
 \subsection{Nextflow}
 Nextflow has integrated compatibility with running software inside Singularity images, meaning Nextflow can call on the programs contained within the Singularity image. The pipeline of Quandenser-pipeline is shown in figure \ref{fig:workflow}. As explained in section \ref{ssec:quandenser-method}, Nextflow's capability of running multiple processes in parallel was use with a modified version of Quandenser to allow for paralellization. When running the parallelized version of Quandenser in the pipeline, the processes are divided into five parts, two of which are parallelizable. The aim was to speed up the calculation time when running large cohorts, since the time scaling of an increased number of files was not a linear relationship to the processing time.
@@ -55,13 +58,14 @@ To integrate the Singularity image and the Nextflow pipeline, a GUI was created 
 
 To launch the GUI, a shell script handling installing Singularity, downloading the image from Singularity Hub and starting the GUI embedded inside the image. Figure \ref{fig:GUI_workflow} shows the GUI workflow. The GUI is used to modify the configurations for the pipeline, which affects how the pipeline is executed. When the user starts the pipeline, the GUI communicates to the shell script with a "named pipe", i.e a file which both the GUI and the shell script has access to, which tells the shell script to execute the Nextflow pipeline. The pipeline then calls on the Singularity image and executes the embedded software in the image at a particular order.
 
+% Ta bort
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{pictures/GUI_workflow.png}
   \caption{GUI workflow of Quandenser-pipeline}
   \label{fig:GUI_workflow}
 \end{figure}
 
-\subsection{Pipelines}
+\subsection{Benchmark on bacterial proteomes}  %% MERGE PUNKT UNDER
 Two other pipelines using non-container software were tested on the bacterial proteome data. The following table illustrates which pipelines were used:
 
 \newcommand{\textone}{\small The pipeline created for the thesis, using Quandenser as it's cornerstone. Due to Singularity not supporting non-POSIX systems, the Windows OS cannot run the pipeline natively without using a compatibility layer. An virtual machine wrapper was developed to allow users to run the pipeline in Windows}

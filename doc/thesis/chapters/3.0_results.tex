@@ -4,11 +4,13 @@
 
 The programs were run on a computer with an Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of memory. The following histogram show the processing time of Quandenser pipeline, OpenMS and MaxQuant for the two data sets.
 
-\begin{figure}[H]
+\begin{figure}[H]  %% CHANGE TO STYLE WHITE (NO BACKGROUND) + ta bort titel i plot + set_context('talk') (fonter)
   \includegraphics[width=\linewidth]{results/times.png}
-  \caption{Pipeline processing time on local computer (wall time). Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
+  \caption{\textbf{Processing time on local computer (wall time)}. Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
   \label{fig:processing-local}
 \end{figure}
+% Första meningen är bold (titel för bilden)
+% Skriv om experimentet, vilka det är (left right) samt antal filer
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/timeline-local.png}
@@ -50,6 +52,7 @@ slr1739 & Photosystem II protein (PsbW) \\ \bottomrule
 \end{table}
 \end{center}
 
+% Ta abundances, lägg i tidsaxis
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/combined.png}
   \caption{Heatmap of fold changes between groups of the differentially expressed proteins. To interpret the plots, the comparison is \textbf{y}vs\textbf{x} where y is the group at the y-axis and x the group at the x-axis. If you were to look at the first row, second column, it would be the comparison of the log2 fold change between AvsB. A positive value would mean that group A has a higher expression that group B.}
