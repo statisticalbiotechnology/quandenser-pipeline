@@ -4,23 +4,21 @@
 
 The programs were run on a computer with an Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of memory. The following histogram show the processing time of Quandenser pipeline, OpenMS and MaxQuant for the two data sets.
 
-\begin{figure}[H]  %% CHANGE TO STYLE WHITE (NO BACKGROUND) + ta bort titel i plot + set_context('talk') (fonter)
+\begin{figure}[H]
   \includegraphics[width=\linewidth]{results/times.png}
-  \caption{\textbf{Processing time on local computer (wall time)}. Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
+  \caption{\textbf{Processing time on local computer (wall time)}. QP is the newly created pipeline and the y-axis of the plots shows the wall time (i.e. the processing time) of the different pipelines. The plot at the left illustrates the processing time of the cyanobacterial data set (10 files, about 0.8 Gb each), while the plot at the right is the processing time of the ralstonia data set (20 files, about 1.3 Gb each). Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
   \label{fig:processing-local}
 \end{figure}
-% Första meningen är bold (titel för bilden)
-% Skriv om experimentet, vilka det är (left right) samt antal filer
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/timeline-local.png}
-  \caption{Timeline of parallel processing of the cyanobacteria data set on the local computer. Note that \textit{quandenser\_parallel\_1} is "fully" parallelizable while \textit{quandenser\_parallel\_3} is partially parallelized, following a minimum spanning tree explained in section \ref{ssec:quandenser-method}. The rest of the processes are non-parallelizable. A maximum of two forks was set (aka two processes in parallel)}
+  \caption{\textbf{Timeline of parallel processing of the cyanobacteria data set on the local computer.} Note that \textit{quandenser\_parallel\_1} is "fully" parallelizable while \textit{quandenser\_parallel\_3} is partially parallelized, following a minimum spanning tree explained in section \ref{ssec:quandenser-method}. The rest of the processes are non-parallelizable. A maximum of two forks was set (aka two processes in parallel)}
   \label{fig:timeline-local}
 \end{figure}
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/timeline-cluster.png}
-  \caption{Timeline of parallel processing of the cyanobacteria data set on UPPMAX. The caption of figure \ref{fig:timeline-local} explains the processing names. The grey area of each bar represents SLURM queue time for each process. Unlimited amounts of processes was set, meaning no limit was set to the amount of parallelized processes possible}
+  \caption{\textit{Timeline of parallel processing of the cyanobacteria data set on UPPMAX.} The caption of figure \ref{fig:timeline-local} explains the processing names. The grey area of each bar represents SLURM queue time for each process. Unlimited amounts of processes was set, meaning no limit was set to the amount of parallelized processes possible}
   \label{fig:timeline-cluster}
 \end{figure}
 
@@ -39,7 +37,7 @@ Protein & Function \\ \midrule
 ssr3383 & Phycobilisome LC linker polypeptide \\ [0.5ex]
 slr0083 & ATP-dependent RNA helicase \\ [0.5ex]
 ssl2501 & Hypothetical protein \\ [0.5ex]
-slr0473 & Phytochrome \\ [0.5ex]
+slr0473 & Phytochrome Cph1 \\ [0.5ex]
 sll1184 & Heme oxygenase \\ [0.5ex]
 sll1214 & Magnesium-protoporphyrin IX monomethyl ester cyclase \\ [0.5ex]
 sll1452 & Nitrate transport protein \\ [0.5ex]
@@ -55,6 +53,6 @@ slr1739 & Photosystem II protein (PsbW) \\ \bottomrule
 % Ta abundances, lägg i tidsaxis
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/combined_edited.png}
-  \caption{\textbf{Comparing protein expression of differentially expressed proteins.} The expected value of protein expression (output from triqler) from \ref{table:cyano-proteins} are plotted, comparing expression between the five groups (before dawn, after dawn, noon, before sundown and after sundown). The proteins are divided into two plots; the top plot is proteins which has a lower expression in the noon compared to before dawn, while the plot at the bottom is proteins which has a higher expression during noon when comparing to before dawn}
-  \label{fig:heatmap}
+  \caption{\textbf{Comparing protein expression of differentially expressed proteins.} The expected value of protein expression (output from triqler) from table \ref{table:cyano-proteins} are plotted with the x-axis the time of day. The protein expression is compared the five experiment groups (before dawn, after dawn, noon, before sundown and after sundown). The proteins are divided into two plots; the top plot is proteins with a lower expression in the noon compared to before dawn, while the plot at the bottom is proteins which has a higher expression during noon when comparing to before dawn}
+  \label{fig:epression}
 \end{figure}
