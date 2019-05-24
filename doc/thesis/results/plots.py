@@ -13,7 +13,7 @@ times_cyano = [1*60 + 12,
                1*60 + 19,
                1*60 + 14,
                2*60 + 41]
-times_cyano_core = [369,  # Rerun this
+times_cyano_core = [291,  # Rerun this
                     258,  # Should be correct
                     195,  # 1:14, 278% cpu
                     712.5]
@@ -24,7 +24,7 @@ times_ralstonia = [3*60 + 23,
                    8*60 + 11]
 times_ralstonia_core = [833,  # Rerun this with time
                         599,  # Should be correct
-                        602,
+                        602,  # 4:18, 240% cpu
                         2371]  # 8:15, 483% cpu
 
 # Titles
