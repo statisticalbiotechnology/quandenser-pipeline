@@ -24,7 +24,7 @@ times_ralstonia = [3*60 + 23,
                    8*60 + 11]
 times_ralstonia_core = [833,  # Rerun this with time
                         599,  # Should be correct
-                        1,
+                        602,
                         2371]  # 8:15, 483% cpu
 
 # Titles
