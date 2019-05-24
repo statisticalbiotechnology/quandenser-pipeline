@@ -10,22 +10,22 @@ sns.set_context("talk")
 
 # Cyano
 times_cyano = [1*60 + 12,
-               1*60 + 19,  # CALC OR FIND
+               1*60 + 19,
                1*60 + 16,
                2*60 + 41]
-times_cyano_core = [90,
-                    251,
-                    195,
+times_cyano_core = [369,  # Rerun this
+                    258,  # Should be correct
+                    195,  # 1:13, 278% cpu
                     712.5]
 # Ralstonia
 times_ralstonia = [3*60 + 23,
-                   3*60 + 21,  # CALC OR FIND
+                   3*60 + 21,
                    3*60 + 52,
                    8*60 + 11]
-times_ralstonia_core = [246,
-                        204,
+times_ralstonia_core = [833,  # Rerun this with time
+                        599,  # Should be correct
                         1,
-                        1]
+                        2371]  # 8:15, 483% cpu
 
 # Titles
 titles =  ['Cyanobacteria', 'Ralstonia']
@@ -35,7 +35,7 @@ data = {'Time': {'Data': [times_cyano, times_ralstonia],
                  'file': 'times.png',
                  'titles': ['cyano', 'ralstonia']},
         'Time core hours':  {'Data': [times_cyano_core, times_ralstonia_core],
-                              'ylabel': 'Minutes',
+                              'ylabel': 'Core minutes',
                               'file': 'times_core.png',
                               'titles': ['cyano', 'ralstonia']}}
 
