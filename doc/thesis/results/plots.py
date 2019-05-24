@@ -11,16 +11,16 @@ sns.set_context("talk")
 # Cyano
 times_cyano = [1*60 + 12,
                1*60 + 19,
-               1*60 + 16,
+               1*60 + 14,
                2*60 + 41]
 times_cyano_core = [369,  # Rerun this
                     258,  # Should be correct
-                    195,  # 1:13, 278% cpu
+                    195,  # 1:14, 278% cpu
                     712.5]
 # Ralstonia
 times_ralstonia = [3*60 + 23,
                    3*60 + 21,
-                   3*60 + 52,
+                   4*60 + 18,
                    8*60 + 11]
 times_ralstonia_core = [833,  # Rerun this with time
                         599,  # Should be correct
