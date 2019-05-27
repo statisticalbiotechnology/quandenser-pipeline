@@ -6,13 +6,13 @@ The programs were run on a computer with an Intel Core i7-4790k CPU @ 4.0 GHz wi
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/times.png}
-  \caption{\textbf{Processing time on local computer (wall time)}. QP is the newly created pipeline and the y-axis of the plots shows the wall time (i.e. the processing time) of the different pipelines. Lower is better (less time to finish the pipeline). The plot at the left illustrates the processing time of the cyanobacterial data set (10 files, about 0.8 Gb each), while the plot at the right is the processing time of the ralstonia data set (20 files, about 1.3 Gb each). Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
+  \caption{\textbf{Processing time on local computer (wall time)}. QP is the newly created pipeline and the y-axis of the plots shows the wall time (i.e. the processing time) of the different pipelines. Lower means less time to complete the process. The plot at the left illustrates the processing time of the cyanobacterial data set (10 files, about 0.8 Gb each), while the plot at the right is the processing time of the ralstonia data set (20 files, about 1.3 Gb each). Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
   \label{fig:processing-local}
 \end{figure}
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{results/times_core.png}
-  \caption{\textbf{Core minutes to finish process on local computer}. The y-axis of the plots shows core minutes used (i.e. how much the computer resources used) of the different pipelines. Lower is better (less resources used). The plot at the left illustrates the core minutes to process the cyanobacterial data set (10 files, about 0.8 Gb each), while the plot at the right is the core minutes used to process the ralstonia data set (20 files, about 1.3 Gb each). Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
+  \caption{\textbf{Core minutes to finish process on local computer}. The y-axis of the plots shows core minutes used (i.e. how much the computer resources used) of the different pipelines. Lower means less computational resources used to finish the process. The plot at the left illustrates the core minutes used to process the cyanobacterial data set (10 files, about 0.8 Gb each), while the plot at the right is the core minutes used to process the ralstonia data set (20 files, about 1.3 Gb each). Note that \textit{parallel} Quandenser used a maximum of two forks (aka two processes in parallel), which was the maximum the computer could handle}
   \label{fig:processing-local-cores}
 \end{figure}
 
@@ -30,10 +30,9 @@ The programs were run on a computer with an Intel Core i7-4790k CPU @ 4.0 GHz wi
 \end{figure}
 
 \subsection{Biological data}
+The cyanobacteria experiment groups were divided in five groups; before sunrise (A), after sunrise (B), noon (C), before sunset (D) and after sunset (E) with two replicates each. From the cyanobacterial data set, each combination of experiment groups were compared to one another, i.e. all groups were compared to all other groups. For the ralstonia dataset, the same method applied where the experimental groups of 0.05, 0.10, 0.15, 0.20 and 0.25 growth-rate were compared to one another.
 
-The cyanobacteria experiment groups were divided in five groups; before sunrise (A), after sunrise (B), noon (C), before sunset (D) and after sunset (E) with two replicates each. From the cyanobacterial data set, each combination of experiment groups were compared to one another, i.e. all groups were compared to all other groups. For the ralstonia dataset, the same method applied.
-
-For the cyanobacteria dataset, a total of 24 proteins between groups were found to be differentially expressed, which consisted of 10 unique proteins (shown in table \ref{table:cyano-proteins}). For the ralstonia dataset, a total of 760 proteins between groups were found to be differentially expressed, which consisted of 267 unique proteins. Due to the large amount of unique proteins found in the ralstonia data set, the ralstonia proteins were not analyzed.
+For the cyanobacteria dataset, a total of 24 proteins between the experimental groups were found to be differentially expressed, which consisted of 10 unique proteins (shown in table \ref{table:cyano-proteins}). For the ralstonia dataset, a total of 760 proteins between the experimental groups were found to be differentially expressed, which consisted of 267 unique proteins. Due to the large amount of unique proteins found in the ralstonia data set, the ralstonia proteins were not analyzed.
 
 \begin{center}
 \begin{table}[H]
@@ -60,7 +59,7 @@ slr0083 & ATP-dependent RNA helicase  & 6.305e-16 & 0.0164 \\ [0.5ex] \bottomrul
 \begin{figure}[H]
   \begin{center}
   \includegraphics[width=\linewidth]{results/combined_edited.png}
-  \caption{\textbf{Comparing protein expression of differentially expressed proteins.} The expected value of relative protein expression of the same protein, comparing the experimental groups from table \ref{table:cyano-proteins}. The experimental groups were cyanobacteria grown in conditions simulating; before sunrise, after sunrise, noon, before sundown and after sundown. The proteins in the plot were found to be differentially expressed and the "bands" of the lines are the 95\% confidence interval around the mean. The proteins are divided into two plots; the top plot is proteins with a lower expression in the noon compared to before sunrise, while the plot at the bottom is proteins which has a higher expression during noon when comparing to before sunrise.}
+  \caption{\textbf{Comparing protein expression of differentially expressed proteins.} The expected value of relative protein expression of the same protein, comparing the experimental groups from table \ref{table:cyano-proteins}. The experimental groups were cyanobacteria grown in conditions simulating; before sunrise, after sunrise, noon, before sundown and after sundown. The proteins in the plot were found to be differentially expressed and the "bands" of the lines are 95\% confidence interval around the mean. The proteins are divided into two plots; the top plot is proteins with a lower expression in the noon compared to before sunrise, while the plot at the bottom is proteins which has a higher expression during noon when comparing to before sunrise.}
   \label{fig:expression}
   \end{center}
 \end{figure}
