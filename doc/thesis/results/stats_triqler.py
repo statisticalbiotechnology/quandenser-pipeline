@@ -18,16 +18,13 @@ sns.set_style("whitegrid")
 sns.set_context("talk")
 
 def main(directory, fasta):
-    proteins = unique_and_diff(directory)
-    try:
-        protein_search(proteins, fasta)
-    except Exception as e:
-        print(e)
-    #generate_heatmap(directory, proteins)
+    proteins, data = unique_and_diff(directory)
     generate_plot(directory, proteins)
+    protein_search(proteins, fasta, data)
 
 def unique_and_diff(directory):
     files = glob.glob(directory)
+    data = {}
     proteins = []
     threshold = 0.05
     diff = 0
@@ -40,22 +37,32 @@ def unique_and_diff(directory):
                 continue
             line = line.replace('\n','').split('\t')
             qval = float(line[0])
+            pep = float(line[4])
             if qval < threshold:
                 protein = line[header.index('protein')]
                 protein = protein.split('|')[-1]
                 proteins.append(protein)
                 diff += 1
+                if protein not in data.keys():
+                    data[protein] = {}
+                    data[protein] = {'qval': qval, 'pep': pep}
+                else:
+                    if data[protein]['qval'] > qval:
+                        data[protein]['qval'] = qval
     print("DIFF:", diff)
     print("UNIQUE:", len(list(set(proteins))))
-    return list(set(proteins))
+    return list(set(proteins)), data
 
-def protein_search(diff_proteins, fasta):
+def protein_search(diff_proteins, fasta, data):
     with open(fasta, 'r') as f:
         all_proteins = f.read().split('>')
         all_proteins = [i.split('\n')[0] for i in all_proteins]
         accessions = [i.split(' ')[0] for i in all_proteins]
         all_info = [' '.join(i.split(' ')[1:]) for i in all_proteins]
     with open('proteins.txt', 'w') as f:
+        text = f"Protein & Function & PEP & q-value \\\\  \\midrule\n"
+        f.write(text)
+    with open('proteins.txt', 'a') as f:
         for i, protein in enumerate(accessions):
             protein = protein.split('|')[-1]
             if protein == '':
@@ -63,8 +70,8 @@ def protein_search(diff_proteins, fasta):
             if protein in diff_proteins:
                 info = all_info[i].split('OS=')[0]
                 info = info.split('(')[0]
-                text = f"{protein} & {info} \\\\"
-                f.write(text + '\n')
+                text = f"{protein} & {info} & {data[protein]['pep']} & {data[protein]['qval']} \\\\ [0.5ex]\n"
+                f.write(text)
 
 def generate_plot(directory, proteins):
     files = glob.glob(directory)
@@ -105,7 +112,7 @@ def generate_plot(directory, proteins):
                     data[protein] = {}
                     data[protein] = sliced
         create_plot(data, groups)
-        return
+        return data
 
 def create_plot(data, groups):
     fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(10,10))
@@ -137,7 +144,7 @@ def average(l):
     return avg
 
 if __name__ == "__main__":
-    directory = "data/cyano_QP/*"
+    directory = "data/FA_QP/*"
     if 'FA' in directory:
         fasta = "/media/storage/timothy/MSfiles/fasta/ralstonia/UP000008210_381666_UNIPROT_20190107_CRAP.fasta"
     if 'cyano' in directory:
