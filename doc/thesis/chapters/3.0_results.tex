@@ -37,20 +37,20 @@ For the cyanobacteria dataset, a total of 24 proteins between groups were found 
 
 \begin{center}
 \begin{table}[H]
-\caption{\textbf{Differentially expressed proteins from the cyanobacteria data set}. Data about the function of the proteins were gathered from NCBI gene search \cite{ncbi-search}}
-\begin{tabular}{ l l }
+\caption{\textbf{Differentially expressed proteins from the cyanobacteria data set}. Data about the function of the proteins were gathered from NCBI gene search \cite{ncbi-search}. PEP is the Posterior Error Probability of the protein, which is quite simply the probability that the observation is incorrect (in this case, if the protein found is what was in the mass analyzer) \cite{q-value}. The q-value is the minimum q-value when comparing all experimental groups}
+\begin{tabular}{ l l l l }
 \toprule
-Protein & Function \\ \midrule
-ssr3383 & Phycobilisome LC linker polypeptide \\ [0.5ex]
-slr0083 & ATP-dependent RNA helicase \\ [0.5ex]
-ssl2501 & Hypothetical protein \\ [0.5ex]
-slr0473 & Phytochrome Cph1 \\ [0.5ex]
-sll1184 & Heme oxygenase \\ [0.5ex]
-sll1214 & Magnesium-protoporphyrin IX monomethyl ester cyclase \\ [0.5ex]
-sll1452 & Nitrate transport protein \\ [0.5ex]
-slr2032 & Hypothetical protein \\ [0.5ex]
-ssr1480 & RNA-binding protein \\ [0.5ex]
-slr1739 & Photosystem II protein (PsbW) \\ \bottomrule
+Protein & Function & PEP & q-value \\  \midrule
+sll1214 & Magnesium-protoporphyrin IX monomethyl ester cyclase  & 6.305e-16 & 0.007298 \\ [0.5ex]
+sll1184 & Heme oxygenase & 6.305e-16 & 0.00261 \\ [0.5ex]
+slr2032 & Hypothetical protein YCF23 & 4.568e-13 & 0.03241 \\ [0.5ex]
+sll1452 & Nitrate transport protein & 6.305e-16 & 0.01067 \\ [0.5ex]
+ssl2501 & Hypothetical protein & 6.305e-16 & 0.002183 \\ [0.5ex]
+ssr1480 & RNA-binding protein  & 6.305e-16 & 0.04116 \\ [0.5ex]
+slr1739 & Photosystem II protein (PsbW) & 6.305e-16 & 0.04529 \\ [0.5ex]
+ssr3383 & Phycobilisome LC linker polypeptide & 6.305e-16 & 0.006643 \\ [0.5ex]
+slr0473 & Phytochrome Cph1 & 6.305e-16 & 0.02829 \\ [0.5ex]
+slr0083 & ATP-dependent RNA helicase  & 6.305e-16 & 0.0164 \\ [0.5ex] \bottomrule
 \end{tabular}
 \centering
 \label{table:cyano-proteins}
