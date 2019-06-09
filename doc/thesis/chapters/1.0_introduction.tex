@@ -12,6 +12,20 @@ The aim of the project was to utilize containerization to embed a software named
 
 Two bacterial mass spectrometry data sets generated at Paul Hudson's lab in SciLifeLab were used to test the performance of the pipeline and compared to other established methods of processing mass spectrometry data processing the same data.
 
+\subsection{Mass spectrometry data}
+
+A common mass spectrometry experimental setup is illustrated in figure \ref{fig:mass-spec}. This setup is called a "LC-MS/MS" and is explained below.
+
+A protein sample is inserted into the mass spectrometer and goes through a column, annotated as Liquid Chromatography (LC) in figure \ref{fig:mass-spec}. The proteins in the sample are then separated by the retention time, i.e. the time it takes for the proteins to leave the column, after which the proteins are ionized in an ElectronSpray Ionization module (ESI). After the ESI, the proteins enter the first mass spectrometry module (labeled as MS1 in the figure), and a MS1 spectrum obtained. The x-axis of the spectrum is the ratio between mass to charge of the protein and the intensity on the y-axis. The mass spectrometer then selects a peak from the MS1 spectrum which is passed through a Collision Induced Dissociation (CID) module, where the proteins are fragmented. The fragments from the CID goes through the next mass spectrometry module (labeled as MS2 in the figure), and a MS2 spectrum is obtained, where the x-axis and the y-axis are the same as the MS1 spectrum \cite{quantitative_analysis}.
+
+In summary, the mass spectrometer takes a protein sample as input and outputs several MS1 and MS2 spectra for each sample, which can then be analyzed with mass spectrometry software to identify and quantify proteins in the input sample.
+
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{pictures/mass_spec.png}
+  \caption{\textbf{Output of a proteomic mass spectrometry analysis}. The green circle represents one protein in the sample}
+  \label{fig:mass-spec}
+\end{figure}
+
 \subsection{Related work}
 A multitude of software for analyzing bioinformatic data using containers already exist. The community-driven open source project \textit{Biocontainers} utilizes container images to create pipelines for bioinformatic applications \cite{biocontainers}. Most pipelines utilizing containers are using the software \textit{Docker} to create the containers \cite{docker}. Why Singularity containers was used in the project was due to the main benefit with using Singularity images; the images can be executed without systems administrator privileges, meaning any user can freely execute the image, such as on a HPC cluster. Non-container pipelines are a common way to analyze mass spectrometry data, such as MaxQuant and OpenMS \cite{maxquant} \cite{openms}, which are the two software compared to Quandenser-pipeline. There are Docker containers with all the components required to run OpenMS, but as explained previously, Docker containers are not suited for a shared HPC environment due to security issues \cite{openms-hpc}.
 
