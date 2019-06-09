@@ -25,7 +25,7 @@ There exist a multitude of different types of MS data format, which can cause co
 \subsubsection{Crux}
 Crux is an open source mass spectrometry analysis toolkit available for Linux, Windows and MacOS \cite{crux}. The purpose of integrating Crux into the image was to use three specific tools; tide-index, tide-search and percolator. Tide-index is a pre-search tool that adds indexes and decoys to the protein data base, which is used by the search tool tide-search, that parses fragmentation spectra and creates peptide-to-spectrum matches (PSMs) \cite{tide-search}. Percolator is a post-search tool, that separates peptide targets from decoy PSMs \cite{percolator}. In combination, the tools were used to post-process the output from Quandenser to prepare it for the software Triqler, another tool included in the image which is explained in the next section.
 
-\subsubsection{Triqler}
+\subsubsection{Triqler}  \label{ssec:triqler}
 Triqler is a software which uses graphical models and bayesian statistics to find differentially expressed proteins between samples \cite{triqler}. Triqler can utilize MS2 and MS1 spectra from the Quandenser output with minor reformatting, meaning Triqler was an excellent tool to include in the image. However, the main benefit of using Triqler is the way it handles error propagation of quantification.
 
 False Discovery Rate (FDR) is a statistical measurement of how many false positives there will be among positive results \cite{fdr}.  Triqler explicitly propagates uncertainty in the quantification process, meaning the FDR can be controlled and can be used to filter the quantifications at the end of the quantification process, which typical Label-free quantification (LFQ) pipeline fails to achieve \cite{triqler}. Futhermore, Triqler imputes missing values in a bayesian way by assigning a probability distribution over possible values of the missing values, with the uncertainty propagation explained above included. The missing value is then assigned by integrating the probability distributions over the possible imputed values, meaning the missing value is estimated more accurately compared to filling in the missing value with another, such as replacing it with the mean value \cite{triqler}.
@@ -79,6 +79,8 @@ MaxQuant 1.6.3.3 & \textthree \\ \hline
 \end{tabular}
 \end{center}
 \end{table}
+
+To ensure that the comparison of the pipelines was fairly executed, the OpenMS pipeline was optimized with the help of the creator of the pipeline while the documentation and online support forums for MaxQuant were used to optimize the processing of the data sets. A comparison between the output from Quandenser and MaxQuant has already been performed, where it was shown that Quandenser and Triqler outperformed MaxQuant by finding more differentially expressed proteins in clinical data sets \cite{quandenser}. The thesis will not include a comparison of the protein outputs from the pipelines, but focus on the performances of the pipelines in processing time.
 
 \subsubsection{Finding differentially expressed proteins}
 Significantly differentially expressed proteins were also analyzed from the cyanobacteria data set with the output from Quandenser-pipeline. To define a differentially expressed protein, a relevant statistical parameter was chosen to represent how statistically significant find is; the q-value. A q-value is an excellent statistical measurement when doing multiple tests, which in this case is for each specific protein \cite{q-value}.
