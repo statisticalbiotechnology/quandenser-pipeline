@@ -114,7 +114,7 @@ process msconvert {
   output:
     file("converted/*") into spectra_converted
   script:
-	"""
+  """
   mkdir -p converted
   wine msconvert ${f} --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
   """
@@ -136,7 +136,7 @@ if ( params.boxcar_convert == true) {
     output:
       file("mzML/boxcar_converted/*") into boxcar_channel
     script:
-  	"""
+    """
     python -s /usr/local/bin/boxcar_converter.py mzML/ ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
     """
   }
@@ -161,18 +161,18 @@ process quandenser {
     file('mzML/*') from combined_channel_normal.collect()
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-	  file("Quandenser_output/consensus_spectra/**") into spectra_normal includeInputs true
-	  file("Quandenser_output/*") into quandenser_out_normal includeInputs true
+    file("Quandenser_output/consensus_spectra/**") into spectra_normal includeInputs true
+    file("Quandenser_output/*") into quandenser_out_normal includeInputs true
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == false
   script:
-	"""
+  """
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
     cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
-	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
-	"""
+  quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  """
 }
 
 process quandenser_parallel_1 {  // About 3 min/run
@@ -185,11 +185,11 @@ process quandenser_parallel_1 {  // About 3 min/run
     file('mzML/*') from combined_channel_parallel_1
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-	  file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
+    file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
-	"""
+  """
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
     cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
@@ -201,7 +201,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
   quandenser --batch modified_list.txt --max-missing ${params.max_missing} --parallel-1 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
-	"""
+  """
 }
 
 percolator_workdir = file("${params.output_path}/work/percolator_${params.random_hash}")  // Path to working percolator directory
@@ -233,35 +233,23 @@ process quandenser_parallel_2 {  // About 30 seconds
     file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-	  file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
+    file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
     file "Quandenser_output/maracluster/featureAlignmentQueue.txt" into alignRetention_queue
     file "Quandenser_output/dinosaur/allFeatures.txt" into allFeatures_queue
     file "Quandenser_output/maracluster/*" into maracluster_publish
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
-	"""
+  """
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
     cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
-	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
-	"""
+  quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  """
 }
 
 if (params.parallel_quandenser == true){
-  // This queue will define maximum depth of the processing tree
-  alignRetention_queue
-      .collectFile()  // Get file, will wait for process to finish
-      .map { it.text }  // Convert file to text
-      .splitText()  // Split text, each line in a seperate loop
-      .map { it -> it.tokenize('\t')[0] }  // Get first value, it contains the rounds
-      .toInteger()  // Convert string to integer for max function
-      .max()  // Maximum amount of rounds there is
-      .subscribe { max_depth=it; }  // Add maximum_depth as a variable
-      .map{ it -> 0 }
-      .into { wait_queue_1; wait_queue_1_copy }
-
   // This queue will create the file pairs
   alignRetention_queue
       .collectFile()  // Get file, will wait for process to finish
@@ -284,65 +272,34 @@ if (params.parallel_quandenser == true){
     .subscribe{ tree_map=it; }
     .map { it -> 0 }  // Tree map has now been defined, add 0 to queue to initialize tree_map channel
     .into { wait_queue_2; wait_queue_2_copy }
-  // Note: all these channels run async, while tree queue needs max_depth from first queue. Check if this can cause errors
 
   // Initialize first values, so they exist outside process
-  tree_map_reconstructed = [0:1]  // Initialize first value
   processed_files = [0]  // Value needs to be in list, to preserve changes made in sync variables
   process sync_variables {
     exectutor = 'local'
     input:
       val alignRetention_file from alignRetention_queue  // Bug: Needs to be val
-      val wait1 from wait_queue_1
       val wait2 from wait_queue_2
     output:
       val initial_range into sync_ch
     exec:
-     current_depth = 0
-     current_width = 0
-     prev_files = []  // List to store files from previous rounds
-     all_lines = alignRetention_file.readLines()  // Get all lines from maracluster tree
-     println("Execution order:")
-     for( line in all_lines ){
-       file1 = line.tokenize('\t')[1].tokenize('/')[-1]  // Get file name from file 1
-       file2 = line.tokenize('\t')[2].tokenize('/')[-1]  // Get file name from file 2
-       // When the previous round contains any of the files, create a new round
-       if (prev_files.contains(file1) || prev_files.contains(file2) ) {
-          println("Round $current_depth: ")
-          for (file in prev_files){
-            println(" $file ")
-          }
-          tree_map_reconstructed[current_depth] = current_width  // Add new round, with width
-          current_depth++  // Add 1 to depth. The files in this loop will be added to that round
-          current_width = 1  // Since we have 1 pair already, do not start from 0
-          prev_files.clear()  // Clear previous files.
-       } else {
-         current_width++  // Just add 1 to width if they are not colliding
-       }
-       prev_files << file1
-       prev_files << file2
-     }
-     tree_map_reconstructed[current_depth] = current_width
-     println("Treemap is $tree_map")
-     println("Reconstructed treemap is $tree_map_reconstructed")
-
-     end_depth = current_depth + 1
-     tree_map_reconstructed[end_depth] = 1  // Add 1 to the last value, to prevent premature stop
-     tree_map_reconstructed[-1] = tree_map_reconstructed[0]  // Initializiation of first values
-     initial_range = 0..<tree_map_reconstructed[0]  // Initial range
+     current_depth = tree_map.size()
+     tree_map[current_depth] = 1  // Add 1 to the last value, to prevent premature stop
+     tree_map[-1] = tree_map[0]  // Initializiation of first values
+     initial_range = 0..<tree_map[0]  // Initial range
 
      // Note: since we are starting with 0 processed files and we initialize with a range,
      // set processed files to be exactly 0 for the first batch of files
-     processed_files[0] = -tree_map_reconstructed[0]
+     processed_files[0] = -tree_map[0]
 
      connections = 2*(total_spectras-1)
-     speed_increase = connections/(current_depth+1) * 100 - 100
+     speed_increase = connections/(current_depth) * 100 - 100
      println("Total connections = $connections")
-     println("Total rounds with parallel = ${current_depth + 1}")
+     println("Total rounds with parallel = ${current_depth}")
      println("With the current tree, you will get a ${speed_increase.round(1)}% increase in speed with parallelization")
   }
 
-  condition = { 1 == 0 }  // Stop when reaching max_depth. Defined in channel above
+  condition = { 1 == 0 }  // Stop when reaching max_depth
   feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
 
   /* Okay, this one is tricky and needs an explanation
@@ -362,14 +319,14 @@ if (params.parallel_quandenser == true){
   current_depth = -1
   current_width = 0
   input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
-  .flatten()  // Flatten input list
-  .mix( feedback_ch.until(condition) )  // Continously add until files have run out
-  .map { processed_files[0]++ }  // Add 1 to processed files for each emit from feedback_ch
-  .map { it -> current_width++; }  // Add 1 to current width and emit value to buffer
-  .buffer { it >= tree_map_reconstructed[current_depth] - 1}  // When width is more than width at tree
-  .map { it -> current_depth++; current_width = 0; current_depth}  // Add 1 to depth, pass on current depth
-  .flatMap { n -> 0..<tree_map_reconstructed[n] }  // Convert number to a list same size as amount of parallel processes
-  .map { it -> processed_files[0] }  // Convert range 0,1,2.... to processed_files (ex 5,5,5,5...)
+    .flatten()  // Flatten input list
+    .mix( feedback_ch.until(condition) )  // Continously add until files have run out
+    .map { processed_files[0]++ }  // Add 1 to processed files for each emit from feedback_ch
+    .map { it -> current_width++; }  // Add 1 to current width and emit value to buffer
+    .buffer { it >= tree_map[current_depth] - 1}  // When width is more than width at tree
+    .map { it -> current_depth++; current_width = 0; current_depth}  // Add 1 to depth, pass on current depth
+    .flatMap { n -> 0..<tree_map[n] }  // Convert number to a list same size as amount of parallel processes
+    .map { it -> processed_files[0] }  // Convert range 0,1,2.... to processed_files (ex 5,5,5,5...)
 } else {
   // Empty dummy channels if not parallel
   processing_tree = Channel.create()
@@ -436,15 +393,15 @@ process quandenser_parallel_4 {  // About 30 seconds
    file("Quandenser_output/*") from quandenser_out_2_to_4.collect()
    val percolator_1 from percolator_1_completed.collect()
   output:
-	 file "Quandenser_output/*" into quandenser_out_4_to_5 includeInputs true
+   file "Quandenser_output/*" into quandenser_out_4_to_5 includeInputs true
    file "Quandenser_output/maracluster_extra_features/*" into maracluster_extra_features_publish
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
-	"""
+  """
   ln -s ${prev_percolator} Quandenser_output/percolator  # Create link to publishDir
-	quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-4 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
-	"""
+  quandenser --batch list.txt --max-missing ${params.max_missing} --parallel-4 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  """
 }
 
 process quandenser_parallel_5 {
@@ -456,16 +413,16 @@ process quandenser_parallel_5 {
    each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
    file("Quandenser_output/*") from quandenser_out_4_to_5.collect()  // Includes links to first percolator
   output:
-	 file("Quandenser_output/consensus_spectra/**") into spectra_parallel
-	 file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
+   file("Quandenser_output/consensus_spectra/**") into spectra_parallel
+   file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
-	"""
+  """
   rm -rf Quandenser_output/percolator
   ln -s ${prev_percolator} Quandenser_output/percolator
-	quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
-	"""
+  quandenser --batch list.txt --max-missing ${params.max_missing} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  """
 }
 
 // Concate quandenser_out. We don't know which the user did, so we mix them
@@ -482,18 +439,18 @@ process tide_search {
   publishDir publish_output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
   containerOptions "$params.custom_mounts"
   input:
-	file 'seqdb.fa' from db
-	file ms2_files from spectra.collect()  // PS: Sensitive to naming (no blankspace, paranthesis and such)
+  file 'seqdb.fa' from db
+  file ms2_files from spectra.collect()  // PS: Sensitive to naming (no blankspace, paranthesis and such)
   output:
-	file("crux-output/*") into id_files
+  file("crux-output/*") into id_files
   file("${seq_index_name}") into index_files
   when:
     params.workflow == "Full"
   script:
-	"""
+  """
   crux tide-index --missed-cleavages ${params.missed_clevages} --mods-spec ${params.mods_spec} --decoy-format protein-reverse seqdb.fa ${seq_index_name} ${params.crux_index_additional_arguments}
-	crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name} ${params.crux_search_additional_arguments}
-	crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments}
+  crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name} ${params.crux_search_additional_arguments}
+  crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments}
   """
 }
 
@@ -501,11 +458,11 @@ process triqler {
   publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "*proteins.*",overwrite: true
   containerOptions "$params.custom_mounts"
   input:
-	  file("Quandenser_output/*") from quandenser_out.collect()
-	  file("crux-output/*") from id_files.collect()
-	  file 'list.txt' from file_def
+    file("Quandenser_output/*") from quandenser_out.collect()
+    file("crux-output/*") from id_files.collect()
+    file 'list.txt' from file_def
   output:
-	  file("*proteins.*") into triqler_output
+    file("*proteins.*") into triqler_output
     file("triqler.zip") into triqler_zip_output
   when:
     params.workflow == "Full"
@@ -520,9 +477,9 @@ process triqler {
   } else {
     triqler_dist = ''
   }
-	"""
-	python -s /usr/local/bin/prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-	python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw} ${triqler_dist} 2>&1 | tee -a stdout.txt
+  """
+  python -s /usr/local/bin/prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
+  python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw} ${triqler_dist} 2>&1 | tee -a stdout.txt
   zip triqler.zip *.tsv *.csv -x "triqler_input*"
   """
 }
