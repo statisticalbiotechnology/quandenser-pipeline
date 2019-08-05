@@ -160,7 +160,9 @@ done
 # Check for updates
 if [ "$disable_update" == "false" ]; then
   # Check image version on singularity hub
-  VERSION_SINGHUB=$(GET http://singularity-hub.org/api/container/details/statisticalbiotechnology/quandenser-pipeline/ | jq -r '.metrics.inspect' | grep -m 1 -oP 'VERSION=\\"\K([^"\\]*)')
+  #VERSION_SINGHUB=$(GET http://singularity-hub.org/api/container/details/statisticalbiotechnology/quandenser-pipeline/ | jq -r '.metrics.inspect' | grep -m 1 -oP 'VERSION=\\"\K([^"\\]*)')
+  VERSION_SINGHUB=$(curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest \
+  | jq --raw-output '.tag_name')
   # Check version in container. Superimportant: pipe stdin from singularity to dev/null. Otherwise, suspended tty input and it runs in background
   VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' \K(v[0-9]+[.][0-9]+)')
   if [[ "$VERSION_SINGHUB" != *"."* ]]; then
