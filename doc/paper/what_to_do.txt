@@ -1,0 +1,16 @@
+MUST:
+
+• Run datasets with normal pipeline (no parallel on cluster)
+Latosinska PXD002170
+Bracht PXD00147
+Boxcar PXD009348 (files ending with "F")
+
+• Run datasets with parallel pipeline (parallel on cluster)
+
+
+SHOULD:
+
+• Run run MaxQuant as well on the datasets
+
+• Improve or change boxcar merge methods (2 already done, consider c++ or similar)
+https://github.com/statisticalbiotechnology/quandenser-pipeline/blob/master/dependencies/boxcar_converter.py#L229
