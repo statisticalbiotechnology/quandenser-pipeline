@@ -185,7 +185,7 @@ process quandenser_parallel_1 {  // About 3 min/run
     file('mzML/*') from combined_channel_parallel_1
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-    file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur
+    file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur includeInputs true
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
@@ -234,8 +234,7 @@ process quandenser_parallel_2 {  // About 30 seconds
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
     file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
-    file "Quandenser_output/maracluster/featureAlignmentQueue.txt" into alignRetention_queue
-    file "Quandenser_output/dinosaur/allFeatures.txt" into allFeatures_queue
+    file "Quandenser_output/maracluster/featureAlignmentQueue.txt" into feature_alignRetention_queue
     file "Quandenser_output/maracluster/*" into maracluster_publish
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
@@ -251,7 +250,7 @@ process quandenser_parallel_2 {  // About 30 seconds
 
 if (params.parallel_quandenser == true){
   // This queue will create the file pairs
-  alignRetention_queue
+  feature_alignRetention_queue
       .collectFile()  // Get file, will wait for process to finish
       .map { it.text }  // Convert file to text
       .splitText()  // Split text, each line in a seperate loop
@@ -263,7 +262,7 @@ if (params.parallel_quandenser == true){
       .into { processing_tree; processing_tree_copy }  // Add queue to channel
 
   // This queue will create the tree
-  alignRetention_queue
+  feature_alignRetention_queue
     .collectFile()  // Get file, will wait for process to finish
     .map { it.text }  // Convert file to text
     .splitText()  // Split text, each line in a seperate loop
@@ -278,7 +277,7 @@ if (params.parallel_quandenser == true){
   process sync_variables {
     exectutor = 'local'
     input:
-      val alignRetention_file from alignRetention_queue  // Bug: Needs to be val
+      val alignRetention_file from feature_alignRetention_queue  // Bug: Needs to be val
       val wait2 from wait_queue_2
     output:
       val initial_range into sync_ch
