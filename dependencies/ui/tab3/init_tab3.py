@@ -25,7 +25,6 @@ def init_tab3(paths):
 
     tab3_msconvert_arguments = additional_arguments('params.msconvert_additional_arguments', paths['nf'])
     tab3_boxcar_convert_arguments = additional_arguments('params.boxcar_convert_additional_arguments', paths['nf'])
-    tab3_parameter_max_missing = parameter_setter_single("params.max_missing", paths['nf'])  # Quandenser
     tab3_quandenser_arguments = additional_arguments('params.quandenser_additional_arguments', paths['nf'])
     tab3_parameter_missed_clevages = parameter_setter_single("params.missed_clevages", paths['nf'])  # Crux
     tab3_parameter_precursor_window = parameter_setter_double("params.precursor_window", paths['nf'])  # Crux
@@ -45,7 +44,6 @@ def init_tab3(paths):
     tab3_leftbox_layout.addRow(QLabel('<b>Boxcar convert'), QLabel())
     tab3_leftbox_layout.addRow(QLabel('Boxcar convert additional arguments'), tab3_boxcar_convert_arguments)
     tab3_leftbox_layout.addRow(QLabel('<b>Quandenser'), QLabel())
-    tab3_leftbox_layout.addRow(QLabel('Max missing'), tab3_parameter_max_missing)
     tab3_leftbox_layout.addRow(QLabel('Quandenser additional arguments'), tab3_quandenser_arguments)
     tab3_leftbox_layout.addRow(QLabel('<b>Crux'), QLabel())
     tab3_leftbox_layout.addRow(QLabel('Missed clevages'), tab3_parameter_missed_clevages)
