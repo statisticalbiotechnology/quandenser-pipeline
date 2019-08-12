@@ -17,6 +17,8 @@ def init_tab2(paths):
     tab2 = QWidget()
     tab2_layout = QHBoxLayout()
     tab2.setLayout(tab2_layout)
+    filler = QLabel('')
+    filler.setFixedWidth(1)
 
     # Left box
     tab2_leftbox = QWidget()
@@ -40,7 +42,7 @@ def init_tab2(paths):
     tab2_leftbox_top_layout.addRow(QLabel('Enable boxcar conversion'), tab2_choose_option_boxcar_convert)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel MSconvert'), tab2_choose_option_parallel_msconvert)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel quandenser'), tab2_choose_option_parallel_quandenser)
-    tab2_leftbox_top_layout.addRow(QLabel(''), QLabel(''))  # Empty space
+    tab2_leftbox_top_layout.addRow(filler, filler)  # Empty space
     tab2_leftbox_layout.addWidget(tab2_leftbox_top)
 
     # Bottom, these will be hidden or shown depending on profile option
@@ -63,13 +65,13 @@ def init_tab2(paths):
     stack_2_widgets = []
     stack_2_widgets.append(get_tooltip('cluster-type'))
     stack_2_widgets.append(choose_option("process.executor", paths['nf']))
-    stack_2_widgets.append(QLabel(''))
+    stack_2_widgets.append(filler)
     stack_2_widgets.append(get_tooltip('cluster-arguments'))
     stack_2_widgets.append(cluster_arguments("process.clusterOptions", paths['nf']))
-    stack_2_widgets.append(QLabel(''))
+    stack_2_widgets.append(filler)
     stack_2_widgets.append(get_tooltip('cluster-queue'))
     stack_2_widgets.append(cluster_arguments("process.queue", paths['nf']))
-    stack_2_widgets.append(QLabel(''))
+    stack_2_widgets.append(filler)
     stack_2_widgets.append(QLabel('MSconvert cpus + time'))
     stack_2_widgets.append(set_cpus("msconvert_cpus", paths['nf']))
     stack_2_widgets.append(set_time("msconvert_time", paths['nf']))
@@ -104,13 +106,13 @@ def init_tab2(paths):
     stack_3_widgets = []
     stack_3_widgets.append(get_tooltip('cluster-type'))
     stack_3_widgets.append(choose_option("process.executor", paths['nf']))
-    stack_3_widgets.append(QLabel(''))
+    stack_3_widgets.append(filler)
     stack_3_widgets.append(get_tooltip('cluster-arguments'))
     stack_3_widgets.append(cluster_arguments("process.clusterOptions", paths['nf']))
-    stack_3_widgets.append(QLabel(''))
+    stack_3_widgets.append(filler)
     stack_3_widgets.append(get_tooltip('cluster-queue'))
     stack_3_widgets.append(cluster_arguments("process.queue", paths['nf']))
-    stack_3_widgets.append(QLabel(''))
+    stack_3_widgets.append(filler)
     stack_3_widgets.append(QLabel('MSconvert cpus + time'))
     stack_3_widgets.append(set_cpus("msconvert_cpus", paths['nf']))
     stack_3_widgets.append(set_time("msconvert_time", paths['nf']))
@@ -135,6 +137,7 @@ def init_tab2(paths):
     stack_3_widgets.append(QLabel('Triqler cpus + time'))
     stack_3_widgets.append(set_cpus("triqler_cpus", paths['nf']))
     stack_3_widgets.append(set_time("triqler_time", paths['nf']))
+    stack_3_widgets.extend([filler, filler, filler])  # Empty space
 
     list_itr = iter(stack_3_widgets)
     for label in list_itr:
