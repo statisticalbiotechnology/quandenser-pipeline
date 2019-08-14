@@ -1,16 +1,36 @@
+NOTE: QP --> Quandenser Pipeline
+
+
 MUST:
 
-• Run datasets with normal pipeline (no parallel on cluster)
+• Run datasets with QP
 Latosinska PXD002170
 Bracht PXD00147
-Boxcar PXD009348 (files ending with "F")
+Boxcar PXD009348 (files ending with "F") OBS: Improve merge method
 
-• Run datasets with parallel pipeline (parallel on cluster)
+Run with normal pipeline, cluster
+Run with normal pipeline, local
+Run with parallel pipeline, cluster
 
+Check wall time and cpu time.
 
 SHOULD:
 
-• Run run MaxQuant as well on the datasets
+• Run MaxQuant on the datasets. Sadly, it will not be able to run on the cluster.
+but running QP on with a "local" run of will show that it is indeed faster
+on the same type of computer. The parallel QP run on cluster will test how fast
+it will go. However, due to "waiting time" of the slurm queue, the wall time might
+ differ greatly. Theoretically with no wait time, it would go super fast.
 
-• Improve or change boxcar merge methods (2 already done, consider c++ or similar)
+• Improve or change boxcar merge methods before running the Boxcar set
+2 methods completed, but consider c++ or similar to improve the merge method.
+Add changes here:
 https://github.com/statisticalbiotechnology/quandenser-pipeline/blob/master/dependencies/boxcar_converter.py#L229
+
+COULD:
+
+• Run the huge data set with QP
+Weightloss PXD004242 (1291 files)
+
+• Run the KNIME pipeline on the data. This part is tricky, since it is possible to parallelize
+this pipeline as well and run on clusters, if OpenMS is installed.
