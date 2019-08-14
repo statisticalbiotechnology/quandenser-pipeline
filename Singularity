@@ -43,7 +43,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/ui /
    # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
    # This comes from quandenser-pipeline branch of quandenser
-   dependencies/quandenser-v0-01-linux-amd64.deb /
+   dependencies/quandenser-v0-02-linux-amd64.deb /
    # Boxcar converter
    dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
 
@@ -66,9 +66,9 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
 
     echo "Updating nextflow"
-    curl -s https://get.nextflow.io | bash
-    rm -f /var/local/quandenser_ui/config/nextflow
-    mv nextflow /var/local/quandenser_ui/config
+    #curl -s https://get.nextflow.io | bash
+    #rm -f /var/local/quandenser_ui/config/nextflow
+    #mv nextflow /var/local/quandenser_ui/config
     chmod a+rx /var/local/quandenser_ui/config/nextflow
 
     echo "Installing proteowizard 32 BIT (FULL VENDOR CAPABILITIES)"
@@ -93,7 +93,6 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     ln -sf /usr/local/bin/pip /usr/local/bin/pip3
 
     echo "Installling packages with pip"
-    #pip install triqler  # Using different version of triqler down below
     # psutil requires gcc
     pip install psutil
     pip install PySide2
@@ -119,14 +118,19 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     echo "Installling quandenser"
     # Use wget when quandenser has fixed the bugs
     #wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
-    dpkg -i /quandenser-v0-01-linux-amd64.deb
+    dpkg -i /quandenser-v0-02-linux-amd64.deb
+    # Weird stuff with permissions. Fixing
+    chmod 755 /usr/bin/quandenser
+    chmod 755 /usr/share/java/advParams_dinosaur_targeted.txt
+    chmod 755 /usr/share/java/Dinosaur-1.1.3.free.jar
     apt-get install -f
 
     echo "Installling triqler (quandenser-pipeline version)"
-    git clone -b quandenser-pipeline https://github.com/statisticalbiotechnology/triqler.git
-    cd triqler
-    pip install .
-    cd ..
+    pip install triqler
+    #git clone -b quandenser-pipeline https://github.com/statisticalbiotechnology/triqler.git
+    #cd triqler
+    #pip install .
+    #cd ..
 
     echo "Installling crux"
     wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
@@ -155,5 +159,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.071"
+    VERSION="v0.08"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
