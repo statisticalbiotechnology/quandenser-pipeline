@@ -32,5 +32,6 @@ COULD:
 • Run the huge data set with QP
 Weightloss PXD004242 (1291 files)
 
-• Run the KNIME pipeline on the data. This part is tricky, since it is possible to parallelize
-this pipeline as well and run on clusters, if OpenMS is installed.
+• Run the KNIME pipeline on the data. This part is tricky, since it is possible
+to parallelize this pipeline as well and run on clusters, if OpenMS is installed.
+But a run with this would also be possible if we want to add it in the report.
