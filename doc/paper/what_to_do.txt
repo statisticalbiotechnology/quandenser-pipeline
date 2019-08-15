@@ -11,16 +11,17 @@ Boxcar PXD009348 (files ending with "F") OBS: Improve merge method
 Run with normal pipeline, cluster
 Run with normal pipeline, local
 Run with parallel pipeline, cluster
+Run with parallel pipeline, local (max 3 forks)
 
 Check wall time and cpu time.
-
-SHOULD:
 
 • Run MaxQuant on the datasets. Sadly, it will not be able to run on the cluster.
 but running QP on with a "local" run of will show that it is indeed faster
 on the same type of computer. The parallel QP run on cluster will test how fast
 it will go. However, due to "waiting time" of the slurm queue, the wall time might
  differ greatly. Theoretically with no wait time, it would go super fast.
+
+SHOULD:
 
 • Improve or change boxcar merge methods before running the Boxcar set
 2 methods completed, but consider c++ or similar to improve the merge method.
