@@ -77,7 +77,7 @@ if args.verbose:
 
 def main():
     assert(args.p in ['non-parallel', 'parallel'])
-    assert(args.merge_method in ['sliding_window', 'merge_and_sort'])
+    assert(args.merge_method in ['sliding_window', 'merge_and_sort', 'channel_picker'])
     files = glob.glob(f"{args.dir}/*.mzML")
     files = list(files)
     new_directory = os.path.dirname(files[0]) + '/boxcar_converted'
@@ -232,6 +232,9 @@ def merge_channels(spectrum_list):
     elif args.merge_method == 'merge_and_sort':
         merged_mz, merged_intensity = merge_and_sort(mz_arrays,
                                                      intensity_arrays)
+    elif args.merge_method == 'channel_picker':
+        merged_mz, merged_intensity = channel_picker(mz_arrays,
+                                                     intensity_arrays)
 
     new_spectrum = Spectrum()
     new_spectrum.parse_xml(copy.deepcopy(spectrum_list[0].spectrum_xml))  # Use first spectrum as template
@@ -283,6 +286,51 @@ def merge_and_sort(mz_arrays, intensity_arrays):
     merged_mz, merged_intensity = remove_low_intensities(merged_mz, merged_intensity)
     merged_mz, merged_intensity = merge_close_peaks(merged_mz, merged_intensity)
     return merged_mz, merged_intensity
+
+def channel_picker(mz_arrays, intensity_arrays):
+    merged_mz = []
+    merged_intensity = []
+    mz_flat, i_flat = mz_arrays[0], intensity_arrays[0]
+    channels = [0]*len(mz_arrays[0])
+    for idx, (mz, i) in enumerate(zip(mz_arrays[1:], intensity_arrays[1:])):
+        mz_flat, i_flat  = np.append(mz_flat, mz), np.append(i_flat, i)
+        channels.extend([idx + 1]*len(mz))
+
+    sort_indices = np.argsort(mz_flat)
+    merged_mz = mz_flat[sort_indices]
+    merged_intensity = i_flat[sort_indices]
+    channels = np.array(channels)[sort_indices]
+
+    for i, v in enumerate(channels):
+        channels[i] = v
+    plt.plot(merged_mz, channels)
+    plt.show()
+
+    momentum = 2
+    push = 4
+    current_channel = 0
+    delete_list = []
+    for i, c in enumerate(channels):
+        if c == current_channel or i <= push:
+            continue
+        else:
+            prev_channels = channels[i-push:i]
+            if np.count_nonzero(prev_channels==current_channel) < momentum:
+                delete_list.append(i)
+            else:
+                current_channel = c
+
+    merged_mz = np.delete(merged_mz, delete_list)
+    merged_intensity = np.delete(merged_intensity, delete_list)
+    channels = np.delete(channels, delete_list)
+
+    for i, v in enumerate(channels):
+        channels[i] = v
+    plt.plot(merged_mz, channels)
+    plt.show()
+
+    return merged_mz, merged_intensity
+
 
 def sum_chunk(mz_range, mz, intensity):
     i_sum = 0
