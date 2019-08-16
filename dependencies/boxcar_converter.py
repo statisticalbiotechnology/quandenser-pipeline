@@ -301,32 +301,40 @@ def channel_picker(mz_arrays, intensity_arrays):
     merged_intensity = i_flat[sort_indices]
     channels = np.array(channels)[sort_indices]
 
-    for i, v in enumerate(channels):
-        channels[i] = v
-    plt.plot(merged_mz, channels)
+    for idx, (mz, i) in enumerate(zip(mz_arrays, intensity_arrays)):
+        i = i / 100000
+        plt.plot(mz, i, linewidth=0.5, label=f'{idx}')
+    plt.plot(merged_mz, channels, 'r',  label='Channels')
+    plt.ylim(0,10)
+    plt.xlim(400, 600)
+    plt.title('No momentum')
+    plt.legend()
     plt.show()
 
-    momentum = 2
-    push = 4
     current_channel = 0
+    push = 3
+    momentum = 2
     delete_list = []
-    for i, c in enumerate(channels):
-        if c == current_channel or i <= push:
-            continue
-        else:
-            prev_channels = channels[i-push:i]
-            if np.count_nonzero(prev_channels==current_channel) < momentum:
-                delete_list.append(i)
-            else:
-                current_channel = c
+    end_val = len(merged_mz)
+    for idx, c in enumerate(channels):
+        if push + idx <= end_val:
+            next_channels = channels[idx : idx+push]
+            current_channel = c
+            if np.count_nonzero(next_channels == current_channel) < momentum:
+                delete_list.append(idx)
 
+    print(len(merged_mz))
     merged_mz = np.delete(merged_mz, delete_list)
     merged_intensity = np.delete(merged_intensity, delete_list)
     channels = np.delete(channels, delete_list)
+    print(len(merged_mz))
 
-    for i, v in enumerate(channels):
-        channels[i] = v
-    plt.plot(merged_mz, channels)
+    plt.plot(merged_mz, merged_intensity / 100000, linewidth=0.5, label='merged')
+    plt.plot(merged_mz, channels, 'r', label='Channels')
+    plt.title('Momentum')
+    plt.ylim(0, 10)
+    plt.xlim(400, 600)
+    plt.legend()
     plt.show()
 
     return merged_mz, merged_intensity
