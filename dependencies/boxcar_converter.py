@@ -47,9 +47,11 @@ parser.add_argument('--exclude',
                     help="""Exclude files with substring""")
 parser.add_argument('-m',
                     '--merge_method',
-                    default='sliding_window',
+                    default='momentum_merge',
                     help="""Merging method.
-                    sliding_window: Slow but higher resolution and no overlaps (default)
+                    momentum_merge: Merges and sorts values, then deletes values 
+                    depending on which "channels" the surrounding values belong to
+                    sliding_window: Slow but higher resolution and no overlaps
                     merge_and_sort: Very fast but overlaps exist. Will not use ms1 spectra""")
 parser.add_argument('-s',
                     "--sliding_window_size",
@@ -77,7 +79,7 @@ if args.verbose:
 
 def main():
     assert(args.p in ['non-parallel', 'parallel'])
-    assert(args.merge_method in ['sliding_window', 'merge_and_sort', 'channel_picker'])
+    assert(args.merge_method in ['sliding_window', 'merge_and_sort', 'momentum_merge'])
     files = glob.glob(f"{args.dir}/*.mzML")
     files = list(files)
     new_directory = os.path.dirname(files[0]) + '/boxcar_converted'
@@ -232,8 +234,8 @@ def merge_channels(spectrum_list):
     elif args.merge_method == 'merge_and_sort':
         merged_mz, merged_intensity = merge_and_sort(mz_arrays,
                                                      intensity_arrays)
-    elif args.merge_method == 'channel_picker':
-        merged_mz, merged_intensity = channel_picker(mz_arrays,
+    elif args.merge_method == 'momentum_merge':
+        merged_mz, merged_intensity = momentum_merge(mz_arrays,
                                                      intensity_arrays)
 
     new_spectrum = Spectrum()
@@ -287,7 +289,7 @@ def merge_and_sort(mz_arrays, intensity_arrays):
     merged_mz, merged_intensity = merge_close_peaks(merged_mz, merged_intensity)
     return merged_mz, merged_intensity
 
-def channel_picker(mz_arrays, intensity_arrays):
+def momentum_merge(mz_arrays, intensity_arrays):
     merged_mz = []
     merged_intensity = []
     mz_flat, i_flat = mz_arrays[0], intensity_arrays[0]
