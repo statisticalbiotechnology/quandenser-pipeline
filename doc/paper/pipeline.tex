@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{authblk}
+\usepackage{float}
 
 \usepackage[outdir=./img/]{epstopdf}
 \usepackage{epsfig}
@@ -69,6 +70,21 @@ to account for the errors as a result of the MBR step.
 
 \subsection*{Data sets}
 
+Three data sets were tested with the pipeline
+
+\begin{table}[!h]
+  \caption{{\textbf{Data sets}}}
+  \label{table:datasets}
+\begin{center}
+\begin{tabular}{ccccc}
+PRIDE id & Description & Amount of files & Size of data set \\ \hline \hline
+PXD001474 & Latosinska & 8 RAW files & 10.2 Gb \\
+PXD002170 & Bracht & 27 RAW files & 14.8 Gb  \\
+PXD009348 & Boxcar & 168 RAW files & 163.2 Gb & \\
+\end{tabular}
+\end{center}
+\end{table}
+
 \section*{Results}
 
 \subsection*{Parallelization}
@@ -84,7 +100,7 @@ In order to further reduce the running time we investigated the possibilities to
 
 To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets. We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
 \begin{table}
-  \caption{{\bf Comprison of run time between the different quantification platforms reported in wall time.}}
+  \caption{{\bf Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
 \begin{tabular}{lcccc}
 & Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
@@ -95,7 +111,7 @@ Latosinska & &&& \\
 \end{table}
 
 \begin{table}
-  \caption{{\bf Comprison of run time between the different quantification platforms reported in cpu time.}}
+  \caption{{\bf Comparison of run time between the different quantification platforms reported in cpu time.}}
   \label{table:cputime}
 \begin{tabular}{lcccc}
 & Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
