@@ -90,6 +90,8 @@ class batch_file_viewer(QTableWidget):
                         if column > self.columnCount() - 1:
                             pass
                         else:
+                            if self.item(row, column) is None:
+                                self.addRow_with_items()
                             self.item(row, column).setText(input)
                         column += 1
                     row += 1
