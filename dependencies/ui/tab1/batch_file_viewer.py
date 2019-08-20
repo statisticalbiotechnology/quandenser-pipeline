@@ -31,6 +31,7 @@ class batch_file_viewer(QTableWidget):
         self.setHorizontalHeaderLabels(["MS files", "Label"])
         self.header.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.header.customContextMenuRequested.connect( self.right_click_menu )
+        self.saved_text = ''
 
     def right_click_menu(self, point):
         column = self.header.logicalIndexAt(point.x())
@@ -73,10 +74,10 @@ class batch_file_viewer(QTableWidget):
                         self.saved_text += self.item(index.row(), index.column()).text()
                         self.saved_text += '\n'
                         new_row = False
-                #self.clipboard.setText(self.saved_text)
+
+                self.clipboard.setText(self.saved_text)
             elif modifiers == QtCore.Qt.ControlModifier and event.key() == 86:  # Paste
-                #clipboard_text = self.clipboard.text()
-                clipboard_text = self.saved_text
+                clipboard_text = self.clipboard.text()
                 clipboard_text = clipboard_text.split('\n')
                 paste_index = self.selectedIndexes()[0]
                 row = paste_index.row()
@@ -92,8 +93,9 @@ class batch_file_viewer(QTableWidget):
                             self.item(row, column).setText(input)
                         column += 1
                     row += 1
-
-        super().keyPressEvent(event)  # Propagate to built in methods
+            else:
+                super().keyPressEvent(event)  # Propagate to built in methods
+                # This interferes with copy and paste if it is not else
 
     def check_cell(self, row, column):
         """Triggered when cell is changed"""
