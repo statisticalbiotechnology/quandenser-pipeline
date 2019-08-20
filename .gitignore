@@ -146,6 +146,7 @@ output*/**
 *.fdb_latexmk
 *.nls
 **.pdf
+*.ttt
 
 # WIP
 WIP/*
