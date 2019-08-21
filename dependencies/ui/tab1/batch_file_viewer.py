@@ -235,19 +235,22 @@ class batch_file_viewer(QTableWidget):
     def help_auto(self):
         help_dialog = QDialog()
         lay = QVBoxLayout()
-        help_string = """
-        Auto labeler uses regular expressions to determine which files belong to a certain groupself.
-        Write the regular expression in the box and press apply. The label will then label your file
-        depending on the naming convention you applied.
+        help_string = '''<html>
+        <center>
+        Auto labeler uses regular expressions to determine which files belong to a certain groupself. <br>
+        Write the regular expression in the box and press apply. <br>
+        The labeler will then label your file depending on the naming convention you applied. <br>
 
-        Example: You have 100s of files named like this
-        patient_X_<date>.RAW
-        Solution can be found here:
-        https://regex101.com/r/dpCBo9/1
+        Example: You have 100s of files named like this <br>
+        patient_X_<date>.RAW <br>
+        Solution can be found <a href=\"https://regex101.com/r/dpCBo9/1/\">here</a> <br>
 
         NOTE: The auto labeler will always take the LAST capturing group
-        """
-        lay.addWidget(QLabel(help_string))
+        </html>
+        '''
+        help_label = QLabel(help_string)
+        help_label.setOpenExternalLinks(True)
+        lay.addWidget(help_label)
         help_dialog.setLayout(lay)
         ans = help_dialog.exec_()  # This will block until the dialog closes
 
