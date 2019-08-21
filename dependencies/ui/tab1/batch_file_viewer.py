@@ -1,12 +1,16 @@
 import sys
-from PySide2.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QMenu, QAction
+from PySide2.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QMenu, QDialogButtonBox
+from PySide2.QtWidgets import QAction, QDialog, QLineEdit, QVBoxLayout, QLabel, QPushButton
 from PySide2.QtGui import QColor, QKeySequence, QClipboard, QGuiApplication
+from PySide2 import QtGui
 from PySide2 import QtCore
 import os
 from difflib import SequenceMatcher
+import re
 
 # Custom parser for both sh files and nf configs
 from custom_config_parser import custom_config_parser
+from utils import ERROR
 
 class batch_file_viewer(QTableWidget):
     def __init__(self, nf_settings_path):
@@ -32,13 +36,14 @@ class batch_file_viewer(QTableWidget):
         self.header.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.header.customContextMenuRequested.connect( self.right_click_menu )
         self.saved_text = ''
+        self.store_re_text = ''
 
     def right_click_menu(self, point):
         column = self.header.logicalIndexAt(point.x())
         # show menu about the column if column 1
         if column == 1:
             menu = QMenu(self)
-            menu.addAction('Auto label', self.auto_label)
+            menu.addAction('Auto label (experimental)', self.auto_label)
             menu.popup(self.header.mapToGlobal(point))
         elif column == 0:
             menu = QMenu(self)
@@ -169,20 +174,82 @@ class batch_file_viewer(QTableWidget):
             label = self.item(row, 1).text()
             all_labels.append(label)
 
+        self.dialog = QDialog()
+        lay = QVBoxLayout()
+        self.dialog.setLayout(lay)
+        self.line = QLineEdit()
+        self.line.setText(self.store_re_text)
+        bbox = QDialogButtonBox()
+        bbox.addButton("Help", QDialogButtonBox.HelpRole)
+        bbox.addButton("Apply", QDialogButtonBox.AcceptRole)
+        bbox.addButton("Cancel", QDialogButtonBox.RejectRole)
+        bbox.accepted.connect(self.apply_auto)
+        bbox.rejected.connect(self.cancel_auto)
+        bbox.helpRequested.connect(self.help_auto)
+        lay.addWidget(self.line)
+        lay.addWidget(bbox)
+        self.dialog.resize(300, 100)
+        ans = self.dialog.exec_()  # This will block until the dialog closes
+        if ans != 1:
+            return
+        re_text = self.line.text()
+        self.store_re_text = re_text
+
         # Assign labels
-        current_label = 1  # start with 1, because rows start with 1
+        c = 0
         for row in range(self.rowCount()):
             label = self.item(row, 1).text()
             file = self.item(row, 0).text()
             if label == '' and file != '':
-                while True:
-                    added_label = str(current_label)
-                    if added_label in all_labels:
-                        current_label += 1
-                    else:
-                        break
+                file_name = os.path.basename(file)
+                search = re.search(re_text, file_name)
+                if search is not None:
+                    c += 1
+                    # idk how to check how many captured groups, so lets do this a hacky way
+                    for i in range(10,-1,-1):
+                        try:
+                            added_label = search.group(i)
+                            break
+                        except Exception as e:
+                            pass
+                else:
+                    added_label = ''  # Do not add label if you don't know what to add
                 self.item(row, 1).setText(added_label)
-                current_label += 1
+        if c == 0:
+            ERROR("No files matched the regex pattern")
+            self.auto_label()
+
+    def apply_auto(self):
+        re_text = self.line.text()
+        test_string = "This is a string to check if you put in a correct regex code"
+        try:
+            match = re.search(re_text, test_string)
+        except Exception as e:
+            ERROR("This is not a valid regex string. Error is: \n" + str(e))
+            return
+        self.dialog.accept()
+
+    def cancel_auto(self):
+        self.dialog.reject()
+
+    def help_auto(self):
+        help_dialog = QDialog()
+        lay = QVBoxLayout()
+        help_string = """
+        Auto labeler uses regular expressions to determine which files belong to a certain groupself.
+        Write the regular expression in the box and press apply. The label will then label your file
+        depending on the naming convention you applied.
+
+        Example: You have 100s of files named like this
+        patient_X_<date>.RAW
+        Solution can be found here:
+        https://regex101.com/r/dpCBo9/1
+
+        NOTE: The auto labeler will always take the LAST capturing group
+        """
+        lay.addWidget(QLabel(help_string))
+        help_dialog.setLayout(lay)
+        ans = help_dialog.exec_()  # This will block until the dialog closes
 
     def remove_empty_rows(self):
         row = 0
