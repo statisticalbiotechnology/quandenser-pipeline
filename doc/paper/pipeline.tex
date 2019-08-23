@@ -103,25 +103,30 @@ To demonstrate the processing speed of the quandenser pipeline we processed a co
   \begin{center}
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
-\begin{tabular}{lcccccc}
-& QP parallel (local) & QP non-parallel (local) & QP parallel (HPC) & QP non-parallel (HPC) & MaxQuant & OpenMS \\ \hline \hline
-BoxCar Plasma & X & X & X & X & X & X \\
-Bracht & 1h 43m & 1h 56m & 2h 40m & 2h 38m & X & X \\
-Latosinska & 1h 14m & 1h 27m & 1h 52m & 2h 11m & X & X \\
+\begin{tabular}{lccc}
+& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
+QP parallel (local) & X & 1h 43m & 1h 14m \\
+QP non-parallel (local) & X & 1h 56m & 1h 27m \\
+QP parallel (HPC) & X & 2h 40m & 1h 52m \\
+QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\
+MaxQuant (local) & X & X & X \\
 \end{tabular}
 \end{center}
 \end{table}
 
-\begin{table}
+\begin{table}[!h]
+  \begin{center}
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in cpu time.}}
   \label{table:cputime}
-\begin{tabular}{lcccc}
-& Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
-BoxCar Plasma & 2.23 h & X & X & N/A \\
-Bracht &  & &&  \\
-Latosinska & &&& \\
+\begin{tabular}{lccc}
+& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
+QP parallel (local) & X & X & X \\
+QP non-parallel (local) & X & X & X \\
+QP parallel (HPC) & X & X & X \\
+QP non-parallel (HPC) & X & X & X \\
+MaxQuant (local) & X & X & X \\
 \end{tabular}
-
+\end{center}
 \end{table}
 
 
