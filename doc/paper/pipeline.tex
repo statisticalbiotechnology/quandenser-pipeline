@@ -99,19 +99,21 @@ In order to further reduce the running time we investigated the possibilities to
 \subsection*{Run time comparison}
 
 To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets. We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
-\begin{table}
-  \caption{{\bf Comparison of run time between the different quantification platforms reported in wall time.}}
+\begin{table}[!h]
+  \begin{center}
+  \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
-\begin{tabular}{lcccc}
-& Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
-BoxCar Plasma & 2.23 h & X & X & N/A \\
-Bracht &  & &&  \\
-Latosinska & &&& \\
+\begin{tabular}{lcccccc}
+& QP parallel (local) & QP non-parallel (local) & QP parallel (HPC) & QP non-parallel (HPC) & MaxQuant & OpenMS \\
+BoxCar Plasma & X & X & X & X & X & X \\
+Bracht & 1h 43m & 1h 56m & X & 2h 40m & 2h 38m & X \\
+Latosinska & 1h 27m & 1h 14m & 1h 52m & 2h 11m & X & X \\
 \end{tabular}
+\end{center}
 \end{table}
 
 \begin{table}
-  \caption{{\bf Comparison of run time between the different quantification platforms reported in cpu time.}}
+  \caption{\textbf{Comparison of run time between the different quantification platforms reported in cpu time.}}
   \label{table:cputime}
 \begin{tabular}{lcccc}
 & Quandenser HPC & Quandenser single node & MaxQuant & OpenMS \\
