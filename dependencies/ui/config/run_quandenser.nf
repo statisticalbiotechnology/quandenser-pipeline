@@ -180,6 +180,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
+  //errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_1
