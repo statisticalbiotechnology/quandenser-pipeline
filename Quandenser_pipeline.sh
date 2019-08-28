@@ -81,7 +81,7 @@ done
       {  # try
         sudo apt-get update && \
         sudo apt-get install -y build-essential \
-        libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git && \
+        libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git cryptsetup && \
         export VERSION=1.11.4 OS=linux ARCH=amd64 && \ # change this as you need
         wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
         sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz && \
