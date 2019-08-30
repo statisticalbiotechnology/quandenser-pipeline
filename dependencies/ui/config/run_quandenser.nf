@@ -105,6 +105,7 @@ process msconvert {
   while we point in the file_list to the files in the work directory with symlinks.
   The symlinks are fast to write + they point to complete files + we know the symlinks location --> fixed :)
   */
+  errorStrategy 'retry'  // If wine crashes for some reason, try again once
   publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "converted/*"
   publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "converted/*"
   containerOptions "$params.custom_mounts"
@@ -180,7 +181,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
-  //errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters
+  errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time run out
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_1
