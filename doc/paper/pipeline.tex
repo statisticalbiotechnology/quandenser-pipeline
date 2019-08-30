@@ -109,22 +109,22 @@ QP parallel (local) & X & 1h 43m & 1h 14m \\
 QP non-parallel (local) & X & 1h 56m & 1h 27m \\
 QP parallel (HPC) & X & 2h 40m & 1h 52m \\
 QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\
-MaxQuant (local) & X & 5h 52m & 2h 33m \\
+MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
 \end{tabular}
 \end{center}
 \end{table}
 
 \begin{table}[!h]
   \begin{center}
-  \caption{\textbf{Comparison of run time between the different quantification platforms reported in cpu time.}}
+  \caption{\textbf{Comparison of run time between the different quantification platforms reported in cpu time in core hours}}
   \label{table:cputime}
 \begin{tabular}{lccc}
 & BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
-QP parallel (local) & X & X & X \\
-QP non-parallel (local) & X & X & X \\
-QP parallel (HPC) & X & X & X \\
-QP non-parallel (HPC) & X & X & X \\
-MaxQuant (local) & X & X & X \\
+QP parallel (local) & X & 5.9 & 3.6 \\
+QP non-parallel (local) & 4.4 & X & 3.1 \\
+QP parallel (HPC) & X & 28.6 & 15.2 \\ % NOTE: Nextflow does not seem to calculate these correctly. Check trace
+QP non-parallel (HPC) & X & 30.4 & 17.8 \\
+MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
 \end{tabular}
 \end{center}
 \end{table}
