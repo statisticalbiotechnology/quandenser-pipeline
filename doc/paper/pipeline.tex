@@ -46,11 +46,11 @@ The proteowizard community have created an windows executable that does such con
 
 New technology, so called containerization, provides means to install software, not into a particular computer, but into a virtual container environment, in a so-called container. The container can be distributed to several separate computers, yet is guaranteed to execute in the exact same way regardless of the operating system. There are several such containerization techniques available. The perhaps most popular one, docker, have a wide variety of available libraries of containers, and e.g. biocontainers \cite{}. However, docker containers, due to their nature, are executed with systems administrator privileges, and could be utilized for malicious purpose.  In this work we will focus on one named \textit{Singularity}, as it does not execute under root privileges and hence is the preferred solution of most computer cluster and High Performance Computing (HPC) clusters, particularly the ones in an academic environment.
 
-Recently, the proteowizard comunity developed a docker-container for the wine implementation of msconvert (\url{https://hub.docker.com/r/chambm/pwiz-skyline-i-agree-to-the-vendor-licenses/}). This is tremendiously helpful, as it enables linux developers to produce piplines that can operate from beginning to end inside a linux environment, or even an HPC environment.
+Recently, the proteowizard comunity developed a docker-container for the wine implementation of msconvert (\url{https://hub.docker.com/r/chambm/pwiz-skyline-i-agree-to-the-vendor-licenses/}). This is tremendously helpful, as it enables linux developers to produce piplines that can operate from beginning to end inside a Linux environment, or even an HPC environment.
 
 We recently introduced a new method, {\em Quandenser} (QUANtification by
 Distillation for ENhanced Signals with Error Regulation), that increase the sensitivity of the LFQ
-analysis pipeline. Just as any proteomics data analysis method, the processing consist of multiple steps, coded in separate executables. Among other tools it contains Dinosaur\cite{teleman2016dinosaur} for feature finding, MaRaCluster\cite{the2016maracluster} for clustering, Crux\cite{mcilwain2014} for database searching, and qvality\cite{kall2008non} as well as Triqler\cite{the2018integrated} for error assesments. To facilitate the installation of the method we placed these components in a Singularity container.
+analysis pipeline. Just as any proteomics data analysis method, the processing consist of multiple steps, coded in separate executables. Among other tools it contains Dinosaur\cite{teleman2016dinosaur} for feature finding, MaRaCluster\cite{the2016maracluster} for clustering, Crux\cite{mcilwain2014} for database searching, and qvality\cite{kall2008non} as well as Triqler\cite{the2018integrated} for error assessments. To facilitate the installation of the method we placed these components in a Singularity container.
 
 To further facilitate the processing we used a workflow managing system, deals with how different pieces of dependent software can be consequently executed in a particular environment. Again, there are several workflow managers available, but the one used was \textit{NextFlow}\cite{di2017nextflow}.
 
@@ -64,13 +64,13 @@ to decrease the number of spectra to be searched. Importantly, it also provides
 {\em feature-feature match} error rates which can be used as input to Triqler
 to account for the errors as a result of the MBR step.
 
-
-
 \section*{Methods}
+
+
 
 \subsection*{Data sets}
 
-Three data sets were tested with the pipeline
+FIXME data sets were tested with the pipeline. The data sets had
 
 \begin{table}[!h]
   \caption{{\textbf{Data sets}}}
@@ -78,9 +78,9 @@ Three data sets were tested with the pipeline
 \begin{center}
 \begin{tabular}{ccccc}
 PRIDE id & Description & Amount of files & Size of data set \\ \hline \hline
-PXD001474 & Latosinska & 8 RAW files & 10.2 Gb \\
-PXD002170 & Bracht & 27 RAW files & 14.8 Gb  \\
-PXD009348 & Boxcar & 168 RAW files & 163.2 Gb & \\
+PXD002170 & Latosinska & 8 RAW files & 10.2 Gb \\
+PXD001474 & Bracht & 27 RAW files & 14.8 Gb  \\
+PXD009348 & Wewer (Boxcar Plasma) & 168 RAW files & 163.2 Gb & \\
 \end{tabular}
 \end{center}
 \end{table}
@@ -104,7 +104,7 @@ To demonstrate the processing speed of the quandenser pipeline we processed a co
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
 \begin{tabular}{lccc}
-& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
+&  Wewer (BoxCar Plasma) & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 1h 43m & 1h 14m \\
 QP non-parallel (local) & X & 1h 56m & 1h 27m \\
 QP parallel (HPC) & X & 2h 40m & 1h 52m \\
@@ -121,7 +121,7 @@ MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
 \begin{tabular}{lccc}
 & BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 5.9 & 3.6 \\
-QP non-parallel (local) & 4.4 & X & 3.1 \\
+QP non-parallel (local) & X & 4.4 & 3.1 \\
 QP parallel (HPC) & X & 28.6 & 15.2 \\ % NOTE: Nextflow does not seem to calculate these correctly. Check trace
 QP non-parallel (HPC) & X & 30.4 & 17.8 \\
 MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
