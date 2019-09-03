@@ -146,7 +146,7 @@ if ( params.boxcar_convert == true) {
 }
 
 // Clone channel we created to use in multiple processes (one channel per process, no more)
-boxcar_channel.into {
+boxcar_channel.flatten().into {
   combined_channel_normal
   combined_channel_parallel_1
   combined_channel_parallel_2
