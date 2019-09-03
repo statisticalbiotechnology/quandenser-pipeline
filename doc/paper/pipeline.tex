@@ -28,14 +28,11 @@
 { {\bf Running Title -- } Parallelization and containerization of quantitative protoeomics data processing pipelines}
 
 \begin{abstract}
-The methods for processing shotgun proteomics data are not always straight forward to operate, and sometimes need manual intervention. This problem is exacerbate due to a preference toward UNIX among bioinformatician software developers, while instrument manufacturerers' with few exceptions operate under Windows. In practice, this means that many mass spectrometry labs use Windows computers just for making the format conversion. This also means that there will be software environment issues. Containerization enables installation of software into a virtual container environment, in a so-called container, as opposed to into a particular computer. The container can be distributed, while guaranteed to execute the exact same way regardless of operating system. In this paper we use \textit{Singularity} to contain a novel method developed in out lab, \textit{Quandenser} (QUANtification by Distillation for ENhanced Singals with Error Regulation), that increase the sensitivity of the LFQ analysis pipeline. This pipeline incorporates multiple processing steps, coded in separate executables. Amongs other tools it contains Dinosaur, MaRaCluster, Crux, qvality and Triqler. To facilitate the installation of the method, all these components are placed in the Singularity container. To further facilitate the processing we used a workflow managing system, \textit{NextFlow}. We benchmark our method against established protein quantification method, \textit{MaxQuant} using \textit{Latosinska} and \textit{iRPG} datasets and find that our method has superior computational time. In addition, it can be used in High Performance Computing clusters. Lastly, features for processing a novel scan method called \textit{BoxCar} has also been incorporated into our processing pipeline. [Fundera pa avrundning]
-
-
+The methods for processing shotgun proteomics data are not always straight forward to operate, and sometimes need manual intervention. This problem is exacerbate due to a preference toward UNIX among bioinformatician software developers, while instrument manufacturerers' with few exceptions operate under Windows. In practice, this means that many mass spectrometry labs use Windows computers just for making the format conversion. This also means that there will be software environment issues. Containerization enables installation of software into a virtual container environment, in a so-called container, as opposed to into a particular computer. The container can be distributed, while guaranteed to execute the exact same way regardless of operating system. In this paper we use \textit{Singularity} to contain a novel method developed in out lab, \textit{Quandenser} (QUANtification by Distillation for ENhanced Singals with Error Regulation), that increase the sensitivity of the LFQ analysis pipeline. This pipeline incorporates multiple processing steps, coded in separate executables. Amongs other tools it contains Dinosaur, MaRaCluster, Crux, qvality and Triqler. To facilitate the installation of the method, all these components are placed in the Singularity container. To further facilitate the processing we used a workflow managing system, \textit{NextFlow}. We benchmark our method against established protein quantification method, \textit{MaxQuant} using \textit{Latosinska} and \textit{iRPG} datasets and find that our method has superior computational time. In addition, it can be used in High Performance Computing clusters. Lastly, features for processing a novel scan method called \textit{BoxCar} has also been incorporated into our processing pipeline. [Fundera pa avrundning] FIXME
 
 \end{abstract}
 
 \section*{Introduction}
-
 Mass spectrometry-based proteomics is currently seen as the most comprehensive technique to analyze protein content in biological samples. Modern MS generate vast amounts of data and the analysis of such data is generally considered as a bottleneck. This has its reasons. The methods for processing the data are complex and are not always straight forward to operate, and sometimeds need manual intervention. As it is hard to recreate the exact software environment used during processing, many results produced with mass spectrometers cannot be accurately reproduced outside of the lab where it was initially generated.
 
 The seamingly ever increasing performance of each generation of mass spectrometry equipment drives both sample sizes and the number of spectra per sample in a manner that the frequently single processr implemented approaches to data processing has a hard time to keep up.
@@ -66,24 +63,12 @@ to account for the errors as a result of the MBR step.
 
 \section*{Methods}
 
-
-
 \subsection*{Data sets}
+Three data sets of RAW were downloaded and tested on the pipeline and MaxQuant. The first data set was LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD009348, 168 RAW files, total 163.2 Gb in size). The data set utilized the Boxcar scan method, mentioned previously. The second data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) and third data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id:  PXD001474, 27 RAW files, total of 14.8 Gb).
 
-FIXME data sets were tested with the pipeline. The data sets had
-
-\begin{table}[!h]
-  \caption{{\textbf{Data sets}}}
-  \label{table:datasets}
-\begin{center}
-\begin{tabular}{ccccc}
-PRIDE id & Description & Amount of files & Size of data set \\ \hline \hline
-PXD002170 & Latosinska & 8 RAW files & 10.2 Gb \\
-PXD001474 & Bracht & 27 RAW files & 14.8 Gb  \\
-PXD009348 & Wewer (Boxcar Plasma) & 168 RAW files & 163.2 Gb & \\
-\end{tabular}
-\end{center}
-\end{table}
+\subsection*{Processing data sets}
+The pipelines were processed on a computer running a Linux OS with an Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of
+memory. MaxQuant version 1.6.3.3 was used to process the data sets using while the fasta file used was generated from Swissprot 2019-04-11. Quandenser-pipeline was processed on the same local computer, and also on the HPC cluster Rackham at UPPMAX.
 
 \section*{Results}
 
@@ -91,20 +76,19 @@ PXD009348 & Wewer (Boxcar Plasma) & 168 RAW files & 163.2 Gb & \\
 In order to further reduce the running time we investigated the possibilities to parallelize the processing within quandenser. Particularly we performed the following optimizations:
 \begin{itemize}
   \item The conversion of each run from raw file-format into mzML-format is an embarrassingly parallelizable problem, in that each file can be processed in independent processes. We hence just enabled parallel processing by implementing the conversion process as a nextflow node.
-  \item The initial feature finding with Dinosaur\cite{teleman2016dinosaur} can be done independently for each file. Again we could parallize by just putting this into a separate nextflow node.
+  \item The initial feature finding with Dinosaur\cite{teleman2016dinosaur} can be done independently for each file. Again we could parallelize the process by putting this into a separate Nextflow node.
   \item Quandenser uses a minimum spanning tree strategy \cite{rost2016tric} to align the retention times of the different mass spectrometry runs. This makes an internal dependency structure. Every node in the minimum spanning tree will have to be aligned together with its sub-nodes, so the alignment process is done from the leafs inwards to the trunk.  However, at every level of the tree each branch can be processed independently. We have hence enabled individual processes to handle the alignment of every sub tree.
   \item FIXME: complete this list
 \end{itemize}
 
 \subsection*{Run time comparison}
-
 To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets. We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
 \begin{table}[!h]
   \begin{center}
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
 \begin{tabular}{lccc}
-&  Wewer (BoxCar Plasma) & Bracht & Latosinska \\ \hline \hline
+& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 1h 43m & 1h 14m \\
 QP non-parallel (local) & X & 1h 56m & 1h 27m \\
 QP parallel (HPC) & X & 2h 40m & 1h 52m \\
@@ -131,10 +115,10 @@ MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
 
 
 \subsection*{User Interface}
-
 To facilitate the operation of quandenser, we have provided quandenser with a user interface. A couple of notable features of the user interface are FIXME.
 
 \section*{Discussion}
+
 
 Will Podman rock our world?
 
