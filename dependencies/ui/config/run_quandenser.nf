@@ -89,7 +89,7 @@ for( line in all_lines ){
 }
 
 println("Total spectras = " + total_spectras)
-println("Spectras that will be converted = " + amount_of_non_mzML)
+//println("Spectras that will be converted = " + amount_of_non_mzML)
 
 if( params.parallel_msconvert == true ) {
   spectra_convert_channel = spectra_convert  // No collect = parallel processing, one file in each process
