@@ -28,14 +28,19 @@
 { {\bf Running Title -- } Parallelization and containerization of quantitative protoeomics data processing pipelines}
 
 \begin{abstract}
-The methods for processing shotgun proteomics data are not always straight forward to operate, and sometimes need manual intervention. This problem is exacerbate due to a preference toward UNIX among bioinformatician software developers, while instrument manufacturerers' with few exceptions operate under Windows. In practice, this means that many mass spectrometry labs use Windows computers just for making the format conversion. This also means that there will be software environment issues. Containerization enables installation of software into a virtual container environment, in a so-called container, as opposed to into a particular computer. The container can be distributed, while guaranteed to execute the exact same way regardless of operating system. In this paper we use \textit{Singularity} to contain a novel method developed in out lab, \textit{Quandenser} (QUANtification by Distillation for ENhanced Singals with Error Regulation), that increase the sensitivity of the LFQ analysis pipeline. This pipeline incorporates multiple processing steps, coded in separate executables. Amongs other tools it contains Dinosaur, MaRaCluster, Crux, qvality and Triqler. To facilitate the installation of the method, all these components are placed in the Singularity container. To further facilitate the processing we used a workflow managing system, \textit{NextFlow}. We benchmark our method against established protein quantification method, \textit{MaxQuant} using \textit{Latosinska} and \textit{iRPG} datasets and find that our method has superior computational time. In addition, it can be used in High Performance Computing clusters. Lastly, features for processing a novel scan method called \textit{BoxCar} has also been incorporated into our processing pipeline. [Fundera pa avrundning] FIXME
+The methods for processing shotgun proteomics data are not always straight forward to operate, and sometimes need manual intervention. This problem is exacerbate due to a preference toward UNIX among bioinformatician software developers, while instrument manufacturerers' with few exceptions operate under Windows. In practice, this means that many mass spectrometry labs use Windows computers just for making the format conversion. This also means that there will be software environment issues. Containerization enables installation of software into a virtual container environment, in a so-called container, as opposed to into a particular computer. The container can be distributed, while guaranteed to execute the exact same way regardless of operating system. In this paper we use \textit{Singularity} to contain a novel method developed in out lab, \textit{Quandenser} (QUANtification by Distillation for ENhanced Singals with Error Regulation), that increase the sensitivity of the LFQ analysis pipeline. This pipeline incorporates multiple processing steps, coded in separate executables. Among other tools, it contains Dinosaur, MaRaCluster, Crux, qvality and Triqler. To facilitate the installation of the method, all these components are placed in the Singularity container. To further facilitate the processing we used a workflow managing system, \textit{NextFlow}. We benchmark our method against established protein quantification method, \textit{MaxQuant} using \textit{Latosinska} and \textit{iRPG} datasets and find that our method has superior computational time. FIXME
+
+% Note: it seems that for large data sets, non-parallel Quandenser is not superior :(
+% Hopefully, the parallel version will be. First, I need to finish the non-parallel runs, which will give me very useful information.
+
+In addition, it can be used in High Performance Computing clusters. Lastly, features for processing a novel scan method called \textit{BoxCar} has also been incorporated into our processing pipeline. The pipeline shows promise of
 
 \end{abstract}
 
 \section*{Introduction}
-Mass spectrometry-based proteomics is currently seen as the most comprehensive technique to analyze protein content in biological samples. Modern MS generate vast amounts of data and the analysis of such data is generally considered as a bottleneck. This has its reasons. The methods for processing the data are complex and are not always straight forward to operate, and sometimeds need manual intervention. As it is hard to recreate the exact software environment used during processing, many results produced with mass spectrometers cannot be accurately reproduced outside of the lab where it was initially generated.
+Mass spectrometry-based proteomics is currently seen as the most comprehensive technique to analyze protein content in biological samples. Modern MS generate vast amounts of data and the analysis of such data is generally considered as a bottleneck. This has its reasons. The methods for processing the data are complex and are not always straight forward to operate, and sometimes need manual intervention. As it is hard to recreate the exact software environment used during processing, many results produced with mass spectrometers cannot be accurately reproduced outside of the lab where it was initially generated.
 
-The seamingly ever increasing performance of each generation of mass spectrometry equipment drives both sample sizes and the number of spectra per sample in a manner that the frequently single processr implemented approaches to data processing has a hard time to keep up.
+The seemingly ever increasing performance of each generation of mass spectrometry equipment drives both sample sizes and the number of spectra per sample in a manner that the frequently single processor implemented approaches to data processing has a hard time to keep up.
 
 There is also a mismatch between the bioinformaticians who often develop methods operating under Unix, and the fact that the instrument manufacturers' software with few exception operate under Windows. In practice this means that many mass spectrometry labs keep them selves with Windows computers, just for making format conversions between vendor specific raw file formats and non-proprietary file formats that can be read under windows.
 
@@ -43,7 +48,7 @@ The proteowizard community have created an windows executable that does such con
 
 New technology, so called containerization, provides means to install software, not into a particular computer, but into a virtual container environment, in a so-called container. The container can be distributed to several separate computers, yet is guaranteed to execute in the exact same way regardless of the operating system. There are several such containerization techniques available. The perhaps most popular one, docker, have a wide variety of available libraries of containers, and e.g. biocontainers \cite{}. However, docker containers, due to their nature, are executed with systems administrator privileges, and could be utilized for malicious purpose.  In this work we will focus on one named \textit{Singularity}, as it does not execute under root privileges and hence is the preferred solution of most computer cluster and High Performance Computing (HPC) clusters, particularly the ones in an academic environment.
 
-Recently, the proteowizard comunity developed a docker-container for the wine implementation of msconvert (\url{https://hub.docker.com/r/chambm/pwiz-skyline-i-agree-to-the-vendor-licenses/}). This is tremendously helpful, as it enables linux developers to produce piplines that can operate from beginning to end inside a Linux environment, or even an HPC environment.
+Recently, the proteowizard comunity developed a docker-container for the wine implementation of msconvert (\url{https://hub.docker.com/r/chambm/pwiz-skyline-i-agree-to-the-vendor-licenses/}). This is tremendously helpful, as it enables linux developers to produce pipelines that can operate from beginning to end inside a Linux environment, or even an HPC environment.
 
 We recently introduced a new method, {\em Quandenser} (QUANtification by
 Distillation for ENhanced Signals with Error Regulation), that increase the sensitivity of the LFQ
@@ -64,11 +69,11 @@ to account for the errors as a result of the MBR step.
 \section*{Methods}
 
 \subsection*{Data sets}
-Three data sets of RAW were downloaded and tested on the pipeline and MaxQuant. The first data set was LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD009348, 168 RAW files, total 163.2 Gb in size). The data set utilized the Boxcar scan method, mentioned previously. The second data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) and third data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id:  PXD001474, 27 RAW files, total of 14.8 Gb).
+Three data sets of RAW were downloaded and tested on the pipeline compared with MaxQuant. The first data set was LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD009348, 168 RAW files, total 163.2 Gb in size). The data set utilized the Boxcar scan method, mentioned previously. The second data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) and third data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id:  PXD001474, 27 RAW files, total of 14.8 Gb).
 
 \subsection*{Processing data sets}
 The pipelines were processed on a computer running a Linux OS with an Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of
-memory. MaxQuant version 1.6.3.3 was used to process the data sets using while the fasta file used was generated from Swissprot 2019-04-11. Quandenser-pipeline was processed on the same local computer, and also on the HPC cluster Rackham at UPPMAX.
+memory. MaxQuant version 1.6.3.3 was used to process the data sets and a fasta file generated from Swissprot 2019-04-11. Quandenser-pipeline was processed on the same local computer, and also on the HPC cluster Rackham at UPPMAX.
 
 \section*{Results}
 
@@ -82,7 +87,7 @@ In order to further reduce the running time we investigated the possibilities to
 \end{itemize}
 
 \subsection*{Run time comparison}
-To demonstrate the processing speed of the quandenser pipeline we processed a couple of large-scale data sets. We compared the processing time some different platform needed to complete the processing of the FIXME dataset.
+To demonstrate the processing speed of the Quandenser-pipeline we processed a couple of large-scale data sets. We compared the processing time some different platform needed to complete the processing of the data sets.
 \begin{table}[!h]
   \begin{center}
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
@@ -115,10 +120,14 @@ MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
 
 
 \subsection*{User Interface}
-To facilitate the operation of quandenser, we have provided quandenser with a user interface. A couple of notable features of the user interface are FIXME.
+To facilitate the operation of quandenser, we have provided quandenser with a user interface. The aim was to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. To allow users to easily download and run the GUI from within the image, a shell script was created to minimize manual intervention and installation. The shell script installs Singularity, downloading the image from Singularity Hub and start the GUI embedded inside the image.
+
+A couple of notable features of the user interface are FIXME.
+
 
 \section*{Discussion}
 
+Singularity is the current
 
 Will Podman rock our world?
 
