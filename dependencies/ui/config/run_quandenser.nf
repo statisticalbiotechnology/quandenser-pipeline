@@ -91,6 +91,9 @@ for( line in all_lines ){
 println("Total spectras = " + total_spectras)
 //println("Spectras that will be converted = " + amount_of_non_mzML)
 
+file_params = file("$publish_output_path/params.txt")
+file_params << "$params" + '\n'  // need to add \n
+
 if( params.parallel_msconvert == true ) {
   spectra_convert_channel = spectra_convert  // No collect = parallel processing, one file in each process
 } else {
