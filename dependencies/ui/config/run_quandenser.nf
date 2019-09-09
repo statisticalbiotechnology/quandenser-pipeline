@@ -120,7 +120,7 @@ process msconvert {
   script:
   """
   mkdir -p converted
-  wine msconvert ${f} --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
+  wine msconvert ${f} --verbose --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
   """
 }
 
