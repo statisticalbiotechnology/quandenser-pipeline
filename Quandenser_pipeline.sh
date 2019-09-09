@@ -7,7 +7,8 @@ YELLOW="\033[0;93m"
 RESET="\033[0m\n"
 
 # Go to dir where the script lies, this allows for links to work
-cd "$(dirname "$(realpath "$0")")"
+export SCRIPTDIR="$(dirname "$(realpath "$0")")"
+cd "$SCRIPTDIR"
 
 function PIPE_read() {
   # grep: -o, only get match, cut: -d'=' deliminter and get second column, tr: clear carriage return
@@ -92,13 +93,17 @@ done
         source ~/.bashrc && \
         mkdir -p ${GOPATH}/src/github.com/sylabs && \
         cd ${GOPATH}/src/github.com/sylabs && \
-        git clone https://github.com/sylabs/singularity.git && \
+        export SINGULARITYVERSION=3.2.1 && \
+        wget https://github.com/sylabs/singularity/releases/download/v${SINGULARITYVERSION}/singularity-${SINGULARITYVERSION}.tar.gz && \
+        tar -xzf singularity-${SINGULARITYVERSION}.tar.gz && \
+        # git clone https://github.com/sylabs/singularity.git && \
         cd singularity && \
         cd ${GOPATH}/src/github.com/sylabs/singularity && \
         ./mconfig && \
         cd ./builddir && \
         make && \
         sudo make install && \
+        cd "$SCRIPTDIR" && \
         printf "${GREEN}Singularity successfully installed${RESET}"
       } || { # catch
         printf "${RED}Singularity failed to install. Do you have root access? ${RESET}"
@@ -207,10 +212,13 @@ singularity exec --app quandenser_ui SingulQuand.SIF  python -c "from utils impo
 for var in "$@"; do
   if [ "$var" = "--disable-opengl" ] || [ "$var" = "-D" ]; then  # Check if user wants to disable opengl, will remember it for next time
     PIPE_write "disable-opengl" "true"
+    echo "${YELLOW}OpenGL disabled"
   elif [ "$var" = "--enable-opengl" ] || [ "$var" = "-E" ]; then  # Check if user wants to enable opengl
     PIPE_write "disable-opengl" "false"
+    echo "${YELLOW}OpenGL enabled"
   elif [ "$var" = "--disable-nvidia" ] || [ "$var" = "-N" ]; then  # Check if user wants to disable nvidia drivers
     graphics=""
+    echo "${YELLOW}Nvidia drivers disabled"
   fi
 done
 
@@ -252,4 +260,3 @@ while true; do
     fi
   fi
 done
-cd -  # Go back to prev folder. Will work if you are using link
