@@ -69,7 +69,7 @@ to account for the errors as a result of the MBR step.
 \section*{Methods}
 
 \subsection*{Data sets}
-Three data sets of RAW were downloaded and tested on the pipeline compared with MaxQuant. The first data set was LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD009348, 168 RAW files, total 163.2 Gb in size). The data set utilized the Boxcar scan method, mentioned previously. The second data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) and third data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id:  PXD001474, 27 RAW files, total of 14.8 Gb).
+Three data sets of RAW were downloaded and tested on the pipeline compared with MaxQuant. The first data set was LFQ mass spectrometry data of patients before and after gastric bypass surgery (PRIDE id: PXD004242, FIXME RAW files, total FIXME Gb in size). The second data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) and third data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id:  PXD001474, 27 RAW files, total of 14.8 Gb).
 
 \subsection*{Processing data sets}
 The pipelines were processed on a computer running a Linux OS with an Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of
@@ -93,12 +93,26 @@ To demonstrate the processing speed of the Quandenser-pipeline we processed a co
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
 \begin{tabular}{lccc}
+
+% This is from SHANNON, after the quandenser update
+& Weightloss & Bracht & Latosinska \\ \hline \hline
+QP parallel (local) & X & 1h 13m & 56m \\
+QP non-parallel (local) & X & 1h 35m & 1h 12m \\
+QP parallel (HPC) & X & 2h 40m & 1h 52m \\  % X & 3h 48m & 2h 39m
+QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\  % X & 2h 50m & 2h 3m
+MaxQuant (local) & X & X & X \\
+
+\begin{comment}
+% This is from BOSE pre quandenser update.
+% I will rerun everything on shannon due to RAM issues + Matthew needs BOSE for the quandenser paper
 & BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 1h 43m & 1h 14m \\
 QP non-parallel (local) & X & 1h 56m & 1h 27m \\
 QP parallel (HPC) & X & 2h 40m & 1h 52m \\
 QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\
 MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
+\end{comment}
+
 \end{tabular}
 \end{center}
 \end{table}
@@ -108,12 +122,27 @@ MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in cpu time in core hours}}
   \label{table:cputime}
 \begin{tabular}{lccc}
+
+% This is from SHANNON, after the quandenser update
+% NOTE: Less core hours on local because each core is faster than in BOSE
+& Weightloss & Bracht & Latosinska \\ \hline \hline
+QP parallel (local) & X & 3.9 & 2.4 \\
+QP non-parallel (local) & X & 3.0 & 1.8 \\
+QP parallel (HPC) & X & 23.9 & 14.9 \\
+QP non-parallel (HPC) & X & 29.0 & 18.2 \\
+MaxQuant (local) & X & X & X \\
+
+\begin{comment}
+% This is from BOSE pre quandenser update.
+% I will rerun everything on shannon due to RAM issues + Matthew needs BOSE for the quandenser paper
 & BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 5.9 & 3.6 \\
 QP non-parallel (local) & X & 4.4 & 3.1 \\
 QP parallel (HPC) & X & 28.6 & 15.2 \\ % NOTE: Nextflow does not seem to calculate these correctly. Check trace
 QP non-parallel (HPC) & X & 30.4 & 17.8 \\
 MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
+\end{comment}
+
 \end{tabular}
 \end{center}
 \end{table}
@@ -127,7 +156,11 @@ A couple of notable features of the user interface are FIXME.
 
 \section*{Discussion}
 
-Singularity is the current
+The new pipeline allows an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.
+
+The processing time of the pipeline was also considerable faster than MaxQuant, a popular mass spectrometry analyzing software, and slightly faster than OpenMS. The combination of faster processing time and being able to run on HPC clusters makes it an excellent tool for analyzing label-free mass spectrometry data. Some efforts were made with the parallel implementation of Quandenser, but it did not improve the computation time. However, the framework for parallelization of Quandenser might prove to be useful in the future, if the project were to be continued.
+
+Singularity is the currently the  as it is the preferred solution of most High Performance Computing (HPC) clusters, such as UPPMAX.
 
 Will Podman rock our world?
 
