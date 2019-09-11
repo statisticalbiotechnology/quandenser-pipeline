@@ -20,9 +20,6 @@ def main():
         checker['msconvert'] = True
     elif 'parallel-1' in args.command:
         checker['dinosaur'] = True
-    elif 'sleep' in args.command:
-        checker['msconvert'] = True
-        checker['dinosaur'] = True
 
     counter = 0
     last_line = ''
