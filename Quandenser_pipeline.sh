@@ -212,13 +212,13 @@ singularity exec --app quandenser_ui SingulQuand.SIF  python -c "from utils impo
 for var in "$@"; do
   if [ "$var" = "--disable-opengl" ] || [ "$var" = "-D" ]; then  # Check if user wants to disable opengl, will remember it for next time
     PIPE_write "disable-opengl" "true"
-    echo "${YELLOW}OpenGL disabled"
+    printf "${YELLOW}OpenGL disabled${RESET}"
   elif [ "$var" = "--enable-opengl" ] || [ "$var" = "-E" ]; then  # Check if user wants to enable opengl
     PIPE_write "disable-opengl" "false"
-    echo "${YELLOW}OpenGL enabled"
+    printf "${YELLOW}OpenGL enabled${RESET}"
   elif [ "$var" = "--disable-nvidia" ] || [ "$var" = "-N" ]; then  # Check if user wants to disable nvidia drivers
     graphics=""
-    echo "${YELLOW}Nvidia drivers disabled"
+    printf "${YELLOW}Nvidia drivers disabled${RESET}"
   fi
 done
 
