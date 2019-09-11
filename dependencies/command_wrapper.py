@@ -10,8 +10,6 @@ args = parser.parse_args()
 def main():
     print(f"running command: {args.command}")
     process = subprocess.Popen([args.command],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
                                 shell=True)
 
     checker = {'msconvert': False,
@@ -26,7 +24,13 @@ def main():
     while True:
         poll = process.poll()
         if poll == None:
-
+            if not os.path.isfile('stdout.txt'):
+                continue
+            else:
+                with open('stdout.txt', 'r') as file:
+                    lines = file.readlines()
+                    if lines == []:
+                        continue
             if checker['msconvert']:
                 with open('stdout.txt', 'r') as file:
                     lines = file.readlines()
