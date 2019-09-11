@@ -5,6 +5,7 @@
 \usepackage{amsfonts}
 \usepackage{authblk}
 \usepackage{float}
+\usepackage{verbatim}
 
 \usepackage[outdir=./img/]{epstopdf}
 \usepackage{epsfig}
@@ -56,24 +57,18 @@ analysis pipeline. Just as any proteomics data analysis method, the processing c
 
 To further facilitate the processing we used a workflow managing system, deals with how different pieces of dependent software can be consequently executed in a particular environment. Again, there are several workflow managers available, but the one used was \textit{NextFlow}\cite{di2017nextflow}.
 
-Quandenser condenses the quantification data by applying
-unsupervised clustering on both MS1 and MS2 level and thereby paves the way for
-a quantification-first approach. The algorithm combines the unknowns from both
-levels into a condensed set of MS1 features and MS2 spectra that are likely to
-be interesting for further investigation. Specifically, Quandenser incorporates
-MBR for MS1 features to increase sensitivity and uses MS2 spectrum clustering
-to decrease the number of spectra to be searched. Importantly, it also provides
-{\em feature-feature match} error rates which can be used as input to Triqler
-to account for the errors as a result of the MBR step.
+Quandenser condenses the quantification data by applying unsupervised clustering on both MS1 and MS2 level and thereby paves the way for a quantification-first approach. The algorithm combines the unknowns from both levels into a condensed set of MS1 features and MS2 spectra that are likely to be interesting for further investigation. Specifically, Quandenser incorporates MBR for MS1 features to increase sensitivity and uses MS2 spectrum clustering to decrease the number of spectra to be searched. Importantly, it also provides {\em feature-feature match} error rates which can be used as input to Triqler to account for the errors as a result of the MBR step.
 
 \section*{Methods}
 
 \subsection*{Data sets}
-Three data sets of RAW were downloaded and tested on the pipeline compared with MaxQuant. The first data set was LFQ mass spectrometry data of patients before and after gastric bypass surgery (PRIDE id: PXD004242, FIXME RAW files, total FIXME Gb in size). The second data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) and third data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id:  PXD001474, 27 RAW files, total of 14.8 Gb).
+Three data sets of RAW were downloaded and tested on the pipeline compared with MaxQuant. The first data set was a subset of LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD004242, 180 RAW files, total 97.5 Gb in size). The second data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id: PXD001474, 27 RAW files, total of 14.8 Gb) and the third data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size).
 
 \subsection*{Processing data sets}
-The pipelines were processed on a computer running a Linux OS with an Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of
-memory. MaxQuant version 1.6.3.3 was used to process the data sets and a fasta file generated from Swissprot 2019-04-11. Quandenser-pipeline was processed on the same local computer, and also on the HPC cluster Rackham at UPPMAX.
+The pipelines were processed on a computer running a Linux OS with an Intel i5-9600K (6 cores) @ 4.600GHz with 64 Gb of memory.
+% BOSE
+% Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of memory.
+MaxQuant version 1.6.3.3 was used to process the data sets and a fasta file generated from Swissprot 2019-04-11. The setting "match-between-runs" in MaxQuant was enabled during processing. Quandenser-pipeline was processed on the same local computer, and also on the HPC cluster Rackham at UPPMAX.
 
 \section*{Results}
 
@@ -93,26 +88,13 @@ To demonstrate the processing speed of the Quandenser-pipeline we processed a co
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in wall time.}}
   \label{table:walltime}
 \begin{tabular}{lccc}
-
 % This is from SHANNON, after the quandenser update
 & Weightloss & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 1h 13m & 56m \\
 QP non-parallel (local) & X & 1h 35m & 1h 12m \\
 QP parallel (HPC) & X & 2h 40m & 1h 52m \\  % X & 3h 48m & 2h 39m
 QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\  % X & 2h 50m & 2h 3m
-MaxQuant (local) & X & X & X \\
-
-\begin{comment}
-% This is from BOSE pre quandenser update.
-% I will rerun everything on shannon due to RAM issues + Matthew needs BOSE for the quandenser paper
-& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
-QP parallel (local) & X & 1h 43m & 1h 14m \\
-QP non-parallel (local) & X & 1h 56m & 1h 27m \\
-QP parallel (HPC) & X & 2h 40m & 1h 52m \\
-QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\
-MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
-\end{comment}
-
+MaxQuant (local) & X & 4h 17m & 1h 45m \\
 \end{tabular}
 \end{center}
 \end{table}
@@ -122,7 +104,6 @@ MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in cpu time in core hours}}
   \label{table:cputime}
 \begin{tabular}{lccc}
-
 % This is from SHANNON, after the quandenser update
 % NOTE: Less core hours on local because each core is faster than in BOSE
 & Weightloss & Bracht & Latosinska \\ \hline \hline
@@ -130,23 +111,14 @@ QP parallel (local) & X & 3.9 & 2.4 \\
 QP non-parallel (local) & X & 3.0 & 1.8 \\
 QP parallel (HPC) & X & 23.9 & 14.9 \\
 QP non-parallel (HPC) & X & 29.0 & 18.2 \\
-MaxQuant (local) & X & X & X \\
-
-\begin{comment}
-% This is from BOSE pre quandenser update.
-% I will rerun everything on shannon due to RAM issues + Matthew needs BOSE for the quandenser paper
-& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
-QP parallel (local) & X & 5.9 & 3.6 \\
-QP non-parallel (local) & X & 4.4 & 3.1 \\
-QP parallel (HPC) & X & 28.6 & 15.2 \\ % NOTE: Nextflow does not seem to calculate these correctly. Check trace
-QP non-parallel (HPC) & X & 30.4 & 17.8 \\
-MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
-\end{comment}
-
+MaxQuant (local) & X & 15.5 & 6.2 \\
 \end{tabular}
 \end{center}
 \end{table}
 
+The performance of Quandenser-pipeline was significantly faster than MaxQuant on both data sets, FIXME\% faster for the FIXME data set Comparing Quandenser-pipeline to OpenMS, Quandenser-pipeline was only slightly faster than OpenMS for both data sets.
+
+Comparing CPU hours, the 
 
 \subsection*{User Interface}
 To facilitate the operation of quandenser, we have provided quandenser with a user interface. The aim was to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. To allow users to easily download and run the GUI from within the image, a shell script was created to minimize manual intervention and installation. The shell script installs Singularity, downloading the image from Singularity Hub and start the GUI embedded inside the image.
@@ -155,8 +127,7 @@ A couple of notable features of the user interface are FIXME.
 
 
 \section*{Discussion}
-
-The new pipeline allows an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.
+The new pipeline allows for an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.
 
 The processing time of the pipeline was also considerable faster than MaxQuant, a popular mass spectrometry analyzing software, and slightly faster than OpenMS. The combination of faster processing time and being able to run on HPC clusters makes it an excellent tool for analyzing label-free mass spectrometry data. Some efforts were made with the parallel implementation of Quandenser, but it did not improve the computation time. However, the framework for parallelization of Quandenser might prove to be useful in the future, if the project were to be continued.
 
