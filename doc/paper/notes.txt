@@ -1,0 +1,22 @@
+
+\begin{comment}
+% This is from BOSE pre quandenser update.
+% I will rerun everything on shannon due to RAM issues + Matthew needs BOSE for the quandenser paper
+& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
+QP parallel (local) & X & 1h 43m & 1h 14m \\
+QP non-parallel (local) & X & 1h 56m & 1h 27m \\
+QP parallel (HPC) & X & 2h 40m & 1h 52m \\
+QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\
+MaxQuant (local) & 14h 17m & 5h 52m & 2h 33m \\
+\end{comment}
+
+\begin{comment}
+% This is from BOSE pre quandenser update.
+% I will rerun everything on shannon due to RAM issues + Matthew needs BOSE for the quandenser paper
+& BoxCar Plasma & Bracht & Latosinska \\ \hline \hline
+QP parallel (local) & X & 5.9 & 3.6 \\
+QP non-parallel (local) & X & 4.4 & 3.1 \\
+QP parallel (HPC) & X & 28.6 & 15.2 \\ % NOTE: Nextflow does not seem to calculate these correctly. Check trace
+QP non-parallel (HPC) & X & 30.4 & 17.8 \\
+MaxQuant (local) & 76.56 & 31.74 & 13.06 \\
+\end{comment}
