@@ -92,8 +92,8 @@ To demonstrate the processing speed of the Quandenser-pipeline we processed a co
 & Weightloss & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 1h 13m & 56m \\
 QP non-parallel (local) & X & 1h 35m & 1h 12m \\
-QP parallel (HPC) & X & 2h 40m & 1h 52m \\  % X & 3h 48m & 2h 39m
-QP non-parallel (HPC) & X & 2h 38m & 2h 11m \\  % X & 2h 50m & 2h 3m
+QP parallel (HPC) & X & 1h 17m & 1h 21m \\  % Removed waiting time
+QP non-parallel (HPC) & X & 2h 29m & 1h 54m \\  % Removed waiting time
 MaxQuant (local) & X & 4h 17m & 1h 45m \\
 \end{tabular}
 \end{center}
@@ -118,7 +118,7 @@ MaxQuant (local) & X & 15.5 & 6.2 \\
 
 The performance of Quandenser-pipeline was significantly faster than MaxQuant on both data sets, FIXME\% faster for the FIXME data set Comparing Quandenser-pipeline to OpenMS, Quandenser-pipeline was only slightly faster than OpenMS for both data sets.
 
-Comparing CPU hours, the 
+Comparing CPU hours, the
 
 \subsection*{User Interface}
 To facilitate the operation of quandenser, we have provided quandenser with a user interface. The aim was to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. To allow users to easily download and run the GUI from within the image, a shell script was created to minimize manual intervention and installation. The shell script installs Singularity, downloading the image from Singularity Hub and start the GUI embedded inside the image.
