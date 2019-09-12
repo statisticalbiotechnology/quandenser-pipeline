@@ -3,6 +3,7 @@ import argparse
 import time
 import os
 import signal
+import psutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("command")
@@ -28,7 +29,14 @@ def main():
         with open('debug.txt', 'a') as debug_file:
             debug_file.write(f"Killing process and it's children")
         print("Killing processes and it's children")
-        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+
+        p = psutil.Process(process.pid)
+        children = p.children(recursive=True)
+        for child in children:
+            with open('debug.txt', 'a') as debug_file:
+                debug_file.write(str(child) + '\n')
+            child.kill()
+        p.kill()
         exit(1)
 
 def check_error(checker, process):
