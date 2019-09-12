@@ -7,6 +7,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("command")
 args = parser.parse_args()
 
+sleep_time = 5
+
 def main():
     print(f"running command: {args.command}")
     process = subprocess.Popen([args.command],
@@ -22,19 +24,17 @@ def main():
     counter = 0
     last_line = ''
     while True:
+        time.sleep(sleep_time)  # 7 seconds between checks
         poll = process.poll()
         if poll == None:
             if not os.path.isfile('stdout.txt'):
                 continue
-            else:
+            if checker['msconvert']:
                 with open('stdout.txt', 'r') as file:
                     lines = file.readlines()
                     if lines == []:
                         continue
-            if checker['msconvert']:
-                with open('stdout.txt', 'r') as file:
-                    lines = file.readlines()
-                    # The crash happens in convertin spectra. Wait until it starts before checking
+                    # The crash happens in converting spectra. Wait until it starts before checking
                     if not 'converting spectra:' in lines[-1]:
                         continue
                     if lines[-1] == last_line:
@@ -48,12 +48,13 @@ def main():
             elif checker['dinosaur']:
                 with open('stdout.txt', 'r') as file:
                     lines = file.readlines()
+                    if lines == []:
+                        continue
                 for line in lines:
                     if 'Exception in thread "main" java.lang.ClassCastException' in line:
                         raise Exception('Process wrapper: Dinosaur in Quandenser has crashed.')
         else:
             break  # If process had stopped, exit here
-        time.sleep(7)  # 7 seconds between checks
     if process.returncode != 0:
         stdout, stderr = process.communicate()
         raise Exception(f"Process wrapper: Unknown error. Stderr:\n {stderr.decode('utf-8')}")
