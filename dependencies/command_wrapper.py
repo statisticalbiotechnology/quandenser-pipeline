@@ -2,6 +2,7 @@ import subprocess
 import argparse
 import time
 import os
+import signal
 
 parser = argparse.ArgumentParser()
 parser.add_argument("command")
@@ -11,8 +12,9 @@ sleep_time = 5
 
 def main():
     print(f"running command: {args.command}")
-    process = subprocess.Popen([args.command],
-                                shell=True)
+    process = subprocess.Popen(args.command,
+                               shell=True,
+                               preexec_fn=os.setsid)
 
     checker = {'msconvert': False,
                'dinosaur': False}
@@ -20,7 +22,16 @@ def main():
         checker['msconvert'] = True
     elif 'parallel-1' in args.command:
         checker['dinosaur'] = True
+    try:
+        check_error(checker, process)
+    except:
+        with open('debug.txt', 'a') as debug_file:
+            debug_file.write(f"Killing process and it's children")
+        print("Killing processes and it's children")
+        os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        exit(1)
 
+def check_error(checker, process):
     counter = 0
     last_line = ''
     while True:
@@ -37,13 +48,17 @@ def main():
                     # The crash happens in converting spectra. Wait until it starts before checking
                     if not 'converting spectra:' in lines[-1]:
                         continue
+                    lines[-1] = lines[-1].replace('\n', '')
                     if lines[-1] == last_line:
                         counter += 1
                     elif lines[-1] != last_line:
                         counter = 0  # Reset counter every time here
+                    with open('debug.txt', 'a') as debug_file:
+                        debug_file.write(f"{last_line}\t{lines[-1]}\t{last_line == lines[-1]}\n")
                     last_line = lines[-1]  # Set last line as the line you read
                 if counter >= 3:  # Check 3 times if the line is the same
-                    raise Exception('Process wrapper: MSconvert is stuck.')
+                    raise Exception('ERROR CAUGHT: MSconvert is stuck (a rare, but known problem). Exiting...')
+                    return 1
 
             elif checker['dinosaur']:
                 with open('stdout.txt', 'r') as file:
@@ -52,12 +67,15 @@ def main():
                         continue
                 for line in lines:
                     if 'Exception in thread "main" java.lang.ClassCastException' in line:
-                        raise Exception('Process wrapper: Dinosaur in Quandenser has crashed.')
+                        raise Exception('ERROR CAUGHT: Dinosaur in Quandenser has crashed (a rare, but known problem). Exiting...')
+                        return 1
         else:
             break  # If process had stopped, exit here
     if process.returncode != 0:
         stdout, stderr = process.communicate()
-        raise Exception(f"Process wrapper: Unknown error. Stderr:\n {stderr.decode('utf-8')}")
+        raise Exception(f"ERROR CAUGHT: Unknown error. Stderr:\n {stderr.decode('utf-8')}")
+    print("Process finished")
+    return 0
 
 if __name__ == '__main__':
     main()
