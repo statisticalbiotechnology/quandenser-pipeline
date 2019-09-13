@@ -78,7 +78,6 @@ In order to further reduce the running time we investigated the possibilities to
   \item The conversion of each run from raw file-format into mzML-format is an embarrassingly parallelizable problem, in that each file can be processed in independent processes. We hence just enabled parallel processing by implementing the conversion process as a nextflow node.
   \item The initial feature finding with Dinosaur\cite{teleman2016dinosaur} can be done independently for each file. Again we could parallelize the process by putting this into a separate Nextflow node.
   \item Quandenser uses a minimum spanning tree strategy \cite{rost2016tric} to align the retention times of the different mass spectrometry runs. This makes an internal dependency structure. Every node in the minimum spanning tree will have to be aligned together with its sub-nodes, so the alignment process is done from the leafs inwards to the trunk.  However, at every level of the tree each branch can be processed independently. We have hence enabled individual processes to handle the alignment of every sub tree.
-  \item FIXME: complete this list
 \end{itemize}
 
 \subsection*{Run time comparison}
@@ -109,29 +108,26 @@ MaxQuant (local) & X & 4h 17m & 1h 45m \\
 & Weightloss & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & X & 3.9 & 2.4 \\
 QP non-parallel (local) & X & 3.0 & 1.8 \\
-QP parallel (HPC) & X & 23.9 & 14.9 \\
+QP parallel (HPC) & X & 23.9 & 12.6 \\
 QP non-parallel (HPC) & X & 29.0 & 18.2 \\
 MaxQuant (local) & X & 15.5 & 6.2 \\
 \end{tabular}
 \end{center}
 \end{table}
 
-The performance of Quandenser-pipeline was significantly faster than MaxQuant on both data sets, FIXME\% faster for the FIXME data set Comparing Quandenser-pipeline to OpenMS, Quandenser-pipeline was only slightly faster than OpenMS for both data sets.
-
-Comparing CPU hours, the
-
 \subsection*{User Interface}
-To facilitate the operation of quandenser, we have provided quandenser with a user interface. The aim was to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an open source GUI framework based by the Qt framework \cite{pyside2}. To allow users to easily download and run the GUI from within the image, a shell script was created to minimize manual intervention and installation. The shell script installs Singularity, downloading the image from Singularity Hub and start the GUI embedded inside the image.
+To facilitate the operation of quandenser, we have provided quandenser with a user interface. The aim was to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an GUI framework based by the Qt framework, with a LGPLv3 license \cite{pyside2}. To allow users to easily download and run the GUI from within the image, a shell script was created to minimize manual intervention and installation. The shell script installs Singularity, downloading the container from Singularity Hub and start the GUI embedded inside the image.
 
 A couple of notable features of the user interface are FIXME.
 
-
 \section*{Discussion}
+The performance of Quandenser-pipeline was significantly faster than MaxQuant on both data sets, FIXME\% faster for the FIXME data set.
+
+Comparing CPU hours, the
+
 The new pipeline allows for an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.
 
 The processing time of the pipeline was also considerable faster than MaxQuant, a popular mass spectrometry analyzing software, and slightly faster than OpenMS. The combination of faster processing time and being able to run on HPC clusters makes it an excellent tool for analyzing label-free mass spectrometry data. Some efforts were made with the parallel implementation of Quandenser, but it did not improve the computation time. However, the framework for parallelization of Quandenser might prove to be useful in the future, if the project were to be continued.
-
-Singularity is the currently the  as it is the preferred solution of most High Performance Computing (HPC) clusters, such as UPPMAX.
 
 Will Podman rock our world?
 
