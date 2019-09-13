@@ -22,7 +22,7 @@ def main():
                'dinosaur': False}
     if 'msconvert' in args.command:
         checker['msconvert'] = True
-    elif 'parallel-1' in args.command:
+    elif 'parallel-1' in args.command or 'parallel-3' in args.command:
         checker['dinosaur'] = True
     try:
         check_error(checker, process)
