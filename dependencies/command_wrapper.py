@@ -9,13 +9,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("command")
 args = parser.parse_args()
 
-sleep_time = 5
+sleep_time = 7
 
 def main():
     print(f"running command: {args.command}")
     process = subprocess.Popen(args.command,
                                shell=True,
                                preexec_fn=os.setsid)
+                               # For some goddamned reason, it seems this fixed the hanging
 
     checker = {'msconvert': False,
                'dinosaur': False}
