@@ -24,13 +24,15 @@ def main():
         checker['msconvert'] = True
     elif 'parallel-1' in args.command or 'parallel-3' in args.command:
         checker['dinosaur'] = True
+    print(checker)
     try:
         check_error(checker, process)
-    except:
+    except Exception as e:
+        print("Killing process and it's children")
+        print(str(e))
         with open('debug.txt', 'a') as debug_file:
             debug_file.write(f"Killing process and it's children")
-        print("Killing processes and it's children")
-
+            debug_file.write(str(e))
         p = psutil.Process(process.pid)
         children = p.children(recursive=True)
         for child in children:
@@ -50,7 +52,7 @@ def check_error(checker, process):
             if not os.path.isfile('stdout.txt'):
                 continue
             if checker['msconvert']:
-                with open('stdout.txt', 'r') as file:
+                with open('stdout.txt', 'r', encoding="utf-8") as file:
                     lines = file.readlines()
                     if lines == []:
                         continue
@@ -70,7 +72,7 @@ def check_error(checker, process):
                     return 1
 
             elif checker['dinosaur']:
-                with open('stdout.txt', 'r') as file:
+                with open('stdout.txt', 'r', encoding="utf-8") as file:
                     lines = file.readlines()
                     if lines == []:
                         continue
