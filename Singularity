@@ -46,6 +46,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/quandenser-v0-02-linux-amd64.deb /
    # Boxcar converter
    dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
+   # Command wrapper, which prevents some errors from occuring
+   dependencies/command_wrapper.py /usr/local/bin/command_wrapper.py
 
 %post
     export DEBIAN_FRONTEND=noninteractive
@@ -155,5 +157,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.081"
+    VERSION="v0.082"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
