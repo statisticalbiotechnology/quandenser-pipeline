@@ -159,6 +159,7 @@ disable_update="false"
 for var in "$@"; do
   if [ "$var" = "-U" ] || [ "$var" = "--disable-update" ]; then
     disable_update="true"
+    printf "${YELLOW}Will not check for updates${RESET}"
   fi
 done
 
