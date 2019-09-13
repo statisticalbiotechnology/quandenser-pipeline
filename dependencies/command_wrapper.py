@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("command")
 args = parser.parse_args()
 
-sleep_time = 7
+sleep_time = 6
 
 def main():
     print(f"running command: {args.command}")
