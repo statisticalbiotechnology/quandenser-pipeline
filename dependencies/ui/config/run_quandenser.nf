@@ -110,7 +110,9 @@ process msconvert {
   */
   errorStrategy 'retry'  // If wine crashes for some reason, try again once
   publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "converted/*"
-  publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "converted/*"
+  if( params.publish_msconvert == true ){
+    publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "converted/*"
+  }
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_msconvert_max_forks
   input:
@@ -120,7 +122,7 @@ process msconvert {
   script:
   """
   mkdir -p converted
-  wine msconvert ${f} --verbose --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt
+  python -s /usr/local/bin/command_wrapper.py 'wine msconvert ${f} --verbose --filter "peakPicking true 1-" -o converted ${params.msconvert_additional_arguments} | tee -a stdout.txt'
   """
 }
 
@@ -133,7 +135,9 @@ combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
 if ( params.boxcar_convert == true) {
   process boxcar_convert {
     publishDir "$params.output_path/work/boxcar_converted_${params.random_hash}", mode: 'symlink', overwrite: true
-    publishDir "$publish_output_path", mode: 'copy', overwrite: true
+    if( params.publish_boxcar_convert == true ){
+      publishDir "$publish_output_path", mode: 'copy', overwrite: true
+    }
     containerOptions "$params.custom_mounts"
     input:
       file('mzML/*') from combined_channel.collect()
@@ -158,7 +162,9 @@ boxcar_channel.flatten().into {
 // Normal, non-parallel process
 process quandenser {
   // The normal process, no parallelization
-  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  if( params.publish_quandenser == true ){
+    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  }
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
@@ -181,7 +187,9 @@ process quandenser {
 
 process quandenser_parallel_1 {  // About 3 min/run
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
-  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+  if( params.publish_quandenser == true ){
+    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+  }
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time run out
@@ -205,7 +213,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
   sed -i "/\$filename/!d" modified_list.txt
-  quandenser --batch modified_list.txt --parallel-1 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  python -s /usr/local/bin/command_wrapper.py 'quandenser --batch modified_list.txt --parallel-1 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
   """
 }
 
@@ -229,8 +237,10 @@ if (params.parallel_quandenser == false){
 
 process quandenser_parallel_2 {  // About 30 seconds
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
-  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
-  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+  if( params.publish_quandenser == true ){
+    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
+    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+  }
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
@@ -353,6 +363,7 @@ process quandenser_parallel_3 {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
+  errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time run out
   input:
     file 'list.txt' from file_def
     set val(depth), val(filepair) from processing_tree_changed  // Get a filepair from a round
@@ -383,13 +394,15 @@ process quandenser_parallel_3 {  // About 3 min/run
     mkdir -p pair/file1; mkdir pair/file2
     ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
     ln -s ${prev_percolator} Quandenser_output/percolator
-    quandenser --batch list.txt --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+    python -s /usr/local/bin/command_wrapper.py 'quandenser --batch list.txt --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
     """
 }
 
 process quandenser_parallel_4 {
   // Parallel 4: Run through maracluster extra features. Non-parallel
-  publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  if( params.publish_quandenser == true ){
+    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+  }
   containerOptions "$params.custom_mounts"
   input:
    file 'list.txt' from file_def
@@ -420,7 +433,9 @@ c2 = spectra_parallel
 spectra = c1.concat(c2)
 
 process tide_search {
-  publishDir publish_output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
+  if( params.publish_quandenser == true ){
+    publishDir publish_output_path, mode: 'copy', pattern: "crux-output/*", overwrite: true
+  }
   containerOptions "$params.custom_mounts"
   input:
   file 'seqdb.fa' from db
@@ -439,7 +454,9 @@ process tide_search {
 }
 
 process triqler {
-  publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "*proteins.*",overwrite: true
+  if( params.publish_triqler == true ){
+    publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "*proteins.*",overwrite: true
+  }
   containerOptions "$params.custom_mounts"
   input:
     file("Quandenser_output/*") from quandenser_out.collect()
@@ -451,19 +468,9 @@ process triqler {
   when:
     params.workflow == "Full"
   script:
-  if (params.raw_intensities) {
-    triqler_raw = '--raw_intensities'
-  } else {
-    triqler_raw = ''
-  }
-  if (params.returnDistributions) {
-    triqler_dist = '--returnDistributions'
-  } else {
-    triqler_dist = ''
-  }
   """
   python -s /usr/local/bin/prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
-  python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} ${triqler_raw} ${triqler_dist} 2>&1 | tee -a stdout.txt
+  python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} 2>&1 | tee -a stdout.txt
   zip triqler.zip *.tsv *.csv -x "triqler_input*"
   """
 }
