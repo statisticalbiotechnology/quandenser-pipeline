@@ -118,16 +118,17 @@ MaxQuant (local) & 103.7 & 15.5 & 6.2 \\
 \subsection*{User Interface}
 To facilitate the operation of quandenser, we have provided quandenser with a user interface. The aim was to improve the usability of the workflow, to allow users to easily modify and run the pipeline to their choosing. Pyside2 was used to create the GUI, which is an GUI framework based by the Qt framework, with a LGPLv3 license \cite{pyside2}. To allow users to easily download and run the GUI from within the image, a shell script was created to minimize manual intervention and installation. The shell script installs Singularity, downloading the container from Singularity Hub and start the GUI embedded inside the image.
 
-A couple of notable features of the user interface are FIXME.
+The new pipeline allows for an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing. The combination of faster processing time and being able to run on HPC clusters makes Quandenser-pipeline an excellent tool for analyzing label-free mass spectrometry data.
 
 \section*{Discussion}
-The performance of Quandenser-pipeline was significantly faster than MaxQuant on both data sets, FIXME\% faster for the FIXME data set.
+The performance of Quandenser-pipeline was significantly faster than MaxQuant on all data sets, FIXME\% faster for the FIXME data set.
+
+A drawback with using parallel computation option of the pipeline is that the waiting time on the SLURM cluster for each process slows down the parallelization, meaning that a non-parallel run would be faster in some cases when the HPC cluster is under a heavy load.
+On a local computer, the waiting time for each process is negligible, meaning a parallel processing would always be faster than non-parallel.
 
 Comparing CPU hours, the
 
-The new pipeline allows for an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.
-
-The processing time of the pipeline was also considerable faster than MaxQuant, a popular mass spectrometry analyzing software, and slightly faster than OpenMS. The combination of faster processing time and being able to run on HPC clusters makes it an excellent tool for analyzing label-free mass spectrometry data. Some efforts were made with the parallel implementation of Quandenser, but it did not improve the computation time. However, the framework for parallelization of Quandenser might prove to be useful in the future, if the project were to be continued.
+Another method of containerization is Podman, a daemonless container engine which solves some drawbacks with Singularity, one of which is that Singularity is read-only, while Podman containers can also write inside the container. 
 
 Will Podman rock our world?
 
