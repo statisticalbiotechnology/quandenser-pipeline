@@ -8,11 +8,11 @@ sns.set_color_codes("dark")
 sns.set_style("white")
 sns.set_context("talk")
 data = {
-'QP\n(parallel)': [0, 60 + 13, 56],
+'QP\n(parallel)': [10*60 + 46, 60 + 13, 56],
 'QP\n(non-parallel)': [0, 60 + 35, 60 + 12],
 'QP HPC\n(parallel)': [0, 60 + 17, 60 + 21],
 'QP HPC\n(non-parallel)': [0, 2*60 + 29, 60 + 54],
-'MaxQuant\nmbr': [0, 4*60 + 17, 60 + 45]
+'MaxQuant\nmbr': [28*60 + 44, 4*60 + 17, 60 + 45]
 }
 data_cores = {
 'QP\n(parallel)': [1,2,3],
