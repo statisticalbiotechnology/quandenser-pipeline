@@ -23,7 +23,7 @@ data_cores = {
 }
 
 # Restructure
-data_sets =  ['Weightloss (180 files)', 'Bariatric surgery (27 files)', 'Bladder cancer (8 files)']
+data_sets =  ['Geyer (180 files)', 'Bracht (27 files)', 'Latosinska (8 files)']
 data_list = []
 for key in data.keys():
     values = data[key]
@@ -36,11 +36,13 @@ columns = ['run', 'data_set', 'time']
 pd_data = pd.DataFrame(data_list, columns = columns)
 print(pd_data)
 plt.figure(figsize=(15,7))
-ax=sns.barplot(x='run',
-               y='time',
-               hue='data_set',
-               data=pd_data)
+ax = sns.barplot(x='run',
+                 y='time',
+                 hue='data_set',
+                 data=pd_data)
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles=handles[0:], labels=labels[0:])
 plt.ylabel(y)
-#plt.tight_layout()
+plt.tight_layout()
 plt.savefig(file)
 plt.close()
