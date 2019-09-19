@@ -43,7 +43,7 @@ There is also a mismatch between the bioinformaticians who often develop methods
 
 The proteowizard community have created an windows executable that does such conversions. The system can be executed under the windows emulation program wine, however, the installation process is complicated and such installation are brittle and stop working over time.
 
-New technology, so called containerization, provides means to install software, not into a particular computer, but into a virtual container environment, in a so-called container. The container can be distributed to several separate computers, yet is guaranteed to execute in the exact same way regardless of the operating system. There are several such containerization techniques available. The perhaps most popular one, docker, have a wide variety of available libraries of containers, and e.g. biocontainers \cite{}. However, docker containers, due to their nature, are executed with systems administrator privileges, and could be utilized for malicious purpose.  In this work we will focus on one named \textit{Singularity}, as it does not execute under root privileges and hence is the preferred solution of most computer cluster and High Performance Computing (HPC) clusters, particularly the ones in an academic environment.
+New technology, so called containerization, provides means to install software, not into a particular computer, but into a virtual container environment, in a so-called container. The container can be distributed to several separate computers, yet is guaranteed to execute in the exact same way regardless of the operating system. There are several such containerization techniques available. The perhaps most popular one, docker, have a wide variety of available libraries of containers, and e.g. biocontainers \cite{FIXME}. However, docker containers, due to their nature, are executed with systems administrator privileges, and could be utilized for malicious purpose.  In this work we will focus on one named \textit{Singularity}, as it does not execute under root privileges and hence is the preferred solution of most computer cluster and High Performance Computing (HPC) clusters, particularly the ones in an academic environment.
 
 Recently, the proteowizard community developed a docker-container for the wine implementation of msconvert (\url{https://hub.docker.com/r/chambm/pwiz-skyline-i-agree-to-the-vendor-licenses/}). This is tremendously helpful, as it enables linux developers to produce pipelines that can operate from beginning to end inside a Linux environment, or even an HPC environment.
 
@@ -100,7 +100,7 @@ To demonstrate the processing speed of Quandenser-pipeline, we processed a coupl
 QP parallel (local) & 10h 46m & 1h 13m & 56m \\
 QP non-parallel (local) & 10h 57m & 1h 35m & 1h 12m \\
 QP parallel (HPC) & X & 1h 17m & 1h 21m \\  % Removed waiting time
-QP non-parallel (HPC) & X & 2h 29m & 1h 54m \\  % Removed waiting time
+QP non-parallel (HPC) & 14h 4m & 2h 29m & 1h 54m \\  % Removed waiting time
 MaxQuant (local) & 28h 44m & 4h 17m & 1h 45m \\
 \end{tabular}
 \end{center}
@@ -117,7 +117,7 @@ MaxQuant (local) & 28h 44m & 4h 17m & 1h 45m \\
 QP parallel (local) & 29.8 & 3.9 & 2.4 \\
 QP non-parallel (local) & 16.9 & 3.0 & 1.8 \\
 QP parallel (HPC) & X & 23.9 & 12.6 \\
-QP non-parallel (HPC) & X & 29.0 & 18.2 \\
+QP non-parallel (HPC) & 210.9 & 29.0 & 18.2 \\
 MaxQuant (local) & 103.7 & 15.5 & 6.2 \\
 \end{tabular}
 \end{center}
