@@ -26,35 +26,40 @@ data_cores = {
 data_sets =  ['Geyer (180 files)', 'Bracht (27 files)', 'Latosinska (8 files)']
 data_list = []
 data_cores_list = []
-for key_time, key_cores in zip(data.keys(), data_cores):
+for key_time, key_cores in zip(data.keys(), data_cores.keys()):
     time_values = data[key_time]
-    cpu_values = data[key_cores]
+    cpu_values = data_cores[key_cores]
     for index, (time, cpu) in enumerate(zip(time_values, cpu_values)):
         data_list.append([key_time, data_sets[index], time])
         data_cores_list.append([key_cores, data_sets[index], cpu])
 
-y = 'Minutes'
-file = 'times.png'
-columns = ['run', 'data_set', 'time']
-pd_data = pd.DataFrame(data_list, columns = columns)
-print(pd_data)
-plt.figure(figsize=(15,7))
-ax = sns.barplot(x='data_set',
-                 y='time',
-                 hue='run',
-                 data=pd_data)
+for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['times.png', 'cores.png']):
+    y = y
+    file = f
+    columns = ['run', 'data_set', 'time']
+    pd_data = pd.DataFrame(d, columns = columns)
+    print(pd_data)
+    plt.figure(figsize=(15,7))
+    ax = sns.barplot(x='data_set',
+                     y='time',
+                     hue='run',
+                     data=pd_data)
 
-# Remove uneccessary titles
-handles, labels = ax.get_legend_handles_labels()
-ax.legend(handles=handles[0:], labels=labels[0:])
-ax.set_xlabel('')
+    # Remove uneccessary titles
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles[0:], labels=labels[0:])
+    ax.set_xlabel('')
 
-# Set values on each bar
-for p in ax.patches:
-    ax.text(p.get_x() + p.get_width()/2., p.get_height(), '%d' % int(p.get_height()),
-            fontsize=12, color='black', ha='center', va='bottom')
+    # Set values on each bar
+    if y == 'Minutes':
+        display = '%d'
+    else:
+        display = '%.1f'
+    for p in ax.patches:
+        ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
+                fontsize=12, color='black', ha='center', va='bottom')
 
-plt.ylabel(y)
-plt.tight_layout()
-plt.savefig(file)
-plt.close()
+    plt.ylabel(y)
+    plt.tight_layout()
+    plt.savefig(file)
+    plt.close()
