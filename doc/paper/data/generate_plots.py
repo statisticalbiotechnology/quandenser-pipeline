@@ -39,27 +39,29 @@ for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['ti
     columns = ['run', 'data_set', 'time']
     pd_data = pd.DataFrame(d, columns = columns)
     print(pd_data)
-    plt.figure(figsize=(15,7))
-    ax = sns.barplot(x='data_set',
-                     y='time',
-                     hue='run',
-                     data=pd_data)
+    plt.figure(figsize=(20,9))
+    for idx, d in enumerate(data_sets):
+        plt.subplot(1,len(data_sets), idx+1)
+        ax = sns.barplot(x='data_set',
+                         y='time',
+                         hue='run',
+                         data=pd_data[pd_data.data_set == d])
 
-    # Remove uneccessary titles
-    handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles=handles[0:], labels=labels[0:])
-    ax.set_xlabel('')
+        # Remove uneccessary titles
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles=handles[0:], labels=labels[0:], fontsize='12')
+        ax.set_xlabel('')
+        plt.ylabel(y)
 
-    # Set values on each bar
-    if y == 'Minutes':
-        display = '%d'
-    else:
-        display = '%.1f'
-    for p in ax.patches:
-        ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
-                fontsize=12, color='black', ha='center', va='bottom')
+        # Set values on each bar
+        if y == 'Minutes':
+            display = '%d'
+        else:
+            display = '%.1f'
+        for p in ax.patches:
+            ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
+                    fontsize=12, color='black', ha='center', va='bottom')
 
-    plt.ylabel(y)
     plt.tight_layout()
     plt.savefig(file)
     plt.close()
