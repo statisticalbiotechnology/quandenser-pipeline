@@ -10,14 +10,14 @@ sns.set_context("talk")
 data = {
 'QP (parallel)': [10*60 + 46, 60 + 13, 56],
 'QP (non-parallel)': [10*60 + 57, 60 + 35, 60 + 12],
-'QP HPC (parallel)': [0, 60 + 17, 60 + 21],
+'QP HPC (parallel)': [8*60 + 33, 60 + 17, 60 + 21],
 'QP HPC (non-parallel)': [14*60 + 4, 2*60 + 29, 60 + 54],
 'MaxQuant mbr': [28*60 + 44, 4*60 + 17, 60 + 45]
 }
 data_cores = {
 'QP (parallel)': [29.8, 3.9, 2.4],
 'QP (non-parallel)': [16.9, 3.0, 1.8],
-'QP HPC (parallel)': [1, 23.9, 12.6],
+'QP HPC (parallel)': [164.0, 23.9, 12.6],
 'QP HPC (non-parallel)': [210.9, 29.0, 18.2],
 'MaxQuant mbr': [103.7, 15.5, 6.2]
 }
