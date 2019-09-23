@@ -105,7 +105,7 @@ To demonstrate the processing speed of Quandenser-pipeline, we processed a coupl
 & Geyer & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & 10h 46m & 1h 13m & 56m \\
 QP non-parallel (local) & 10h 57m & 1h 35m & 1h 12m \\
-QP parallel (HPC) & X & 1h 17m & 1h 21m \\  % Removed waiting time
+QP parallel (HPC) & 8h 33m & 1h 17m & 1h 21m \\  % Removed waiting time
 QP non-parallel (HPC) & 14h 4m & 2h 29m & 1h 54m \\  % Removed waiting time
 MaxQuant (local) & 28h 44m & 4h 17m & 1h 45m \\
 \end{tabular}
@@ -122,7 +122,7 @@ MaxQuant (local) & 28h 44m & 4h 17m & 1h 45m \\
 & Weightloss & Bracht & Latosinska \\ \hline \hline
 QP parallel (local) & 29.8 & 3.9 & 2.4 \\
 QP non-parallel (local) & 16.9 & 3.0 & 1.8 \\
-QP parallel (HPC) & X & 23.9 & 12.6 \\
+QP parallel (HPC) & 164.0 & 23.9 & 12.6 \\
 QP non-parallel (HPC) & 210.9 & 29.0 & 18.2 \\
 MaxQuant (local) & 103.7 & 15.5 & 6.2 \\
 \end{tabular}
@@ -132,6 +132,8 @@ MaxQuant (local) & 103.7 & 15.5 & 6.2 \\
 
 \section*{Discussion}
 The performance of Quandenser-pipeline was significantly faster than MaxQuant on all data sets; 167\% faster for the Geyer data set, 252\% faster on the Bracht data set and 87.5\% faster on the Latosinska data set.
+
+On the local computer, the parallel quandenser was only marginally faster than running without the parallelization process and the same could be said for running on a HPC cluster.
 
 A drawback with using parallel computation option of the pipeline is that the waiting time on the SLURM cluster for each process slows down the parallelization, meaning that a non-parallel run would be faster in some cases when the HPC cluster is under a heavy load. However, on a local computer or a HPC cluster with low waiting time, the waiting time for each process is negligible, meaning a parallel processing would always be faster than non-parallel.
 
