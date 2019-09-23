@@ -39,7 +39,7 @@ for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['ti
     columns = ['run', 'data_set', 'time']
     pd_data = pd.DataFrame(d, columns = columns)
     print(pd_data)
-    plt.figure(figsize=(20,9))
+    plt.figure(figsize=(20,7))
     for idx, d in enumerate(data_sets):
         plt.subplot(1,len(data_sets), idx+1)
         ax = sns.barplot(x='data_set',
