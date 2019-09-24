@@ -61,7 +61,7 @@ Here, we introduce \textit{Quandenser-pipeline}, a pipeline utilizing Nextflow a
 Three data sets consisting of RAW files were downloaded and tested on the pipeline, as well as compared with the performance of MaxQuant running the same data sets. The first data set was a subset of LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD004242, 180 RAW files, total 97.5 Gb in size), which will be refered as the Geyer data set \cite{geyer2016bartric}. The second data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id: PXD001474, 27 RAW files, total of 14.8 Gb) which will be refered as the Bracht data set and lastly, the third data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) which will be refered as the Latosinska data set \cite{bracht2015analysis} \cite{latosinska2015comparative}.
 
 \subsection*{Processing data sets}
-The pipeline and MaxQuant were processed on a computer running a Linux OS with an Intel i5-9600K (6 cores) @ 4.600GHz with 64 Gb of memory. MaxQuant version 1.6.3.3 and Quandenser-pipeline version 0.0821 was used to process the data sets. The fasta file used during processing the data was the reference proteome UP000005640 from Swissprot, accessed 2019-04-11. The setting "match-between-runs" in MaxQuant was enabled during processing. The pipeline was also tested on the HPC cluster Rackham at UPPMAX. The run time on the HPC cluster was adjusted by subtracting wait time between processes, due to the variation on SLURM waiting times during heavy load.
+The pipeline and MaxQuant were processed on a computer running a Linux OS with an Intel i5-9600K (6 cores) @ 4.600GHz with 64 Gb of memory. MaxQuant version 1.6.3.3 and Quandenser-pipeline version 0.0821 was used to process the data sets. The fasta file used during processing the data was the reference proteome UP000005640 from Swissprot, accessed 2019-04-11. The setting "match-between-runs" in MaxQuant was enabled during processing. The pipeline was also tested on the HPC cluster Rackham at UPPMAX. Due to the variation on SLURM waiting times during heavy load, the run time on the HPC cluster was adjusted by taking the run time of a node with the highest run time from a parallelized process, then subtracting the run time with the wait time on the SLURM cluster. Thus, if we have one process with ten Nextflow nodes which are processed in parallel, the total processing time of that process was considered to be the node with the longest run time, subtracting the SLURM waiting time.
 
 % BOSE
 % Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of memory.
@@ -93,6 +93,14 @@ To demonstrate the processing speed of Quandenser-pipeline, we processed a coupl
   \caption{\textbf{Comparison of run time between the different quantification platforms reported in core hours.}}
   \label{fig:corehours}
 \end{figure}
+
+The performance of Quandenser-pipeline was significantly faster than MaxQuant on all data sets. When comparing the processing time from figure \ref{fig:walltime} between Quandenser-pipeline running in parallel with Maxquant running on a local computer, Quandenser-pipeline was 167\% faster for the Geyer data set, 252\% faster on the Bracht data set and 87.5\% faster on the Latosinska data set, which is a significant difference in processing time.
+
+Comparing parallelized quandenser and non-parallelized quandenser, we could see that parallel quandenser was faster on all datasets. On the local computer, the parallelized quandenser was only 1.7\% faster on the Geyer data set, 30.1\% faster on the Bracht data set and 28.6\% faster on the Latosinska data set. However, only a minor performance boost on the local machine was expected, since each node has to share the same CPU. The difference in process time of parallelized Quandenser and non-parallelized quandenser on the HPC cluster was more significant than on the local computer, with the parallelized Quandeser being 64.5\% faster on the Geyer data set, 93.5\% faster on the Bracht data set and 40.7\% faster on the Latosinska data set.
+
+We also see a significant difference in core hours used for processing the data sets. When comparing the core hours from figure \ref{fig:corehours} between Quandenser-pipeline running in parallel and MaxQuant, where Quandenser-pipeline used 248\% less core hours for the Geyer data set, 297\% less core hours for the Bracht data set and 158\% less core hours for the Latosinska data.
+
+An interesting aspect of the parallelization was that on the local computer, the core hours used were slightly higher when running Quandenser-pipeline in parallel, but were slightly lower when running parallel on a HPC cluster.
 
 
 \begin{comment}
@@ -131,11 +139,8 @@ MaxQuant (local) & 103.7 & 15.5 & 6.2 \\
 \end{comment}
 
 \section*{Discussion}
-The performance of Quandenser-pipeline was significantly faster than MaxQuant on all data sets; 167\% faster for the Geyer data set, 252\% faster on the Bracht data set and 87.5\% faster on the Latosinska data set.
 
-On the local computer, the parallel quandenser was only marginally faster than running without the parallelization process and the same could be said for running on a HPC cluster.
-
-A drawback with using parallel computation option of the pipeline is that the waiting time on the SLURM cluster for each process slows down the parallelization, meaning that a non-parallel run would be faster in some cases when the HPC cluster is under a heavy load. However, on a local computer or a HPC cluster with low waiting time, the waiting time for each process is negligible, meaning a parallel processing would always be faster than non-parallel.
+One of the drawbacks with using parallel computation option of the pipeline is that the waiting time on the SLURM cluster for each process slows down the parallelization, meaning that a non-parallel run would be faster in some cases when the HPC cluster is under a heavy load. However, on a local computer or on a HPC cluster with low waiting time, the waiting time for each process would negligible, meaning a parallel processing would always be faster than non-parallel.
 
 Another method of containerization is Podman, a daemonless container engine which solves some drawbacks with Singularity, one of which is that Singularity is read-only, while Podman containers can also write inside the container.
 
