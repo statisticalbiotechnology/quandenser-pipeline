@@ -61,7 +61,7 @@ Here, we introduce \textit{Quandenser-pipeline}, a pipeline utilizing Nextflow a
 Three data sets consisting of RAW files were downloaded and tested on the pipeline, as well as compared with the performance of MaxQuant running the same data sets. The first data set was a subset of LFQ mass spectrometry data of patients before and after bariatric surgery (PRIDE id: PXD004242, 180 RAW files, total 97.5 Gb in size), which will be referred as the Geyer data set \cite{geyer2016bartric}. The second data set was a study of Hepatitis C Virus-associated hepatic fibrosis (PRIDE id: PXD001474, 27 RAW files, total of 14.8 Gb) which will be referred as the Bracht data set and lastly, the third data set was from a study of bladder cancer using LFQ mass spectrometry data (PRIDE id: PXD002170, 8 RAW files, total 10.2 Gb in size) which will be referred as the Latosinska data set \cite{bracht2015analysis} \cite{latosinska2015comparative}.
 
 \subsection*{Processing data sets}
-The pipeline and MaxQuant were processed on a computer running a Linux OS with an Intel i5-9600K (6 cores) @ 4.600GHz with 64 Gb of memory. MaxQuant version 1.6.3.3 and Quandenser-pipeline version 0.0821 was used to process the data sets. The fasta file used during processing the data was the reference proteome UP000005640 from Swissprot, accessed 2019-04-11. The setting "match-between-runs" in MaxQuant was enabled during processing. The pipeline was also tested on the HPC cluster Rackham at UPPMAX. Due to the variation on SLURM waiting times during heavy load, the run time on the HPC cluster was adjusted by taking the run time of a node with the highest run time from a parallelized process, then subtracting the run time with the wait time on the SLURM cluster. Thus, if we have one process with ten Nextflow nodes which are processed in parallel, the total processing time of that process was considered to be the node with the longest run time, subtracting the SLURM waiting time.
+The pipeline and MaxQuant were processed on a computer running a Linux OS with an Intel i5-9600K (6 cores) @ 4.6 GHz with 64 Gb of memory. MaxQuant version 1.6.3.3 and Quandenser-pipeline version 0.0821 was used to process the data sets. The fasta file used during processing the data was the reference proteome UP000005640 from Swissprot, accessed 2019-04-11. The setting "match-between-runs" in MaxQuant was enabled during processing. The pipeline was also tested on the HPC cluster Rackham at UPPMAX. Due to the variation on SLURM waiting times during heavy load, the run time on the HPC cluster was adjusted by taking the run time of a node with the highest run time from a parallelized process, then subtracting the run time with the wait time on the SLURM cluster. Thus, if we have one process with ten Nextflow nodes which are processed in parallel, the total processing time of that process was considered to be the node with the longest run time, subtracting the SLURM waiting time.
 
 % BOSE
 % Intel Core i7-4790k CPU @ 4.0 GHz with 32 Gb of memory.
@@ -100,8 +100,7 @@ Comparing parallelized quandenser and non-parallelized quandenser, we could see 
 
 We also see a significant difference in core hours used for processing the data sets. When comparing the core hours from figure \ref{fig:corehours} between Quandenser-pipeline running in parallel and MaxQuant, where Quandenser-pipeline used 248\% less core hours for the Geyer data set, 297\% less core hours for the Bracht data set and 158\% less core hours for the Latosinska data.
 
-An interesting aspect of the parallelization was that on the local computer, the core hours used were slightly higher when running Quandenser-pipeline in parallel, but were slightly lower when running parallel on a HPC cluster. The reason why the th
-
+An interesting aspect of the parallelization was that on the local computer, the core hours used were slightly higher when running Quandenser-pipeline in parallel, but were slightly lower when running parallel on a HPC cluster. Since in the parallel quandenser, some parallel processes uses only 1-2 cores each, which are then added to the SLURM queue requesting only that number of cores and higher demanding processes are set to request a higher number of cores. This is more efficient compared to running quandenser non-parallel on HPC clusters, since the whole process is allocated a set number of cores (often high to accommodate RAM usage). Additionally, the reason why the core hours are much higher on the HPC clusters at Rackham are running Xeon E5-2630 V4 processors @ 2.2 GHz, where each core is much weaker compared to the Intel i5-9600K @ 4.6 GHz.
 
 \begin{comment}
 \begin{table}[!h]
@@ -140,14 +139,14 @@ MaxQuant (local) & 103.7 & 15.5 & 6.2 \\
 
 \section*{Discussion}
 
+The new pipeline allows for an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.The combination of faster processing time and being able to run on HPC clusters makes Quandenser-pipeline an excellent tool for analyzing label-free mass spectrometry data.
+
 One of the drawbacks with using parallel computation option of the pipeline is that the waiting time on the SLURM cluster for each process slows down the parallelization, meaning that a non-parallel run would be faster in some cases when the HPC cluster is under a heavy load. However, on a local computer or on a HPC cluster with low waiting time, the waiting time for each process would negligible, meaning a parallel processing would always be faster than non-parallel.
 
 Another method of containerization is Podman, a daemonless container engine which solves some drawbacks with Singularity, one of which is that Singularity is read-only, while Podman containers can also write inside the container.
 
 %Interesting discussion. Developer of Singularity chimes in on Podman Github
 %https://github.com/containers/libpod/issues/3017
-
-The new pipeline allows for an easy way of analyzing MS files with Quandenser, without requiring multiple dependencies and due to containerization of the software, it allows the pipeline to run on HPC clusters with Singularity as its only dependency. The pipeline also allows user to convert vendor files directly in the pipeline, minimizing the need to pre-convert the files before processing.The combination of faster processing time and being able to run on HPC clusters makes Quandenser-pipeline an excellent tool for analyzing label-free mass spectrometry data.
 
 \bibliographystyle{plain}
 \bibliography{pipeline}
