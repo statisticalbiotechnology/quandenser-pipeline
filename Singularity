@@ -10,16 +10,19 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     export WINEPATH="C:\pwiz"  # Location where the pwiz files will be
     export WINEDEBUG=-all,err+all  # Hide all wine related output
 
-    # Making so user who logs into the image can use wine
-    mkdir -p "/tmp/wineprefix64_$USER"
-    random_name=$(date +%s | sha256sum | base64 | head -c 32)
-    mkdir -p "/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Create folder, so you are owner
-    link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
-    export WINEPREFIX="/tmp/wineprefix64_$USER/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
+    # Check if WINE_TMPDIR exist and set to /tmp if it is not set
+    export WINE_TMPDIR=${WINE_TMPDIR:-/tmp}
 
-    mkdir -p /tmp/runtime-$USER
-    export XDG_RUNTIME_DIR=/tmp/runtime-$USER
-    export XDG_CONFIG_HOME=/tmp/runtime-$USER
+    # Making so user who logs into the image can use wine
+    mkdir -p "$WINE_TMPDIR/wineprefix64_$USER"
+    random_name=$(date +%s | sha256sum | base64 | head -c 32)
+    mkdir -p "$WINE_TMPDIR/wineprefix64_$USER/wineprefix64_$random_name"  # Create folder, so you are owner
+    link_wine.sh $random_name # This script will link all files in $WINEPREFIX and input them in /var/local/shared_wine/wineprefix64
+    export WINEPREFIX="$WINE_TMPDIR/wineprefix64_$USER/wineprefix64_$random_name"  # Change prefix, so wine will know you are the owner
+
+    mkdir -p $WINE_TMPDIR/runtime-$USER
+    export XDG_RUNTIME_DIR=$WINE_TMPDIR/runtime-$USER
+    export XDG_CONFIG_HOME=$WINE_TMPDIR/runtime-$USER
 
 %labels
    website https://github.com/statisticalbiotechnology/quandenser-pipeline
@@ -146,9 +149,12 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
 %appenv quandenser_ui
     export LC_ALL=C
-    mkdir -p /tmp/runtime-$USER
-    export XDG_RUNTIME_DIR=/tmp/runtime-$USER
-    export XDG_CONFIG_HOME=/tmp/runtime-$USER
+    # Check if WINE_TMPDIR exist and set to /tmp if it is not set
+    export WINE_TMPDIR=${WINE_TMPDIR:-/tmp}
+
+    mkdir -p $WINE_TMPDIR/runtime-$USER
+    export XDG_RUNTIME_DIR=$WINE_TMPDIR/runtime-$USER
+    export XDG_CONFIG_HOME=$WINE_TMPDIR/runtime-$USER
     cd /var/local/quandenser_ui
 
 %apprun quandenser_ui
@@ -157,5 +163,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.0821"
+    VERSION="v0.083"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
