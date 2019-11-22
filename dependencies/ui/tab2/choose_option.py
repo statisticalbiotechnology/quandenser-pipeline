@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame, QTableWidget, QLabel, QStackedLayout
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
@@ -12,6 +13,9 @@ class choose_option(QComboBox):
         self.parser = custom_config_parser()
         self.parser.load(settings_file)
         self.settings_file = settings_file
+        # Fix for long combo boxes
+        delegate = QtWidgets.QStyledItemDelegate()
+        self.setItemDelegate(delegate)
         if self.parameter == 'workflow':
             self.addItems(["Full", "MSconvert", "Quandenser"])
         elif 'parallel' in self.parameter:
@@ -19,7 +23,7 @@ class choose_option(QComboBox):
         elif self.parameter == 'profile':
             self.addItems(["local", "cluster"])
         elif self.parameter == 'process.executor':
-            self.addItems(["slurm"])
+            self.addItems(["slurm", "pbs", "pbspro", "sge", "lsf", "moab", "nqsii", "condor", "ignite"])
         else:
             self.addItems(["true", "false"])
         self.default()
