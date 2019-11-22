@@ -93,7 +93,7 @@ done
         source ~/.bashrc && \
         mkdir -p ${GOPATH}/src/github.com/sylabs && \
         cd ${GOPATH}/src/github.com/sylabs && \
-        export SINGULARITYVERSION=3.2.1 && \
+        export SINGULARITYVERSION=3.4.1 && \
         wget https://github.com/sylabs/singularity/releases/download/v${SINGULARITYVERSION}/singularity-${SINGULARITYVERSION}.tar.gz && \
         tar -xzf singularity-${SINGULARITYVERSION}.tar.gz && \
         # git clone https://github.com/sylabs/singularity.git && \
@@ -159,7 +159,6 @@ disable_update="false"
 for var in "$@"; do
   if [ "$var" = "-U" ] || [ "$var" = "--disable-update" ]; then
     disable_update="true"
-    printf "${YELLOW}Will not check for updates${RESET}"
   fi
 done
 
@@ -170,7 +169,7 @@ if [ "$disable_update" == "false" ]; then
   VERSION_SINGHUB=$(curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest \
   | jq --raw-output '.tag_name')
   # Check version in container. Superimportant: pipe stdin from singularity to dev/null. Otherwise, suspended tty input and it runs in background
-  VERSION_SIF=$(</dev/null singularity run SingulQuand.SIF / | grep -oP ' \K(v[0-9]+[.][0-9]+)')
+  VERSION_SIF=$(</dev/null singularity run $mount_point SingulQuand.SIF / | grep -oP ' \K(v[0-9]+[.][0-9]+)')
   if [[ "$VERSION_SINGHUB" != *"."* ]]; then
     printf "${YELLOW}Unable connect to SingularityHub. Either a new version is being published or SingularityHub is not reachable at the moment${RESET}"
   elif [ "$VERSION_SINGHUB" != "$VERSION_SIF" ]; then
@@ -207,7 +206,7 @@ fi
 # Initialize pipe before trying to write, this will be automacially done with the GUI as well
 # However, doing it here will allow users to add parameters without having to run and close the GUI
 # The GUI will work without this
-singularity exec --app quandenser_ui SingulQuand.SIF  python -c "from utils import check_corrupt; check_corrupt('${config_location}')"
+singularity exec --app quandenser_ui $mount_point SingulQuand.SIF python -c "from utils import check_corrupt; check_corrupt('${config_location}')"
 
 # Check for more user commands and write to PIPE that has now been created
 for var in "$@"; do
