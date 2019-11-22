@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QComboBox, QVBoxLayout, QFrame, QTableWidget, QLabel, QStackedLayout
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
@@ -14,6 +15,9 @@ class choose_option(QComboBox):
         self.parser.load(settings_file)
         self.settings_file = settings_file
         self.default()
+        # Fix for long combo boxes
+        delegate = QtWidgets.QStyledItemDelegate()
+        self.setItemDelegate(delegate)
         self.currentIndexChanged.connect(self.selectionchange)
 
     def selectionchange(self,i):
