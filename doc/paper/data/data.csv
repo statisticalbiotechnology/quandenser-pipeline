@@ -1,33 +1,33 @@
-Data set,Run,Replicates,,,,
-Geyer (118 files),QP (parallel),3,06:08:11,06:09:29,06:17:26,
-Geyer (118 files),QP (non-parallel),3,06:47:17,07:07:49,06:58:53,
-Geyer (118 files),QP HPC (parallel),3,05:24:36,05:47:09,05:40:35,
-Geyer (118 files),QP HPC (non-parallel),3,09:57:29,09:30:35,09:15:08,
-Geyer (118 files),MaxQuant mbr,3,23:30:22,23:35:47,23:35:06,
-Bracht (27 files),QP (parallel),3,01:18:56,01:17:13,01:13:33,
-Bracht (27 files),QP (non-parallel),3,01:40:18,01:40:13,01:34:54,
-Bracht (27 files),QP HPC (parallel),3,01:30:17,01:27:01,01:38:16,Check values
-Bracht (27 files),QP HPC (non-parallel),3,02:28:26,02:39:41,02:52:43,
-Bracht (27 files),MaxQuant mbr,3,04:16:56,04:26:33,04:26:58,
-Latosinska (8 files),QP (parallel),3,00:55:42,00:55:46,00:56:11,
-Latosinska (8 files),QP (non-parallel),3,01:10:36,01:10:07,01:11:56,
-Latosinska (8 files),QP HPC (parallel),3,01:20:04,01:27:28,01:24:26,
-Latosinska (8 files),QP HPC (non-parallel),3,01:56:06,02:18:44,02:03:34,
-Latosinska (8 files),MaxQuant mbr,3,01:43:18,01:43:02,01:44:33,
-,,,,,,
-Data set,Run,Replicates,,,,
-Geyer (118 files),QP (parallel),3,17,90,17,80,17,80,
-Geyer (118 files),QP (non-parallel),3,11,10,11,30,12,00,
-Geyer (118 files),QP HPC (parallel),3,110,40,93,80,94,20,
-Geyer (118 files),QP HPC (non-parallel),3,138,90,138,60,124,70,
-Geyer (118 files),MaxQuant mbr,3,81,78,81,84,81,83,
-Bracht (27 files),QP (parallel),3,4,10,4,10,3,90,
-Bracht (27 files),QP (non-parallel),3,3,20,3,10,3,00,
-Bracht (27 files),QP HPC (parallel),3,23,60,24,60,26,20,
-Bracht (27 files),QP HPC (non-parallel),3,29,00,30,80,34,50,
-Bracht (27 files),MaxQuant mbr,3,15,45,16,01,15,97,
-Latosinska (8 files),QP (parallel),3,2,50,2,60,2,40,
-Latosinska (8 files),QP (non-parallel),3,1,80,1,80,1,80,
-Latosinska (8 files),QP HPC (parallel),3,12,60,13,50,16,70,
-Latosinska (8 files),QP HPC (non-parallel),3,18,20,20,20,18,00,
-Latosinska (8 files),MaxQuant mbr,3,6,13,6,13,6,14,
+Data set;Run;Replicates;;;;
+Geyer (118 files);QP (parallel);3;06:08:11;06:09:29;06:17:26;
+Geyer (118 files);QP (non-parallel);3;06:47:17;07:07:49;06:58:53;
+Geyer (118 files);QP HPC (parallel);3;05:24:36;05:47:09;05:40:35;
+Geyer (118 files);QP HPC (non-parallel);3;09:57:29;09:30:35;09:15:08;
+Geyer (118 files);MaxQuant mbr;3;23:30:22;23:35:47;23:35:06;
+Bracht (27 files);QP (parallel);3;01:18:56;01:17:13;01:13:33;
+Bracht (27 files);QP (non-parallel);3;01:40:18;01:40:13;01:34:54;
+Bracht (27 files);QP HPC (parallel);3;01:30:17;01:27:01;01:38:16;Check values
+Bracht (27 files);QP HPC (non-parallel);3;02:28:26;02:39:41;02:52:43;
+Bracht (27 files);MaxQuant mbr;3;04:16:56;04:26:33;04:26:58;
+Latosinska (8 files);QP (parallel);3;00:55:42;00:55:46;00:56:11;
+Latosinska (8 files);QP (non-parallel);3;01:10:36;01:10:07;01:11:56;
+Latosinska (8 files);QP HPC (parallel);3;01:20:04;01:27:28;01:24:26;
+Latosinska (8 files);QP HPC (non-parallel);3;01:56:06;02:18:44;02:03:34;
+Latosinska (8 files);MaxQuant mbr;3;01:43:18;01:43:02;01:44:33;
+;;;;;;
+Data set;Run;Replicates;;;;
+Geyer (118 files);QP (parallel);3;17,90;17,80;17,80;
+Geyer (118 files);QP (non-parallel);3;11,10;11,30;12,00;
+Geyer (118 files);QP HPC (parallel);3;110,40;93,80;94,20;
+Geyer (118 files);QP HPC (non-parallel);3;138,90;138,60;124,70;
+Geyer (118 files);MaxQuant mbr;3;81,78;81,84;81,83;
+Bracht (27 files);QP (parallel);3;4,10;4,10;3,90;
+Bracht (27 files);QP (non-parallel);3;3,20;3,10;3,00;
+Bracht (27 files);QP HPC (parallel);3;23,60;24,60;26,20;
+Bracht (27 files);QP HPC (non-parallel);3;29,00;30,80;34,50;
+Bracht (27 files);MaxQuant mbr;3;15,45;16,01;15,97;
+Latosinska (8 files);QP (parallel);3;2,50;2,60;2,40;
+Latosinska (8 files);QP (non-parallel);3;1,80;1,80;1,80;
+Latosinska (8 files);QP HPC (parallel);3;12,60;13,50;16,70;
+Latosinska (8 files);QP HPC (non-parallel);3;18,20;20,20;18,00;
+Latosinska (8 files);MaxQuant mbr;3;6,13;6,13;6,14;
