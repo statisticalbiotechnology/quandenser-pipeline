@@ -4,36 +4,34 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy import stats
 import datetime
-import pdb
 sns.set_color_codes("dark")
 sns.set_style("white")
 sns.set_context("talk")
+data = {
+'QP (parallel)': [10*60 + 46, 60 + 13, 56],
+'QP (non-parallel)': [10*60 + 57, 60 + 35, 60 + 12],
+'QP HPC (parallel)': [8*60 + 33, 60 + 17, 60 + 21],
+'QP HPC (non-parallel)': [14*60 + 4, 2*60 + 29, 60 + 54],
+'MaxQuant mbr': [28*60 + 44, 4*60 + 17, 60 + 45]
+}
+data_cores = {
+'QP (parallel)': [29.8, 3.9, 2.4],
+'QP (non-parallel)': [16.9, 3.0, 1.8],
+'QP HPC (parallel)': [164.0, 23.9, 12.6],
+'QP HPC (non-parallel)': [210.9, 29.0, 18.2],
+'MaxQuant mbr': [103.7, 15.5, 6.2]
+}
 
-def s2m(time_str):
-    """Get minutes from time."""
-    h, m, s = time_str.split(':')
-    return int(h) * 60 + int(m) + int(s)/60
-
+# Restructure
+data_sets =  ['Geyer (180 files)', 'Bracht (27 files)', 'Latosinska (8 files)']
 data_list = []
 data_cores_list = []
-
-data_sets =  ['Geyer (118 files)',
-              'Bracht (27 files)',
-              'Latosinska (8 files)']
-run_types =  ['QP (parallel)',
-              'QP (non-parallel)',
-              'QP HPC (parallel)',
-              'QP HPC (non-parallel)',
-              'MaxQuant mbr']
-
-for data_set in data_sets:
-    for run_type in run_types:
-        time_values = data_times[data_set][run_type]
-        core_values = data_cores[data_set][run_type]
-        for time_value, core_value in zip(time_values, core_values):
-            data_list.append([run_type, data_set, time_value])
-            data_cores_list.append([run_type, data_set, core_value])
-print(data_list)
+for key_time, key_cores in zip(data.keys(), data_cores.keys()):
+    time_values = data[key_time]
+    cpu_values = data_cores[key_cores]
+    for index, (time, cpu) in enumerate(zip(time_values, cpu_values)):
+        data_list.append([key_time, data_sets[index], time])
+        data_cores_list.append([key_cores, data_sets[index], cpu])
 
 for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['times.png', 'cores.png']):
     y = y
@@ -51,9 +49,7 @@ for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['ti
 
         # Remove uneccessary titles
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles=handles[0:],
-                  labels=labels[0:],
-                  fontsize='12')
+        ax.legend(handles=handles[0:], labels=labels[0:], fontsize='12')
         ax.set_xlabel('')
         plt.ylabel(y)
 
