@@ -6,8 +6,12 @@ def str2min(s):
     total_time = 0
     array = s.split(' ')
     for idx, value in enumerate(reversed(array)):
+        if value[-2:] == 'ms':
+            continue
+        if value == '-':  # Empty time
+            continue
         last = value[-1]
-        value = int(value[:-1])
+        value = int(float(value[:-1]))  # Sometimes 23.1 s
         if last == 's':  # s
             total_time += value/60  # skip last
         elif last == 'm':  # m
@@ -17,6 +21,22 @@ def str2min(s):
         elif last == 'd':  # d
             total_time += value*1440
     return total_time
+
+def submit2min(s):
+    total_time = 0
+    array = s.split(':')
+    for idx, value in enumerate(reversed(array)):
+        value = float(value)
+        if idx == 0:  # s
+            total_time += value/60  # skip last
+        elif idx == 1:  # m
+            total_time += value
+        elif idx == 2:  # m
+            total_time += value*60
+        elif idx == 3:  # m
+            total_time += value*1440
+    return total_time
+
 
 def min2str(time):
     h = math.floor(time/60)
@@ -36,6 +56,8 @@ elif "parallel" in droppedFile:
 total_time = 0  # min
 msconvert_times = []
 quandenser_parallel_1_times = []
+quandenser_parallel_3_groups = []
+quandenser_parallel_3_times = []
 with open(droppedFile, 'r') as f:
     for idx, line in enumerate(f):
         if idx == 0:
@@ -43,23 +65,35 @@ with open(droppedFile, 'r') as f:
         line = line.split('\t')
         name = line[3].split(' ')[0]
         time = line[8]
+        time = str2min(time)
         if name == 'msconvert':
-            time = str2min(time)
             msconvert_times.append(time)
         elif 'quandenser_parallel_1' == name:
-            time = str2min(time)
             quandenser_parallel_1_times.append(time)
         elif 'quandenser_parallel_3' == name:
-            print("!!")
+            submit_time = line[6]
+            submit_time = submit_time.split(' ')[-1]
+            submit_time = submit2min(submit_time)
+            print(submit_time)
+            print(quandenser_parallel_3_groups)
+            if quandenser_parallel_3_groups == []:
+                quandenser_parallel_3_groups.append(submit_time)
+                quandenser_parallel_3_times.append(time)
+            elif abs(quandenser_parallel_3_groups[0] - submit_time) > 0.5:  # Submit within 0.5 min
+                total_time += max(quandenser_parallel_3_times)
+                quandenser_parallel_3_groups = [submit_time]
+                quandenser_parallel_3_times = [time]
+            else:
+                quandenser_parallel_3_groups.append(submit_time)
+                quandenser_parallel_3_times.append(time)
         else:
-            total_time += str2min(time)
-        print(name)
-        print(line[8])
-        print(str2min(line[8]))
+            total_time += time
 
 total_time += max(msconvert_times)
 if quandenser_parallel_1_times != []:
     total_time += max(quandenser_parallel_1_times)
+if quandenser_parallel_3_times != []:
+    total_time += max(quandenser_parallel_3_times)
 print(total_time)
 print(min2str(total_time))
 print(droppedFile)
