@@ -44,7 +44,7 @@ with open('data.csv', 'r') as f:
                 data_cores_list.append([run, data_set, value])
 print(data_list)
 
-for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['times.png', 'cores.png']):
+for d, y, f in zip([data_list, data_cores_list], ['Wall time (minutes)', 'Core hours'], ['times.png', 'cores.png']):
     y = y
     file = f
     columns = ['run', 'data_set', 'time']
@@ -53,10 +53,11 @@ for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['ti
     plt.figure(figsize=(20,7))
     for idx, d in enumerate(data_sets):
         plt.subplot(1,len(data_sets), idx+1)
-        ax = sns.barplot(x='data_set',
+        ax = sns.boxplot(x='data_set',
                          y='time',
                          hue='run',
                          data=pd_data[pd_data.data_set == d])
+        ax.set_xlabel('')
 
         # Remove uneccessary titles
         handles, labels = ax.get_legend_handles_labels()
@@ -67,13 +68,13 @@ for d, y, f in zip([data_list, data_cores_list], ['Minutes', 'Core hours'], ['ti
         plt.ylabel(y)
 
         # Set values on each bar
-        if y == 'Minutes':
+        if y == 'Wall time (minutes)':
             display = '%d'
         else:
             display = '%.1f'
-        for p in ax.patches:
-            ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
-                    fontsize=12, color='black', ha='right', va='bottom')
+        #for p in ax.patches:
+        #    ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
+        #            fontsize=12, color='black', ha='right', va='bottom')
 
     plt.tight_layout()
     plt.savefig(file)
