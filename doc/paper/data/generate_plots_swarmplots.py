@@ -50,31 +50,32 @@ for d, y, f in zip([data_list, data_cores_list], ['Wall time (minutes)', 'Core h
     columns = ['run', 'data_set', 'time']
     pd_data = pd.DataFrame(d, columns = columns)
     print(pd_data)
-    plt.figure(figsize=(20,7))
-    #plt.subplot(1,len(data_sets), idx+1)
-    ax = sns.swarmplot(x='data_set',
-                       y='time',
-                       hue='run',
-                       data=pd_data)
-    ax.set_xlabel('')
+    plt.figure(figsize=(10,7))
+    for idx, d in enumerate(data_sets):
+        plt.subplot(1,len(data_sets), idx+1)
+        ax = sns.swarmplot(x='data_set',
+                           y='time',
+                           hue='run',
+                           data=pd_data[pd_data.data_set == d])
+        ax.set_xlabel('')
+        ax.legend().remove()
+        plt.ylim(bottom=0)
+        plt.ylabel(y)
 
-    # Remove uneccessary titles
+        # Set values on each bar
+        if y == 'Wall time (minutes)':
+            display = '%d'
+        else:
+            display = '%.1f'
+        #for p in ax.patches:
+        #    ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
+        #            fontsize=12, color='black', ha='right', va='bottom')
+        # Remove uneccessary titles
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles=handles[0:],
               labels=labels[0:],
               fontsize='12')
     ax.set_xlabel('')
-    plt.ylabel(y)
-
-    # Set values on each bar
-    if y == 'Wall time (minutes)':
-        display = '%d'
-    else:
-        display = '%.1f'
-    #for p in ax.patches:
-    #    ax.text(p.get_x() + p.get_width()/2., p.get_height(), display % round(p.get_height(),2),
-    #            fontsize=12, color='black', ha='right', va='bottom')
-
     plt.tight_layout()
     plt.savefig(file)
     plt.close()
