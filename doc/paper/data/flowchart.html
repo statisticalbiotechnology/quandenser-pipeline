@@ -1,0 +1,169 @@
+<!--
+  ~ Copyright 2013-2019, Centre for Genomic Regulation (CRG)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<body style="background-color:rgb(25, 35, 45);">
+
+<html>
+    <head>
+        <title>Flowchart</title>
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+        <script type="text/javascript">
+        var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+        document.write(unescape("%3Cscript src='" + prot + "code.jquery.com/jquery-2.0.3.min.js' type='text/javascript' %3E%3C/script%3E"));
+        document.write(unescape("%3Cscript src='" + prot + "cdnjs.cloudflare.com/ajax/libs/cytoscape/2.6.12/cytoscape.min.js' type='text/javascript' %3E%3C/script%3E"));
+        document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js' type='text/javascript' %3E%3C/script%3E"));
+        document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.1.2/cytoscape-dagre.js' type='text/javascript' %3E%3C/script%3E"));
+        </script>
+
+        <style>
+            body {
+                font-family: helvetica;
+                font-size: 14px;
+            }
+
+            #cy {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 999;
+            }
+
+            h1 {
+                opacity: 0.5;
+                font-size: 1em;
+            }
+        </style>
+
+        <script>
+            $(function(){
+                var cy = window.cy = cytoscape({
+                    container: document.getElementById('cy'),
+                    boxSelectionEnabled: true,
+                    autounselectify: true,
+
+                    layout: {
+                        name: 'dagre',
+                        zoom: 0.8,  // zoom level
+                      },
+
+                    style: cytoscape.stylesheet()
+                        .selector('node')
+                            .css({
+                                'width': 10,
+                                'height': 10,
+                                'content': 'data(label)',
+                                'text-valign': 'center',
+                                'text-halign': 'center',
+                                'text-wrap': "wrap",
+                                'text-opacity': 0.5,
+                                'color': '#ffffff',
+                            })
+                        .selector('node.PROCESS')
+                            .css({
+                                'width': 150,
+                                'height': 90,
+                                'text-opacity': 0.9,
+                                'text-wrap': "wrap",
+                                'background-color': '#009911',
+                                'color': '#ffffff',
+                                'shape': 'hexagon'
+                            })
+                        .selector('node.OPERATOR')
+                            .css({
+                                'background-color': '#11479e',
+                                'text-halign': 'right',
+                            })
+                        .selector('node.ORIGIN')
+                            .css({
+                                'background-color': '#999999',
+                                'text-halign': 'right',
+                            })
+                        .selector('node.TERMINATION')
+                            .css({
+                                'background-color': '#999999',
+                                'text-halign': 'right',
+                            })
+                        .selector('edge')
+                            .css({
+                                'content': 'data(label)',
+                                'text-opacity': 0.5,
+                                'width': 4,
+                                'target-arrow-shape': 'triangle',
+                                'line-color': '#9dbaea',
+                                'target-arrow-color': '#ffffff',
+                                'color': '#ffffff',
+                            }),
+
+elements: {
+nodes: [
+{ data: { id: 'input_non_mzml', label: 'non-mzML files'}, classes: 'ORIGIN' },
+{ data: { id: 'input_mzml', label: 'mzML files'}, classes: 'ORIGIN' },
+{ data: { id: 'process_msconvert', label: 'msconvert\n(parallelized)'}, classes: 'PROCESS' },
+{ data: { id: 'operator_merge_mzml', label: 'merge channels'}, classes: 'OPERATOR' },
+{ data: { id: 'input_batch_file', label: 'batch file'}, classes: 'ORIGIN' },
+{ data: { id: 'process_quandenser_non_parallel', label: 'quandenser\n(non-parallel)'}, classes: 'PROCESS' },
+{ data: { id: 'process_quandenser_parallel_1', label: 'quandenser\n(parallel 1)'}, classes: 'PROCESS' },
+{ data: { id: 'process_quandenser_parallel_2', label: 'quandenser\n(parallel 2)'}, classes: 'PROCESS' },
+{ data: { id: 'process_quandenser_parallel_3', label: 'quandenser\n(parallel 3)'}, classes: 'PROCESS' },
+{ data: { id: 'process_quandenser_parallel_4', label: 'quandenser\n(parallel 4)'}, classes: 'PROCESS' },
+{ data: { id: 'input_protein_database', label: 'protein database'}, classes: 'ORIGIN' },
+{ data: { id: 'process_crux', label: 'crux tools'}, classes: 'PROCESS' },
+{ data: { id: 'input_protein_database2', label: 'batch file'}, classes: 'ORIGIN' },
+{ data: { id: 'output_collect_quandenser_data', label: 'Quandenser data output'}, classes: 'OPERATOR' },
+{ data: { id: 'process_triqler', label: 'triqler'}, classes: 'PROCESS' },
+{ data: { id: 'output_triqer', label: 'triqler output'}, classes: 'OPERATOR' },
+],
+edges: [
+{ data: { source: 'input_non_mzml', target: 'process_msconvert'} },
+{ data: { source: 'input_mzml', target: 'operator_merge_mzml'} },
+{ data: { source: 'process_msconvert', target: 'operator_merge_mzml'} },
+{ data: { source: 'input_batch_file', target: 'process_quandenser_non_parallel'} },
+{ data: { source: 'operator_merge_mzml', target: 'process_quandenser_non_parallel'} },
+{ data: { source: 'operator_merge_mzml', target: 'process_quandenser_parallel_1'} },
+{ data: { source: 'process_quandenser_parallel_1', target: 'process_quandenser_parallel_2'} },
+{ data: { source: 'process_quandenser_parallel_2', target: 'process_quandenser_parallel_3'} },
+{ data: { source: 'process_quandenser_parallel_3', target: 'process_quandenser_parallel_4'} },
+{ data: { source: 'process_quandenser_parallel_4', target: 'output_collect_quandenser_data'} },
+{ data: { source: 'process_quandenser_non_parallel', target: 'output_collect_quandenser_data' } },
+{ data: { source: 'input_protein_database', target: 'process_crux'} },
+{ data: { source: 'process_quandenser_non_parallel', target: 'process_crux', label: 'MS2 spectra' } },
+{ data: { source: 'process_crux', target: 'process_triqler'} },
+{ data: { source: 'input_protein_database2', target: 'process_triqler'} },
+{ data: { source: 'output_collect_quandenser_data', target: 'process_triqler'} },
+{ data: { source: 'process_triqler', target: 'output_triqer'} },
+],
+},
+      });
+      cy.panBy({
+        x: -100,
+        y: 0
+      });
+            });
+
+        </script>
+    </head>
+
+    <font color="white">
+    <body>
+        <h1>Quandenser-pipeline: created with Nextflow Cytoscape.js with Dagre</h1>
+        <div id="cy"></div>
+    </body>
+    </font>
+
+</html>
