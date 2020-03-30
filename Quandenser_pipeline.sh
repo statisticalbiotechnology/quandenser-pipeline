@@ -1,5 +1,6 @@
 #!/bin/bash
 config_location="/home/$USER/.quandenser_pipeline"  # Change depending on mac or linux
+export QUANDENSER_CONFIG_PATH=$config_location
 GREEN="\033[0;92m"
 RED="\033[0;91m"
 BLUE="\033[0;94m"

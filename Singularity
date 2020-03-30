@@ -69,6 +69,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     apt-get update
     apt-get -y install default-jre git unzip bzip2 nano curl zip gcc
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
+    apt-get -y install build-essential zlib1g-dev libssl-dev  # For building python
 
     echo "Updating nextflow"
     #curl -s https://get.nextflow.io | bash
@@ -89,12 +90,17 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     chmod a+rx /usr/local/bin/link_wine.sh  # also set so everybody can link with the script
 
     echo "Installing python 3.6"
-    add-apt-repository ppa:jonathonf/python-3.6  # Add repo for python 3.6
-    apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6 python3.6-dev
+    cd $(mktemp -d)
+    wget -nc https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
+    tar -xvf Python-3.6.3.tgz
+    cd Python-3.6.3
+    ./configure
+    make
+    make install
+    # DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6 python3.6-dev
     wget -nc https://bootstrap.pypa.io/get-pip.py
     python3.6 get-pip.py
-    ln -sf /usr/bin/python3.6 /usr/local/bin/python
+    ln -sf /usr/local/bin/python3 /usr/local/bin/python
     ln -sf /usr/local/bin/pip /usr/local/bin/pip3
 
     echo "Installling packages with pip"
@@ -106,7 +112,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     pip install matplotlib
     pip install numpy
     pip install tqdm
-    apt-get -y install python3.6-tk
+    #apt-get -y install python3.6-tk
 
     echo "Installling dependencies for OpenGL and X11"
     # Qt dependencies

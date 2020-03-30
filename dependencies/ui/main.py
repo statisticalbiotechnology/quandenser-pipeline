@@ -28,11 +28,15 @@ from custom_config_parser import custom_config_parser
 from tooltip_label import tooltip_label
 
 # Utils
-from utils import check_corrupt, check_running, ERROR
+from utils import check_corrupt, check_running, ERROR, WARNING
 
 # read user and create config location
 user = os.environ.get('USER')
-config_path = f"/home/{user}/.quandenser_pipeline"
+config_path = os.environ.get('QUANDENSER_CONFIG_PATH')
+print("Config", config_path)
+if (config_path is None) or config_path == "":
+    config_path = f"/home/{user}/.quandenser_pipeline"
+    WARNING(f"QUANDENSER_CONFIG_PATH not set. Defaulting to {config_path}")
 #print(Style.BRIGHT, end='\r')  # Set style
 
 class Main(QMainWindow):
