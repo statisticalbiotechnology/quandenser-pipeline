@@ -129,7 +129,7 @@ if [ ! -f SingulQuand.SIF ]; then
     if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
       printf "${GREEN}Installing Singularity container${RESET}"
       {  # try
-        singularity pull -n SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline && \
+        singularity pull SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline && \
         printf "${GREEN}Singularity container successfully installed${RESET}"
       } || {
         printf "${RED}Downloading the container failed${RESET}"
