@@ -46,7 +46,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/ui /
    # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
    # This comes from quandenser-pipeline branch of quandenser
-   dependencies/quandenser-v0-02-linux-amd64.deb /
+#   dependencies/quandenser-v200508-linux-amd64.deb /
    # Boxcar converter
    dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
    # Command wrapper, which prevents some errors from occuring
@@ -70,6 +70,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     apt-get -y install default-jre git unzip bzip2 nano curl zip gcc
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
     apt-get -y install build-essential zlib1g-dev libssl-dev  # For building python
+    apt-get -y install maven  # For building quandenser
 
     echo "Updating nextflow"
     #curl -s https://get.nextflow.io | bash
@@ -123,9 +124,13 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     cd $(mktemp -d)
 
     echo "Installling quandenser"
-    # Use wget when quandenser has fixed the bugs
     #wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
-    dpkg -i /quandenser-v0-02-linux-amd64.deb
+    git clone --recursive https://github.com/statisticalbiotechnology/quandenser.git
+    cd quandenser
+    git checkout e07136fdc1ba5fd61f2b41462ef19a82847824aa
+    ./quickbuild.sh
+    cd ..
+    dpkg -i ./release/ubuntu64/quandenser-*-linux-amd64.deb
     # Weird stuff with permissions. Fixing
     chmod 755 /usr/bin/quandenser
     chmod 755 /usr/share/java/advParams_dinosaur_targeted.txt
