@@ -124,10 +124,11 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     cd $(mktemp -d)
 
     echo "Installling quandenser"
-    #wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
+    # wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
     git clone --recursive https://github.com/statisticalbiotechnology/quandenser.git
     cd quandenser
-    git checkout e07136fdc1ba5fd61f2b41462ef19a82847824aa
+    # git checkout e07136fdc1ba5fd61f2b41462ef19a82847824aa
+    git checkout quandenser-pipeline
     ./quickbuild.sh
     cd ..
     dpkg -i ./release/ubuntu64/quandenser-*-linux-amd64.deb
