@@ -329,7 +329,6 @@ if (params.parallel_quandenser == true){
 
   Note: ..< is needed, because if the value is 1 in tree map, I don't want 2 values, only 1 value
   */
-  // IT FUCKING WORKS, WHOAA!!!!!!!! SO MANY GODDAMNED HOURS WENT INTO THIS
   current_depth = -1
   current_width = 0
   input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined

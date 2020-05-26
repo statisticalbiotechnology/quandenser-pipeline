@@ -56,6 +56,7 @@ do
     printf "${BLUE}  -E or --enable-opengl\t\t This will enable opengl, if you have disabled it before (will persist through runs)$RESET"
     printf "${BLUE}  -U or --disable-update\t This will disable checking for updates$RESET"
     printf "${BLUE}  -N or --disable-nvidia\t Disable using nvidia drivers (useful if you are running on a cluster with NVIDIA cards from a computer without NVIDIA drivers)$RESET"
+    printf "${BLUE}  -L or --gui-free-installation\tInstall scripts in current directory to run qunadenser w/o gui, and exit.$RESET"
     exit 0
   fi
 done
@@ -198,6 +199,28 @@ if [ "$disable_update" == "false" ]; then
     printf "${GREEN}Quandenser-pipeline is up to date ($VERSION_SIF)${RESET}"
   fi
 fi
+for var in "$@"; do
+  if [ "$var" = "--gui-free-installation" ] || [ "$var" = "-L" ]; then  # Check if user wants to install local scripts and exit
+    #cd "$SCRIPTDIR"
+    mkdir -p ./out
+    base_url="https://raw.githubusercontent.com/statisticalbiotechnology/quandenser-pipeline/master/dependencies/ui/config/"
+    wget -q $base_url/run_quandenser.sh
+    wget -q $base_url/run_quandenser.nf
+    wget -qO ./out/nf.config $base_url/nf.config
+    sed -i 's|CONFIG_LOCATION="/home/$USER/.quandenser_pipeline"|CONFIG_LOCATION=`pwd`|g' run_quandenser.sh
+    sed -i 's|OUTPUT_PATH=""|export OUTPUT_PATH=`pwd`/out|g' run_quandenser.sh
+    sed -i 's|NF_CONFIG_LOCATION="$CONFIG_LOCATION/nf.config"|NF_CONFIG_LOCATION="$OUTPUT_PATH/nf.config"|g' run_quandenser.sh
+    chmod a+x run_quandenser.sh
+    sed -i 's|params.output_path=""|params.output_path="$OUTPUT_PATH"|g' ./out/nf.config
+    sed -i 's|params.batch_file=""|params.batch_file="file_list.txt"|g' ./out/nf.config
+    printf "${YELLOW}Installed scripts in curent working directory.${RESET}"
+    printf "${YELLOW}Please configure scripts by editing out/nf.config and run_quandenser.sh.${RESET}"
+    printf "${YELLOW}You will also need to create a tab-delimeted file, file_list.txt, containing"
+    printf "the files you want to process and their sample group.${RESET}"
+    printf "${YELLOW}You will then be able to run the pipleline with run_quandenser.sh${RESET}"
+    exit 0
+  fi
+done
 
 if (( $EUID == 0 )); then
     printf "${YELLOW}You are running as root. Please run the script again as user${RESET}"
