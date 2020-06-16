@@ -43,6 +43,11 @@ def check_corrupt(config_path):
             WARNING(f"Missing file {file}. Installing file")
             shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
             os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
+            if file == "run_quandenser.sh":
+                # CONFIG DIRECTORY #
+                sh_parser = custom_config_parser()
+                sh_parser.load(f"{config_path}/{file}")
+                sh_parser.write("CONFIG_LOCATION", f"{config_path}")  # In sh
         else:  # check corrupt/old versions of config
             if (file.split('.')[-1] in ['config', 'sh'] or file == 'PIPE') and file != 'ui.config':
                 installed_parser.load(f"{config_path}/{file}")

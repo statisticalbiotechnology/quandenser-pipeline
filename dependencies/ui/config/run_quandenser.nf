@@ -6,11 +6,10 @@ println(params)
 publish_output_path = params.output_path + params.output_label
 
 // Check if resume folder has been set
+resume_directory = file("NULL")
 if (params.resume_directory != "") {
   resume_directory = file(params.resume_directory)
   println("Resuming from directory: ${resume_directory}")
-} else {
-  resume_directory = file("NULL")
 }
 
 file_def = file(params.batch_file)  // batch_file
@@ -24,7 +23,16 @@ if( params.workflow == "MSconvert" || params.workflow == "Quandenser" ) {
 db = file(db_file)  // Sets "db" as the file defined above
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 
-if (params.workflow != "MSconvert") {
+if (params.workflow == "MSconvert") {
+  spectra_in = Channel.from(1)  // This prevents name collision crash
+  
+  Channel  // non-mzML files with proper labeling which will be converted
+    .from(file_def.readLines())
+    .map { it -> it.tokenize('\t') }
+    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+    .map { it -> file(it[0]) }
+    .into { spectra_convert }
+} else {
   // Preprocessing file_list
   Channel  // mzML files with proper labeling
     .from(file_def.readLines())
@@ -32,26 +40,15 @@ if (params.workflow != "MSconvert") {
     .filter { it.size() > 1 }  // filters any input that is not <path> <label>
     .filter { it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
     .map { it -> file(it[0]) }
-    .into { spectra_in; spectra_in_q }  // Puts the files into spectra_in
-} else {
-  spectra_in = Channel.from(1)  // This prevents name collision crash
-}
-
-if (params.workflow != "MSconvert") {
+    .into { spectra_in }  // Puts the files into spectra_in  
+  
   Channel  // non-mzML files with proper labeling which will be converted
     .from(file_def.readLines())
     .map { it -> it.tokenize('\t') }
     .filter { it.size() > 1 }  // filters any input that is not <path> <X>
     .filter{ it[0].tokenize('.')[-1] != "mzML" }  // filters any input that is .mzML
     .map { it -> file(it[0]) }
-    .into { spectra_convert; spectra_convert_bool }
-} else {
-  Channel  // non-mzML files with proper labeling which will be converted
-    .from(file_def.readLines())
-    .map { it -> it.tokenize('\t') }
-    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
-    .map { it -> file(it[0]) }
-    .into { spectra_convert; spectra_convert_bool }
+    .into { spectra_convert }
 }
 
 // Replaces the lines of non-mzML with their corresponding converted mzML counterpart
@@ -81,15 +78,15 @@ file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")
 file_def_publish = file("$publish_output_path/file_list.txt")
 file_def.text = ""  // Clear file, if it exists
 file_def_publish.text = ""  // Clear file, if it exists
-total_spectras = 0
+total_files = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
   file_def_publish << line + '\n'
-  total_spectras++
+  total_files++
 }
 
-println("Total spectras = " + total_spectras)
-//println("Spectras that will be converted = " + amount_of_non_mzML)
+println("Total files = " + total_files)
+//println("Files that will be converted = " + amount_of_non_mzML)
 
 file_params = file("$publish_output_path/params.txt")
 file_params << "$params" + '\n'  // need to add \n
@@ -126,11 +123,8 @@ process msconvert {
   """
 }
 
-// Problem: We get a channel with proper mzML files and non mzML file
-// Solution: Concate these channel, even if one channel is empty, you get the contents either way
-c1 = spectra_in
-c2 = spectra_converted
-combined_channel = c1.concat(c2)  // This will mix the spectras into one channel
+// Concatenate these channels, even if one channel is empty, you get the contents either way
+combined_channel = spectra_in.concat(spectra_converted)
 
 if ( params.boxcar_convert == true) {
   process boxcar_convert {
@@ -148,7 +142,7 @@ if ( params.boxcar_convert == true) {
     python -s /usr/local/bin/boxcar_converter.py mzML/ ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
     """
   }
-  } else {
+} else {
   boxcar_channel = combined_channel
 }
 
@@ -192,7 +186,7 @@ process quandenser_parallel_1 {  // About 3 min/run
   }
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
-  errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time run out
+  errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time runs out
   input:
     file 'list.txt' from file_def
     file('mzML/*') from combined_channel_parallel_1
@@ -204,11 +198,10 @@ process quandenser_parallel_1 {  // About 3 min/run
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
-    cp -as \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mkdir -p Quandenser_output/dinosaur
     mzML_file=\$(basename -s .mzML mzML/*)
+    cp \$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file* Quandenser_output/dinosaur/
     echo "FILE IS \$mzML_file"
-    find Quandenser_output/dinosaur/* ! -name "\$mzML_file*" -delete
   fi
   cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
   filename=\$(find mzML/* | xargs basename)
@@ -235,7 +228,29 @@ if (params.parallel_quandenser == false){
   percolator_workdir.deleteDir()  // Delete workdir
 }
 
-process quandenser_parallel_2 {  // About 30 seconds
+
+// necessary for --use-tmp-files flag
+tmp_workdir = file("${params.output_path}/work/tmp_${params.random_hash}")  // Path to working tmp directory
+result = tmp_workdir.mkdir()  // Create the directory
+
+// Copy old tmp files to work directory
+if (params.resume_directory != "") {
+  tmp_resume_files = file("${resume_directory}/tmp/*")  // Path to working tmp directory
+  if ( tmp_resume_files.isEmpty() ) {
+    // pass
+  } else {
+    tmp_resume_dir = file("${resume_directory}/tmp")  // Path to working tmp directory
+    tmp_workdir.deleteDir()  // Delete workdir
+    tmp_resume_dir.copyTo("${params.output_path}/work/tmp_${params.random_hash}")
+  }
+}
+if (params.parallel_quandenser == false){
+  tmp_workdir.deleteDir()  // Delete workdir
+}
+
+
+
+process quandenser_parallel_2 {
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   if( params.publish_quandenser == true ){
     publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
@@ -263,99 +278,81 @@ process quandenser_parallel_2 {  // About 30 seconds
   """
 }
 
+/*
+All alignments in a round can be processed in parallel, but we need to wait 
+for all the processes in the previous round to finish before starting the next.
+For this, we create a tree object, which countains all the rounds and how 
+many processes can run in parallel per round. We then create a feedback loop,
+which runs until the alignment queue is empty. All processes in a round run 
+async and will each input a value into the feedback channel. The buffer command 
+waits for all processes in a round to finish before starting the next round. 
+This is then piped to a function that spawns the exact amount of processes 
+needed for the next round.
+*/
+class Tree {
+  private int processed_alignments = -1; // set processed_alignments to be 0 after the dummy round
+  private int processed_alignments_current_round = 0;
+  private int current_round = -1; // Dummy round to get tree started
+  private Map tree_map;
+  public int num_rounds;
+  
+  int initialize(tree) {
+    tree_map = tree.countBy { it }; // create map with number of alignments per round
+    
+    num_rounds = tree_map.size();
+    tree_map[-1] = 0;  // Dummy round to get tree started
+    tree_map[num_rounds] = 0;  // Dummy round at end of the tree, prevents nextRound() to fail after last round
+    return 0;
+  }
+  
+  int alignmentFinished() {
+    processed_alignments++;
+    return ++processed_alignments_current_round;
+  }
+  
+  List nextRound() {
+    current_round++;
+    processed_alignments_current_round = 0;
+    return [processed_alignments] * tree_map[current_round];
+  }
+  
+  int currentRoundAlignments() {
+    return tree_map[current_round];
+  }
+}
+
+// Empty dummy channels if not parallel
+processing_tree = Channel.create()
+feedback_ch = Channel.create()  // This channel loops until max_rounds has been reached
+input_ch = Channel.create()
 if (params.parallel_quandenser == true){
   // This queue will create the file pairs
   feature_alignRetention_queue
       .collectFile()  // Get file, will wait for process to finish
       .map { it.text }  // Convert file to text
-      .splitText()  // Split text, each line in a seperate loop
-      // This is tricky. Split each line into a tuple, first which contains the rounds and the second with file pairs
+      .splitText()  // Split text by line
       .map { it -> [it.tokenize('\t')[0].toInteger(), [file(it.tokenize('\t')[1]),
-                                                       file(it.tokenize('\t')[2].replaceAll(/\n/, ''))]] }
-      .groupTuple()  // Combines the rounds into a nested tuple, aka all round 1 are in a tuple of tuples
-      .transpose()  // transpose the order, so it will be round 0 first, then round 1 in the correct queue
-      .into { processing_tree; processing_tree_copy }  // Add queue to channel
+                                                       file(it.tokenize('\t')[2])]] }
+      .into { processing_tree; processing_tree_copy }
 
-  // This queue will create the tree
-  feature_alignRetention_queue
-    .collectFile()  // Get file, will wait for process to finish
-    .map { it.text }  // Convert file to text
-    .splitText()  // Split text, each line in a seperate loop
-    .map { it -> it.tokenize('\t')[0].toInteger() }  // Get first value, it contains the rounds. Convert to int!
-    .countBy()  // Count depths and put into a map. Will output ex [0:1, 1:1, 2:2, 3:4, 4:1, 5:3 ...] Depends on tree
-    .subscribe{ tree_map=it; }
-    .map { it -> 0 }  // Tree map has now been defined, add 0 to queue to initialize tree_map channel
-    .into { wait_queue_2; wait_queue_2_copy }
+  tree = new Tree()
 
-  // Initialize first values, so they exist outside process
-  processed_files = [0]  // Value needs to be in list, to preserve changes made in sync variables
-  process sync_variables {
-    exectutor = 'local'
-    input:
-      val alignRetention_file from feature_alignRetention_queue  // Bug: Needs to be val
-      val wait2 from wait_queue_2
-    output:
-      val initial_range into sync_ch
-    exec:
-     current_depth = tree_map.size()
-     tree_map[current_depth] = 1  // Add 1 to the last value, to prevent premature stop
-     tree_map[-1] = tree_map[0]  // Initializiation of first values
-     initial_range = 0..<tree_map[0]  // Initial range
-
-     // Note: since we are starting with 0 processed files and we initialize with a range,
-     // set processed files to be exactly 0 for the first batch of files
-     processed_files[0] = -tree_map[0]
-
-     connections = 2*(total_spectras-1)
-     speed_increase = connections/(current_depth) * 100 - 100
-     println("Total connections = $connections")
-     println("Total rounds with parallel = ${current_depth}")
-     println("With the current tree, you will get a ${speed_increase.round(1)}% increase in speed with parallelization")
-  }
-
-  condition = { 1 == 0 }  // Stop when reaching max_depth
-  feedback_ch = Channel.create()  // This channel loop until max_depth has been reached
-
-  /* Okay, this one is tricky and needs an explanation
-  The problem was that I need to create a processing tree. Any amount of files in each round can be processed in parallel,
-  but we need to wait for all the previous processes to finish before we do the next batch of files. The files from previous rounds
-  needs to be accessible to the next rounds.
-  The solution is to create a feedback loop, so the process will loop until the file queue is empty (until command). However, since all processes
-  run async and will each input a value into the feedback channel, it will spawn the exact amount of processes which were started from
-  the beginning. I solved the issue by creating a tree map, which countains all the rounds and how many processes it can run in parallel.
-  Each process will submit a value, which is the next round that should be processed. The buffer command will wait for all processes
-  to finish before starting the next batch.
-  This is then piped to a function that creates list that is flattened, spawning the exact amount of processes needed before the next batch.
-
-  Note: ..< is needed, because if the value is 1 in tree map, I don't want 2 values, only 1 value
-  */
-  current_depth = -1
-  current_width = 0
-  input_ch = sync_ch  // Syncronization, aka wait until tree_map is defined
-    .flatten()  // Flatten input list
-    .mix( feedback_ch.until(condition) )  // Continously add until files have run out
-    .map { processed_files[0]++ }  // Add 1 to processed files for each emit from feedback_ch
-    .map { it -> current_width++; }  // Add 1 to current width and emit value to buffer
-    .buffer { it >= tree_map[current_depth] - 1}  // When width is more than width at tree
-    .map { it -> current_depth++; current_width = 0; current_depth}  // Add 1 to depth, pass on current depth
-    .flatMap { n -> 0..<tree_map[n] }  // Convert number to a list same size as amount of parallel processes
-    .map { it -> processed_files[0] }  // Convert range 0,1,2.... to processed_files (ex 5,5,5,5...)
-} else {
-  // Empty dummy channels if not parallel
-  processing_tree = Channel.create()
-  feedback_ch = Channel.create()
-  input_ch = Channel.create()
+  input_ch = processing_tree_copy
+    .collect{ it[0] } // Collect alignment round indexes in a list
+    .map{ it -> tree.initialize(it) }
+    .mix( feedback_ch )
+    .map { tree.alignmentFinished(); }  // Increment and return finished alignments
+    .buffer { it >= tree.currentRoundAlignments() }  // Check if all alignments in this round are done
+    .flatMap { tree.nextRound(); }
 }
 
+processing_tree_changed = Channel.from( 1 )
+input_ch_changed = Channel.from( 1 )
 if (params.parallel_quandenser_tree == true && params.parallel_quandenser == true) {
   processing_tree_changed = processing_tree
   input_ch_changed = input_ch
 } else if (params.parallel_quandenser == true) {
   processing_tree_changed = processing_tree.collect()
-  input_ch_changed = Channel.from( 1 )
-} else {
-  processing_tree_changed = Channel.from( 1 )
-  input_ch_changed = Channel.from( 1 )
 }
 
 process quandenser_parallel_3 {  // About 3 min/run
@@ -368,6 +365,7 @@ process quandenser_parallel_3 {  // About 3 min/run
     set val(depth), val(filepair) from processing_tree_changed  // Get a filepair from a round
     // This will replace percolator directory with a link to work directory percolator
     each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
+    each prev_tmp from Channel.fromPath("${params.output_path}/work/tmp_${params.random_hash}")
 
     // Access previous files from quandenser. Consider maracluster files as links, takes time to publish
     file "Quandenser_output/*" from quandenser_out_2_to_3.collect()
@@ -384,6 +382,7 @@ process quandenser_parallel_3 {  // About 3 min/run
     """
     echo "FILES: All of them"
     ln -s ${prev_percolator} Quandenser_output/percolator
+    ln -s ${prev_tmp} Quandenser_output/tmp
     quandenser --batch list.txt --parallel-3 99999 ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
     """
   else
@@ -392,7 +391,10 @@ process quandenser_parallel_3 {  // About 3 min/run
     echo "PROCESSED FILES BEFORE: ${feedback_val}"
     mkdir -p pair/file1; mkdir pair/file2
     ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
+    rm -rf Quandenser_output/percolator
     ln -s ${prev_percolator} Quandenser_output/percolator
+    rm -rf Quandenser_output/tmp
+    ln -s ${prev_tmp} Quandenser_output/tmp
     python -s /usr/local/bin/command_wrapper.py 'quandenser --batch list.txt --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
     """
 }
@@ -406,10 +408,11 @@ process quandenser_parallel_4 {
   input:
    file 'list.txt' from file_def
    each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
+   each prev_tmp from Channel.fromPath("${params.output_path}/work/tmp_${params.random_hash}")
    file("Quandenser_output/*") from quandenser_out_2_to_4.collect()
    val percolator_1 from percolator_1_completed.collect()
   output:
-   file("Quandenser_output/consensus_spectra/**") into spectra_parallel
+   file("Quandenser_output/consensus_spectra/*") into spectra_parallel
    file "Quandenser_output/*" into quandenser_out_parallel includeInputs true
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
@@ -417,11 +420,13 @@ process quandenser_parallel_4 {
   """
   rm -rf Quandenser_output/percolator
   ln -s ${prev_percolator} Quandenser_output/percolator  # Create link to publishDir
+  rm -rf Quandenser_output/tmp
+  ln -s ${prev_tmp} Quandenser_output/tmp
   quandenser --batch list.txt --parallel-4 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
-// Concate quandenser_out. We don't know which the user did, so we mix them
+// Concatenate quandenser_out. We don't know which the user did, so we mix them
 c1 = quandenser_out_normal
 c2 = quandenser_out_parallel
 quandenser_out = c1.concat(c2)
@@ -446,7 +451,7 @@ process tide_search {
     params.workflow == "Full"
   script:
   """
-  crux tide-index --missed-cleavages ${params.missed_clevages} --mods-spec ${params.mods_spec} --decoy-format protein-reverse ${params.crux_index_additional_arguments} seqdb.fa ${seq_index_name}
+  crux tide-index --missed-cleavages ${params.missed_cleavages} --mods-spec ${params.mods_spec} --decoy-format protein-reverse ${params.crux_index_additional_arguments} seqdb.fa ${seq_index_name}
   crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name} ${params.crux_search_additional_arguments}
   crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments}
   """

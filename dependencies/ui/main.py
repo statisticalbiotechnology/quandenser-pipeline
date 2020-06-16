@@ -48,7 +48,7 @@ class Main(QMainWindow):
         QFontDatabase.addApplicationFont("fonts/rockwell.ttf")
         self.resize(1000, 800)
 
-        # Check file integrety
+        # Check file integrity
         check_corrupt(config_path)
         self.paths = {}
         self.paths['config'] = f"{config_path}"
@@ -262,6 +262,6 @@ class Main(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setStyleSheet(qdarkstyle.load_stylesheet_pyside())  # Set dark style
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())  # Set dark style
     ex = Main() # Stack smashing happens BEFORE we reach here
     sys.exit(app.exec_())
