@@ -14,43 +14,6 @@ if (params.resume_directory != "") {
 
 file_def = file(params.batch_file)  // batch_file
 
-// change the path to where the database is and the batch file is if you are only doing msconvert
-if( params.workflow == "MSconvert" || params.workflow == "Quandenser" ) {
-  db_file = params.batch_file  // Will not be used, so junk name
-} else {
-  db_file = params.db
-}
-db = file(db_file)  // Sets "db" as the file defined above
-seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
-
-if (params.workflow == "MSconvert") {
-  spectra_in = Channel.from(1)  // This prevents name collision crash
-  
-  Channel  // non-mzML files with proper labeling which will be converted
-    .from(file_def.readLines())
-    .map { it -> it.tokenize('\t') }
-    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
-    .map { it -> file(it[0]) }
-    .into { spectra_convert }
-} else {
-  // Preprocessing file_list
-  Channel  // mzML files with proper labeling
-    .from(file_def.readLines())
-    .map { it -> it.tokenize('\t') }
-    .filter { it.size() > 1 }  // filters any input that is not <path> <label>
-    .filter { it[0].tokenize('.')[-1] == "mzML" }  // filters any input that is not .mzML
-    .map { it -> file(it[0]) }
-    .into { spectra_in }  // Puts the files into spectra_in  
-  
-  Channel  // non-mzML files with proper labeling which will be converted
-    .from(file_def.readLines())
-    .map { it -> it.tokenize('\t') }
-    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
-    .filter{ it[0].tokenize('.')[-1] != "mzML" }  // filters any input that is .mzML
-    .map { it -> file(it[0]) }
-    .into { spectra_convert }
-}
-
 // Replaces the lines of non-mzML with their corresponding converted mzML counterpart
 count = 0
 amount_of_non_mzML = 0
@@ -88,6 +51,40 @@ for( line in all_lines ){
 println("Total files = " + total_files)
 //println("Files that will be converted = " + amount_of_non_mzML)
 
+Channel  // non-mzML files with proper labeling which will be converted
+    .from(file_def.readLines())
+    .map { it -> it.tokenize('\t') }
+    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+    .map { it -> file(it[0]) }
+    .merge ( Channel.from(1..total_files) )
+    .set{ file_list }
+
+// change the path to where the database is and the batch file is if you are only doing msconvert
+if( params.workflow == "MSconvert" || params.workflow == "Quandenser" ) {
+  db_file = params.batch_file  // Will not be used, so junk name
+} else {
+  db_file = params.db
+}
+db = file(db_file)  // Sets "db" as the file defined above
+seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
+
+if (params.workflow == "MSconvert") {
+  spectra_in = Channel.from(1)  // This prevents name collision crash
+  
+  file_list.set { spectra_convert }
+} else {
+  file_list.into { file_list_mzML; file_list_non_mzML }
+  
+  // Preprocessing file_list
+  file_list_mzML
+    .filter { it[0].getExtension() == "mzML" }  // filters any input that is not .mzML
+    .set { spectra_in }  // Puts the files into spectra_in  
+  
+  file_list_non_mzML  // non-mzML files with proper labeling which will be converted
+    .filter{ it[0].getExtension() != "mzML" }  // filters any input that is .mzML
+    .set { spectra_convert }
+}
+
 file_params = file("$publish_output_path/params.txt")
 file_params << "$params" + '\n'  // need to add \n
 
@@ -113,9 +110,9 @@ process msconvert {
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_msconvert_max_forks
   input:
-    file f from spectra_convert_channel
+    set file(f), val(file_idx) from spectra_convert_channel
   output:
-    file("converted/*") into spectra_converted
+    set file("converted/*"), val(file_idx) into spectra_converted
   script:
   """
   mkdir -p converted
@@ -134,9 +131,9 @@ if ( params.boxcar_convert == true) {
     }
     containerOptions "$params.custom_mounts"
     input:
-      file('mzML/*') from combined_channel.collect()
+      set file('mzML/*'), val(file_idx) from combined_channel.collect()
     output:
-      file("mzML/boxcar_converted/*") into boxcar_channel
+      set file("mzML/boxcar_converted/*"), val(file_idx) into boxcar_channel
     script:
     """
     python -s /usr/local/bin/boxcar_converter.py mzML/ ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
@@ -147,10 +144,10 @@ if ( params.boxcar_convert == true) {
 }
 
 // Clone channel we created to use in multiple processes (one channel per process, no more)
-boxcar_channel.flatten().into {
-  combined_channel_normal
-  combined_channel_parallel_1
-  combined_channel_parallel_2
+boxcar_channel.into {
+  mzml_input_non_parallel
+  mzml_input_parallel_1
+  mzml_input_parallel_2
 }
 
 // Normal, non-parallel process
@@ -162,7 +159,7 @@ process quandenser {
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
-    file('mzML/*') from combined_channel_normal.collect()
+    file('mzML/*') from mzml_input_non_parallel.collect()
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
     file("Quandenser_output/consensus_spectra/**") into spectra_normal includeInputs true
@@ -179,20 +176,21 @@ process quandenser {
   """
 }
 
-process quandenser_parallel_1 {  // About 3 min/run
+process quandenser_parallel_1_dinosaur {  // About 3 min/run
   // Parallel 1: Take 1 file, run it throught dinosaur. Exit when done. Parallel process
   if( params.publish_quandenser == true ){
-    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+    publishDir publish_output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/dinosaur/*"
   }
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
   errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time runs out
   input:
     file 'list.txt' from file_def
-    file('mzML/*') from combined_channel_parallel_1
+    set file('mzML/*'), val(file_idx) from mzml_input_parallel_1
+    each prev_tmp from Channel.fromPath("${params.output_path}/work/tmp_${params.random_hash}")
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-    file "Quandenser_output/dinosaur/*" into quandenser_out_1_to_2_dinosaur includeInputs true
+    file "Quandenser_output/dinosaur/*" into quandenser_out_dinosaur includeInputs true
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
@@ -200,13 +198,15 @@ process quandenser_parallel_1 {  // About 3 min/run
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output/dinosaur
     mzML_file=\$(basename -s .mzML mzML/*)
-    cp \$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file* Quandenser_output/dinosaur/
+    cp -as \$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file* Quandenser_output/dinosaur/
+    if [ -e "\$(pwd)/Quandenser_output_resume/dinosaur/features.${file_idx-1}.dat" ]; then
+      cp -as \$(pwd)/Quandenser_output_resume/dinosaur/features.${file_idx-1}.dat Quandenser_output/dinosaur/
+    fi
     echo "FILE IS \$mzML_file"
   fi
-  cp -L list.txt modified_list.txt  # Need to copy not link, but a copy of file which I can modify
-  filename=\$(find mzML/* | xargs basename)
-  sed -i "/\$filename/!d" modified_list.txt
-  python -s /usr/local/bin/command_wrapper.py 'quandenser --batch modified_list.txt --parallel-1 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
+  rm -rf Quandenser_output/tmp
+  ln -s ${prev_tmp} Quandenser_output/tmp
+  python -s /usr/local/bin/command_wrapper.py 'quandenser --batch list.txt --partial-1-dinosaur ${file_idx} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
   """
 }
 
@@ -250,17 +250,17 @@ if (params.parallel_quandenser == false){
 
 
 
-process quandenser_parallel_2 {
+process quandenser_parallel_2_maracluster {
   // Parallel 2: Take all dinosaur files and run maracluster. Exit when done. Non-parallel process
   if( params.publish_quandenser == true ){
-    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/maracluster/*"
-    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/dinosaur/*"
+    publishDir publish_output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/maracluster/*"
   }
   containerOptions "$params.custom_mounts"
   input:
     file 'list.txt' from file_def
-    file('mzML/*') from combined_channel_parallel_2.collect()
-    file('Quandenser_output/dinosaur/*') from quandenser_out_1_to_2_dinosaur.collect()
+    file('mzML/*') from mzml_input_parallel_2.collect()
+    file('Quandenser_output/dinosaur/*') from quandenser_out_dinosaur.collect()
+    each prev_tmp from Channel.fromPath("${params.output_path}/work/tmp_${params.random_hash}")
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
     file "Quandenser_output/*" into quandenser_out_2_to_3, quandenser_out_2_to_4 includeInputs true
@@ -274,7 +274,9 @@ process quandenser_parallel_2 {
     mkdir -p Quandenser_output
     cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
-  quandenser --batch list.txt --parallel-2 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  rm -rf Quandenser_output/tmp
+  ln -s ${prev_tmp} Quandenser_output/tmp
+  quandenser --batch list.txt --partial-2-maracluster ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
@@ -290,9 +292,8 @@ This is then piped to a function that spawns the exact amount of processes
 needed for the next round.
 */
 class Tree {
-  private int processed_alignments = -1; // set processed_alignments to be 0 after the dummy round
   private int processed_alignments_current_round = 0;
-  private int current_round = -1; // Dummy round to get tree started
+  private int current_round = 0; // Dummy round to get tree started
   private Map tree_map;
   public int num_rounds;
   
@@ -300,20 +301,19 @@ class Tree {
     tree_map = tree.countBy { it }; // create map with number of alignments per round
     
     num_rounds = tree_map.size();
-    tree_map[-1] = 0;  // Dummy round to get tree started
-    tree_map[num_rounds] = 0;  // Dummy round at end of the tree, prevents nextRound() to fail after last round
+    tree_map[0] = 0;  // Dummy round to get tree started
+    tree_map[num_rounds+1] = 0;  // Dummy round at end of the tree, prevents nextRound() to fail after last round
     return 0;
   }
   
   int alignmentFinished() {
-    processed_alignments++;
     return ++processed_alignments_current_round;
   }
   
   List nextRound() {
     current_round++;
     processed_alignments_current_round = 0;
-    return [processed_alignments] * tree_map[current_round];
+    return [current_round] * tree_map[current_round];
   }
   
   int currentRoundAlignments() {
@@ -355,7 +355,7 @@ if (params.parallel_quandenser_tree == true && params.parallel_quandenser == tru
   processing_tree_changed = processing_tree.collect()
 }
 
-process quandenser_parallel_3 {  // About 3 min/run
+process quandenser_parallel_3_match_features {  // About 3 min/run
   // Parallel 3: matchFeatures. Parallel
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_quandenser_max_forks  // Defaults to infinite
@@ -395,14 +395,14 @@ process quandenser_parallel_3 {  // About 3 min/run
     ln -s ${prev_percolator} Quandenser_output/percolator
     rm -rf Quandenser_output/tmp
     ln -s ${prev_tmp} Quandenser_output/tmp
-    python -s /usr/local/bin/command_wrapper.py 'quandenser --batch list.txt --parallel-3 ${feedback_val + 1} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
+    python -s /usr/local/bin/command_wrapper.py 'quandenser --batch list.txt --partial-3-match-round ${feedback_val} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
     """
 }
 
-process quandenser_parallel_4 {
+process quandenser_parallel_4_consensus {
   // Parallel 4: Run through maracluster extra features. Non-parallel
   if( params.publish_quandenser == true ){
-    publishDir publish_output_path, mode: 'copy', overwrite: true,  pattern: "Quandenser_output/*"
+    publishDir publish_output_path, mode: 'copy', overwrite: false,  pattern: "Quandenser_output/*"
   }
   containerOptions "$params.custom_mounts"
   input:
@@ -422,7 +422,7 @@ process quandenser_parallel_4 {
   ln -s ${prev_percolator} Quandenser_output/percolator  # Create link to publishDir
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
-  quandenser --batch list.txt --parallel-4 true ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
+  quandenser --batch list.txt --partial-4-consensus ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
@@ -443,7 +443,7 @@ process tide_search {
   containerOptions "$params.custom_mounts"
   input:
   file 'seqdb.fa' from db
-  file ms2_files from spectra.collect()  // PS: Sensitive to naming (no blankspace, paranthesis and such)
+  file ms2_files from spectra.collect()  // N.B.: Sensitive to naming (no blankspace, parenthesis and such)
   output:
   file("crux-output/*") into id_files
   file("${seq_index_name}") into index_files

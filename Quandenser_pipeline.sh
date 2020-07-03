@@ -50,7 +50,7 @@ do
     # Check if user wants to install local scripts
     read_config_location="true"
   elif [ "$read_config_location" = "true" ]; then
-    read_config_location="false"
+    read_config_location="changed"
     if [[ -d $var ]]; then  # If it is an existing path, set it
       config_location=$(realpath "$var")
     else
@@ -231,23 +231,30 @@ fi
 
 if [ "$gui_free_installation" == "true" ]; then # Check if user wants to install local scripts and exit
   mkdir -p ./out
-  #base_url="$SCRIPTDIR/dependencies/ui/config/"
+  
+  #base_url="/home/matthewt/storage/quandenser-pipeline/dependencies/ui/config/"
   #cp $base_url/run_quandenser.sh ./
   #cp $base_url/run_quandenser.nf ./
   #cp $base_url/nextflow ./
   #cp $base_url/nf.config ./out/
+  
   base_url="https://raw.githubusercontent.com/statisticalbiotechnology/quandenser-pipeline/master/dependencies/ui/config/"
   wget -q $base_url/run_quandenser.sh
   wget -q $base_url/run_quandenser.nf
   wget -q $base_url/nextflow
   wget -qO ./out/nf.config $base_url/nf.config
+  
   chmod a+x run_quandenser.sh
   chmod a+x nextflow
   if [ ! -f file_list.txt ]; then
     echo -e "file1.mzML\tcase\nfile2.mzML\tcase\nfile3.mzML\tcontrol\nfile4.mzML\tcontrol" > file_list.txt
   fi
   
-  sed -i 's|CONFIG_LOCATION="/home/$USER/.quandenser_pipeline"|CONFIG_LOCATION=`pwd`|g' run_quandenser.sh
+  if [ "$read_config_location" == "changed" ]; then
+    sed -i "s|CONFIG_LOCATION=\"\"|CONFIG_LOCATION=\"${config_location}\"|g" run_quandenser.sh
+  else
+    sed -i 's|CONFIG_LOCATION=""|CONFIG_LOCATION=`pwd`|g' run_quandenser.sh
+  fi
   sed -i 's|OUTPUT_PATH=""|export OUTPUT_PATH=`pwd`/out|g' run_quandenser.sh
   if [ "$use_docker" == "true" ]; then
     sed -i 's|USE_DOCKER="false"|USE_DOCKER="true"|g' run_quandenser.sh
@@ -260,7 +267,7 @@ if [ "$gui_free_installation" == "true" ]; then # Check if user wants to install
   
   printf "${YELLOW}Installed scripts in current working directory.${RESET}"
   printf "${YELLOW}Please configure scripts by editing out/nf.config and run_quandenser.sh.${RESET}"
-  printf "${YELLOW}You will also need to edit the tab-delimited file, file_list.txt, specifying"
+  printf "${YELLOW}You will also need to edit the tab-delimited file, file_list.txt, specifying "
   printf "the files you want to process and their sample group.${RESET}"
   printf "${YELLOW}You will then be able to run the pipleline with run_quandenser.sh${RESET}"
   exit 0
