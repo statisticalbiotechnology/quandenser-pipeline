@@ -46,7 +46,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/ui /
    # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
    # This comes from quandenser-pipeline branch of quandenser
-#   dependencies/quandenser-v200508-linux-amd64.deb /
+   # dependencies/quandenser-v200508-linux-amd64.deb /
    # Boxcar converter
    dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
    # Command wrapper, which prevents some errors from occuring
@@ -117,7 +117,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
     echo "Installing dependencies for OpenGL and X11"
     # Qt dependencies
-    apt-get -y install build-essential cmake qt5-default libxml2 libxslt1.1 qtbase5-dev
+    apt-get -y install build-essential cmake qt5-default libxml2 libxslt1.1 qtbase5-dev libxcb-xinerama0
     apt-get -y install qttools5-dev-tools libqt5clucene5 libqt5concurrent5 libqt5core5a libqt5dbus5 libqt5designer5 libqt5designercomponents5 libqt5feedback5 libqt5gui5 libqt5help5 libqt5multimedia5 libqt5network5 libqt5opengl5 libqt5opengl5-dev libqt5organizer5 libqt5positioning5 libqt5printsupport5 libqt5qml5 libqt5quick5 libqt5quickwidgets5 libqt5script5 libqt5scripttools5 libqt5sql5 libqt5sql5-sqlite libqt5svg5 libqt5test5 libqt5webkit5 libqt5widgets5 libqt5xml5 libqt5xmlpatterns5 libqt5xmlpatterns5-dev
 
     # Downloading tmp files here
@@ -176,5 +176,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.0834"
+    VERSION="v0.0835"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
