@@ -15,12 +15,13 @@ from utils import ERROR
 
 class run_button(QPushButton):
 
-    def __init__(self, nf_settings_path, sh_script_path, pipe_path):
+    def __init__(self, nf_settings_path, sh_script_path, pipe_path, config_path):
         super(run_button,self).__init__(parent = None)
         self.setText('RUN')
         self.nf_settings_path = nf_settings_path
         self.sh_script_path = sh_script_path
         self.pipe_path = pipe_path
+        self.config_path = config_path
         #self.setStyleSheet("background-color:grey")  # Change color depending on if you can run or not
         self.clicked.connect(self.run)
 
@@ -47,6 +48,7 @@ class run_button(QPushButton):
             return 1
         # Change output parameters in both nf_settings and sh
         self.sh_parser.write("OUTPUT_PATH", output_path)  # In sh
+        self.sh_parser.write("CONFIG_LOCATION", self.config_path)  # In sh
         self.nf_settings_parser.write("params.output_path", output_path)  # In sh
 
         # OUTPUT_LABEL #

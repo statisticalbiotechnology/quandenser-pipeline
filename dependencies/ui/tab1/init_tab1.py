@@ -18,7 +18,7 @@ def init_tab1(paths):
     tab1_batch_file_viewer = batch_file_viewer(paths['nf'])
     tab1_output_chooser = file_chooser(paths['pipe'], type='directory')
     tab1_output_viewer = file_viewer(type='directory')
-    tab1_run_button = run_button(paths['nf'], paths['sh'], paths['pipe'])
+    tab1_run_button = run_button(paths['nf'], paths['sh'], paths['pipe'], paths['config'])
 
     tab1_layout.addWidget(tab1_fasta_chooser, 0, QtCore.Qt.AlignCenter)
     tab1_layout.addWidget(tab1_database_viewer)
