@@ -70,18 +70,31 @@ do
   elif [ "$var" = "--disable-update" ] || [ "$var" = "-U" ]; then 
     # Check if user has disabled updates or not
     disable_update="true"
-  elif [[ -d $var ]]; then  # If it is a path, add it to mount list
+  elif [ -d $var ]; then  # If it is a path, add it to mount list
     directories+=($var)
   fi
 done
 
+# Check dependencies
+{ jq --version && jq_ok="true" && :
+  } || { # catch
+  jq_ok="false"
+  printf "${RED}jq is not installed. You will not be able to automatically check for updates. Please download jq to enable this feature${RESET}"  
+}
+{ java --version && java_ok="true" && :
+  } || { # catch
+  java_ok="false"
+  printf "${RED}java is not installed, require root access. You will not be able to run the pipeline.${RESET}"
+  exit 1
+}
+
 mount_point=""  # Always start with mounting "mnt" directory
-for directory in directories; do
+for directory in "${directories[@]}"; do
   # Check mount points made by the user
   if [ "$use_docker" == "true" ]; then
-    mount_point+=" -v $var:$var"
+    mount_point+=" -v $directory:$directory"
   else
-    mount_point+=" --bind $var:$var"
+    mount_point+=" --bind $directory:$directory"
   fi
 done
 
@@ -97,7 +110,6 @@ else
     exit 1
   fi
 fi
-
 
 # Check if nvidia is installed
 {
@@ -117,7 +129,7 @@ if [ "$use_docker" == "true" ]; then
   fi
 else
   {
-    singularity --version && :
+    SINGULARITYVERSION=$(singularity --version) && :
   } || { # catch
     while true; do
       printf "${GREEN}Singularity is not installed. Y/y to install (requires sudo privileges) or N/n to cancel ${RESET}"
@@ -126,19 +138,27 @@ else
         # NOTE: it should be possible to install for just user (aka without sudo)
         # Perhaps in the future, it could be set so singularity is only installed for user --> no sudo required
         # However, all dependencies, such as squashfs-tools still need to be installed
-        printf "${GREEN}Installing Singularity${RESET}"
         {  # try
+          # Check dependencies
           sudo apt-get update && \
           sudo apt-get install -y build-essential \
-          libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git cryptsetup && \
-          export VERSION=1.11.4 OS=linux ARCH=amd64 && \ # change this as you need
-          wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
-          sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz && \
-          echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
-          echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+          libssl-dev uuid-dev libgpgme11-dev libseccomp-dev pkg-config squashfs-tools git cryptsetup
+          { go version && printf "${YELLOW}GO already installed${RESET}" :
+            } || { # catch
+            printf "${GREEN}Installing GO (to compile singularity)${RESET}"
+            export VERSION=1.11.4 OS=linux ARCH=amd64 && \ # change this as you need
+            wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+            sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+            echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
+            echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+            export GOPATH=${HOME}/go && \
+            export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin && \
+            source ~/.bashrc
+          }
+          # Latest tested is 3.4.1
+          printf "${GREEN}Installing Singularity${RESET}"
           export GOPATH=${HOME}/go && \
           export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin && \
-          source ~/.bashrc && \
           mkdir -p ${GOPATH}/src/github.com/sylabs && \
           cd ${GOPATH}/src/github.com/sylabs && \
           export SINGULARITYVERSION=3.4.1 && \
@@ -166,7 +186,10 @@ else
       fi
     done
   }
-  
+
+  echo $SINGULARITYVERSION
+  extract_v=$(echo $SINGULARITYVERSION | grep -oP '\K([0-9]+[.][0-9]+[.][0-9]+)')  # WIP check singularity version
+
   # Check if the image is installed
   if [ ! -f SingulQuand.SIF ]; then
     while true; do
@@ -176,7 +199,7 @@ else
       if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
         printf "${GREEN}Installing Singularity container${RESET}"
         {  # try
-          singularity pull SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline && \
+          singularity pull --name SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline && \
           printf "${GREEN}Singularity container successfully installed${RESET}"
         } || {
           printf "${RED}Downloading the container failed${RESET}"
@@ -193,7 +216,8 @@ else
   fi
   
   # Check for updates
-  if [ "$disable_update" == "false" ]; then
+  if [ "$disable_update" == "false" ] && [ "$jq_ok" == "true" ]; then
+    # Check jq dependency if updating
     # Check image version on singularity hub
     #VERSION_SINGHUB=$(GET http://singularity-hub.org/api/container/details/statisticalbiotechnology/quandenser-pipeline/ | jq -r '.metrics.inspect' | grep -m 1 -oP 'VERSION=\\"\K([^"\\]*)')
     VERSION_SINGHUB=$(curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest \
@@ -207,7 +231,7 @@ else
         printf "${YELLOW}A new update has been found ($VERSION_SIF -> $VERSION_SINGHUB). Do you want to install it? ${GREEN}Y/y ${YELLOW}or ${RED}N/n. ${BLUE}R/r${YELLOW} to read the changelog${RESET}"
         read accept
         if [ "$accept" = "y" ] || [ "$accept" = "Y" ]; then
-          singularity pull -F SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline
+          singularity pull -F --name SingulQuand.SIF shub://statisticalbiotechnology/quandenser-pipeline
           curl -s https://api.github.com/repos/statisticalbiotechnology/quandenser-pipeline/releases/latest \
           | jq --raw-output '.assets[0] | .browser_download_url' \
           | xargs wget -O $(basename $0) \
