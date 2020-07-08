@@ -195,8 +195,8 @@ process quandenser_parallel_1_dinosaur {  // About 3 min/run
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
   """
+  mkdir -p Quandenser_output/dinosaur
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output/dinosaur
     mzML_file=\$(basename -s .mzML mzML/*)
     cp -as \$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file* Quandenser_output/dinosaur/
     if [ -e "\$(pwd)/Quandenser_output_resume/dinosaur/features.${file_idx-1}.dat" ]; then
@@ -270,8 +270,8 @@ process quandenser_parallel_2_maracluster {
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true
   script:
   """
+  mkdir -p Quandenser_output
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
     cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
   rm -rf Quandenser_output/tmp
