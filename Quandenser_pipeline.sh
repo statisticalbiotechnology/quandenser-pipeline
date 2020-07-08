@@ -81,7 +81,7 @@ done
   jq_ok="false"
   printf "${RED}jq is not installed. You will not be able to automatically check for updates. Please download jq to enable this feature${RESET}"  
 }
-{ java --version && java_ok="true" && :
+{ java -version && java_ok="true" && :
   } || { # catch
   java_ok="false"
   printf "${RED}java is not installed, require root access. You will not be able to run the pipeline.${RESET}"
