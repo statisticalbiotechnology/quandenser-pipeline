@@ -10,8 +10,11 @@ exit_code=2
 pid=
 custom_mounts=
 started=
-disable-opengl=
+disable-opengl=true
 pwd=
 
 # HOST TO HOST
 last-dir=""
+
+# This can trigger a new PIPE update
+versionX=""
