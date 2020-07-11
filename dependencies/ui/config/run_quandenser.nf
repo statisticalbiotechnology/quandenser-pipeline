@@ -14,6 +14,30 @@ if (params.resume_directory != "") {
 
 file_def = file(params.batch_file)  // batch_file
 
+index = 1
+Channel  // non-mzML files with proper labeling which will be converted
+    .from(file_def.readLines())
+    .map { it -> it.tokenize('\t') }
+    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
+    .map { it -> [file(it[0]), index++] }  // Will index correcly, skips empty rows
+    .set{ file_list }
+
+if (params.workflow == "MSconvert") {  
+  spectra_in = Channel.from(1)  // This prevents name collision crash
+  file_list.set { spectra_convert }
+} else {
+  file_list.into { file_list_mzML; file_list_non_mzML }
+  
+  // Preprocessing file_list
+  file_list_mzML
+    .filter { it[0].getExtension() == "mzML" }  // filters any input that is not .mzML
+    .set { spectra_in }  // Puts the files into spectra_in  
+  
+  file_list_non_mzML  // non-mzML files with proper labeling which will be converted
+    .filter{ it[0].getExtension() != "mzML" }  // filters any input that is .mzML
+    .set { spectra_convert }
+}
+
 // Replaces the lines of non-mzML with their corresponding converted mzML counterpart
 count = 0
 amount_of_non_mzML = 0
@@ -41,23 +65,13 @@ file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")
 file_def_publish = file("$publish_output_path/file_list.txt")
 file_def.text = ""  // Clear file, if it exists
 file_def_publish.text = ""  // Clear file, if it exists
-total_files = 0
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
   file_def_publish << line + '\n'
-  total_files++
 }
 
-println("Total files = " + total_files)
+println("Total files = " + count)
 //println("Files that will be converted = " + amount_of_non_mzML)
-
-Channel  // non-mzML files with proper labeling which will be converted
-    .from(file_def.readLines())
-    .map { it -> it.tokenize('\t') }
-    .filter { it.size() > 1 }  // filters any input that is not <path> <X>
-    .map { it -> file(it[0]) }
-    .merge ( Channel.from(1..total_files) )
-    .set{ file_list }
 
 // change the path to where the database is and the batch file is if you are only doing msconvert
 if( params.workflow == "MSconvert" || params.workflow == "Quandenser" ) {
@@ -68,30 +82,13 @@ if( params.workflow == "MSconvert" || params.workflow == "Quandenser" ) {
 db = file(db_file)  // Sets "db" as the file defined above
 seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 
-if (params.workflow == "MSconvert") {
-  spectra_in = Channel.from(1)  // This prevents name collision crash
-  
-  file_list.set { spectra_convert }
-} else {
-  file_list.into { file_list_mzML; file_list_non_mzML }
-  
-  // Preprocessing file_list
-  file_list_mzML
-    .filter { it[0].getExtension() == "mzML" }  // filters any input that is not .mzML
-    .set { spectra_in }  // Puts the files into spectra_in  
-  
-  file_list_non_mzML  // non-mzML files with proper labeling which will be converted
-    .filter{ it[0].getExtension() != "mzML" }  // filters any input that is .mzML
-    .set { spectra_convert }
-}
-
 file_params = file("$publish_output_path/params.txt")
 file_params << "$params" + '\n'  // need to add \n
 
 if( params.parallel_msconvert == true ) {
   spectra_convert_channel = spectra_convert  // No collect = parallel processing, one file in each process
 } else {
-  spectra_convert_channel = spectra_convert.collect()  // Collect = everything is run in one process
+  spectra_convert_channel = spectra_convert  // Collect = everything is run in one process DISABLED AT THE MOMENT
 }
 
 process msconvert {
@@ -131,12 +128,12 @@ if ( params.boxcar_convert == true) {
     }
     containerOptions "$params.custom_mounts"
     input:
-      set file('mzML/*'), val(file_idx) from combined_channel.collect()
+      set file('mzML/*'), val(file_idx) from combined_channel
     output:
       set file("mzML/boxcar_converted/*"), val(file_idx) into boxcar_channel
     script:
     """
-    python -s /usr/local/bin/boxcar_converter.py mzML/ ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
+    python -s /usr/local/bin/boxcar_converter.py mzML/ -p non-parallel ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
     """
   }
 } else {
