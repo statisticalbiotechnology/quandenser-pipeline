@@ -147,9 +147,19 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     #cd ..
 
     echo "Installing crux"
-    wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
-    unzip -uq crux-3.2.Linux.x86_64.zip
-    cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
+
+    # Old. Problem with downloading at the moment
+    #wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
+    #unzip -uq crux-3.2.Linux.x86_64.zip
+    #cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
+
+    https://github.com/crux-toolkit/crux-toolkit.git
+    cd crux-toolkit
+    cmake .
+    make
+    make install
+    cd ..
+    rm -r crux-toolkit
 
     echo "Fixing timezones"
     offset=1
@@ -176,5 +186,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.0835"
+    VERSION="v0.0836"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"
