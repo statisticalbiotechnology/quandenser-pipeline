@@ -117,7 +117,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
     echo "Installing dependencies for OpenGL and X11"
     # Qt dependencies
-    apt-get -y install build-essential cmake qt5-default libxml2 libxslt1.1 qtbase5-dev libxcb-xinerama0
+    apt-get -y install build-essential cmake qt5-default libxml2 libxslt1.1 qtbase5-dev libxcb-xinerama0 gcc
     apt-get -y install qttools5-dev-tools libqt5clucene5 libqt5concurrent5 libqt5core5a libqt5dbus5 libqt5designer5 libqt5designercomponents5 libqt5feedback5 libqt5gui5 libqt5help5 libqt5multimedia5 libqt5network5 libqt5opengl5 libqt5opengl5-dev libqt5organizer5 libqt5positioning5 libqt5printsupport5 libqt5qml5 libqt5quick5 libqt5quickwidgets5 libqt5script5 libqt5scripttools5 libqt5sql5 libqt5sql5-sqlite libqt5svg5 libqt5test5 libqt5webkit5 libqt5widgets5 libqt5xml5 libqt5xmlpatterns5 libqt5xmlpatterns5-dev
 
     # Downloading tmp files here
@@ -148,18 +148,18 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
     echo "Installing crux"
 
-    # Old. Problem with downloading at the moment
-    #wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
-    #unzip -uq crux-3.2.Linux.x86_64.zip
-    #cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
+     Old. Problem with downloading at the moment
+    wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
+    unzip -uq crux-3.2.Linux.x86_64.zip
+    cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
 
-    git clone https://github.com/crux-toolkit/crux-toolkit.git
-    cd crux-toolkit
-    cmake .
-    make
-    make install
-    cd ..
-    rm -r crux-toolkit
+    #git clone https://github.com/crux-toolkit/crux-toolkit.git
+    #cd crux-toolkit
+    #cmake .
+    #make
+    #make install
+    #cd ..
+    #rm -r crux-toolkit
 
     echo "Fixing timezones"
     offset=1
