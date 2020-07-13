@@ -153,7 +153,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     #unzip -uq crux-3.2.Linux.x86_64.zip
     #cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
 
-    https://github.com/crux-toolkit/crux-toolkit.git
+    git clone https://github.com/crux-toolkit/crux-toolkit.git
     cd crux-toolkit
     cmake .
     make
