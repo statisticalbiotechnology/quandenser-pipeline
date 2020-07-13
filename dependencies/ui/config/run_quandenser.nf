@@ -146,12 +146,9 @@ sync_channel.into {
 
 // Index parallel channels 1 and 2
 index = 1
-index_channel.map { 
-  it -> [it[0], index++]
-}.into {
-  mzml_input_parallel_1
-  mzml_input_parallel_2
-}
+index_channel
+  .map { it -> [it, index++] }
+  .into { mzml_input_parallel_1; mzml_input_parallel_2 }
 
 // Normal, non-parallel process
 process quandenser {
