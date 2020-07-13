@@ -13,13 +13,13 @@ if (params.resume_directory != "") {
 }
 
 file_def = file(params.batch_file)  // batch_file
+file_def.copyTo("$publish_output_path/file_list.txt")
 
-index = 1
 Channel  // non-mzML files with proper labeling which will be converted
     .from(file_def.readLines())
     .map { it -> it.tokenize('\t') }
     .filter { it.size() > 1 }  // filters any input that is not <path> <X>
-    .map { it -> [file(it[0]), index++] }  // Will index correcly, skips empty rows
+    .map { it -> file(it[0]) }  // Will index correcly, skips empty rows
     .set{ file_list }
 
 if (params.workflow == "MSconvert") {  
@@ -30,11 +30,11 @@ if (params.workflow == "MSconvert") {
   
   // Preprocessing file_list
   file_list_mzML
-    .filter { it[0].getExtension() == "mzML" }  // filters any input that is not .mzML
+    .filter { it.getExtension() == "mzML" }  // filters any input that is not .mzML
     .set { spectra_in }  // Puts the files into spectra_in  
   
   file_list_non_mzML  // non-mzML files with proper labeling which will be converted
-    .filter{ it[0].getExtension() != "mzML" }  // filters any input that is .mzML
+    .filter{ it.getExtension() != "mzML" }  // filters any input that is .mzML
     .set { spectra_convert }
 }
 
@@ -62,12 +62,9 @@ for( line in all_lines ){
 
 // Create new batch file to use in work directory. Add the "corrected" raw to mzML paths here
 file_def = file("$params.output_path/work/file_list_${params.random_hash}.txt")
-file_def_publish = file("$publish_output_path/file_list.txt")
 file_def.text = ""  // Clear file, if it exists
-file_def_publish.text = ""  // Clear file, if it exists
 for( line in all_lines ){
   file_def << line + '\n'  // need to add \n
-  file_def_publish << line + '\n'
 }
 
 println("Total files = " + count)
@@ -85,11 +82,8 @@ seq_index_name = "${db.getName()}.index"  // appends "index" to the db filename
 file_params = file("$publish_output_path/params.txt")
 file_params << "$params" + '\n'  // need to add \n
 
-if( params.parallel_msconvert == true ) {
-  spectra_convert_channel = spectra_convert  // No collect = parallel processing, one file in each process
-} else {
-  spectra_convert_channel = spectra_convert  // Collect = everything is run in one process DISABLED AT THE MOMENT
-}
+spectra_convert_channel = spectra_convert  // No collect = parallel processing, one file in each process
+//spectra_convert_channel = spectra_convert  // Collect = everything is run in one process BETTER WITH PARALLEL, DEFAULT
 
 process msconvert {
   /* Note: quandenser needs the file_list with paths to the files.
@@ -101,15 +95,16 @@ process msconvert {
   */
   errorStrategy 'retry'  // If wine crashes for some reason, try again once
   publishDir "$params.output_path/work/converted_${params.random_hash}", mode: 'symlink', overwrite: true, pattern: "converted/*"
+  maxForks params.parallel_msconvert_max_forks  // Defaults to infinite
   if( params.publish_msconvert == true ){
     publishDir "$publish_output_path", mode: 'copy', overwrite: true, pattern: "converted/*"
   }
   containerOptions "$params.custom_mounts"
   maxForks params.parallel_msconvert_max_forks
   input:
-    set file(f), val(file_idx) from spectra_convert_channel
+    file(f) from spectra_convert_channel
   output:
-    set file("converted/*"), val(file_idx) into spectra_converted
+    file("converted/*") into spectra_converted
   script:
   """
   mkdir -p converted
@@ -123,14 +118,15 @@ combined_channel = spectra_in.concat(spectra_converted)
 if ( params.boxcar_convert == true) {
   process boxcar_convert {
     publishDir "$params.output_path/work/boxcar_converted_${params.random_hash}", mode: 'symlink', overwrite: true
+    maxForks params.parallel_boxcar_max_forks  // Defaults to infinite
     if( params.publish_boxcar_convert == true ){
       publishDir "$publish_output_path", mode: 'copy', overwrite: true
     }
     containerOptions "$params.custom_mounts"
     input:
-      set file('mzML/*'), val(file_idx) from combined_channel
+      file('mzML/*') from combined_channel
     output:
-      set file("mzML/boxcar_converted/*"), val(file_idx) into boxcar_channel
+      file("mzML/boxcar_converted/*") into boxcar_channel
     script:
     """
     python -s /usr/local/bin/boxcar_converter.py mzML/ -p non-parallel ${params.boxcar_convert_additional_arguments} 2>&1 | tee -a stdout.txt
@@ -140,9 +136,19 @@ if ( params.boxcar_convert == true) {
   boxcar_channel = combined_channel
 }
 
+sync_channel = boxcar_channel.collect()
+
 // Clone channel we created to use in multiple processes (one channel per process, no more)
-boxcar_channel.into {
+sync_channel.into {
   mzml_input_non_parallel
+  index_channel
+}
+
+// Index parallel channels 1 and 2
+index = 1
+index_channel.map { 
+  it -> [it[0], index++]
+}.into {
   mzml_input_parallel_1
   mzml_input_parallel_2
 }
