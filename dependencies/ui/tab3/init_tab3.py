@@ -30,7 +30,7 @@ def init_tab3(paths):
     tab3_boxcar_convert_publish = publish_checkbox('params.publish_boxcar_convert', paths['nf'])  # boxcar convert
     tab3_quandenser_arguments = additional_arguments('params.quandenser_additional_arguments', paths['nf'])  # quandenser
     tab3_quandenser_publish = publish_checkbox('params.publish_quandenser', paths['nf'])  # quandenser
-    tab3_parameter_missed_clevages = parameter_setter_single("params.missed_cleavages", paths['nf'])  # Crux
+    tab3_parameter_missed_cleavages = parameter_setter_single("params.missed_cleavages", paths['nf'])  # Crux
     tab3_parameter_precursor_window = parameter_setter_double("params.precursor_window", paths['nf'])  # Crux
     tab3_parameter_mods_spec = additional_arguments('params.mods_spec', paths['nf'])  # Crux
     tab3_crux_arguments = additional_arguments('params.crux_index_additional_arguments', paths['nf'])  # Crux
@@ -55,7 +55,7 @@ def init_tab3(paths):
     tab3_leftbox_layout.addRow(QLabel('Quandenser additional arguments'), tab3_quandenser_arguments)
     tab3_leftbox_layout.addRow(QLabel('Publish Quandenser files'), tab3_quandenser_publish)
     tab3_leftbox_layout.addRow(QLabel('<b>Crux'), QLabel())
-    tab3_leftbox_layout.addRow(QLabel('Missed clevages'), tab3_parameter_missed_clevages)
+    tab3_leftbox_layout.addRow(QLabel('Missed cleavages'), tab3_parameter_missed_cleavages)
     tab3_leftbox_layout.addRow(QLabel('Precursor window'), tab3_parameter_precursor_window)
     tab3_leftbox_layout.addRow(QLabel('Mods spec'), tab3_parameter_mods_spec)
     tab3_leftbox_layout.addRow(QLabel('Crux indexing additional arguments'), tab3_crux_index_arguments)
