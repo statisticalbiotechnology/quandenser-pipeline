@@ -148,7 +148,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 
     echo "Installing crux"
 
-     Old. Problem with downloading at the moment
+    # Old. Problem with downloading at the moment
     wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
     unzip -uq crux-3.2.Linux.x86_64.zip
     cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
