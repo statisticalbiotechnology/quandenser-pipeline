@@ -52,7 +52,7 @@ class batch_file_viewer(QTableWidget):
 
     def keyPressEvent(self, event):
         """Add functionallity to keyboard"""
-        if event.key() == 16777223:
+        if event.key() == QtCore.Qt.Key_Delete:  # 16777223
             for item in self.selectedItems():
                 item.setText('')
         elif event.key() == 16777221 or event.key() == 16777220:  # *.221 is right enter
