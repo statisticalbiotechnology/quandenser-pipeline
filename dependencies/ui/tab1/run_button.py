@@ -70,26 +70,32 @@ class run_button(QPushButton):
         # BATCH_FILE #
         child = parent.findChildren(QTableWidget)[0]
         full_table = []
+        errors = []
         for row in range(child.rowCount()):
-            if not child.item(row, 0).text() == '':
+            if child.item(row, 0).text() == ' ':
+                child.item(row, 0).setText('')
+            f = child.item(row, 0).text()
+            if f != '' and f != ' ':
                 if not os.path.isfile(child.item(row, 0).text()):
-                    ERROR(f"File in row {row} does not exist")
-                    return 1
+                    errors.append(f"File {f} in row {row+1} does not exist")
                 elif self.nf_settings_parser.get('params.workflow') in ["MSconvert", "Quandenser"] and child.item(row, 1).text() == '':
                     label = 'A'  # Add junk labeling
                 elif child.item(row, 1).text() == '' and self.nf_settings_parser.get('params.workflow') == "Full":
-                    ERROR(f"File in row {row} is missing a label (Full workflow enabled)")
-                    return 1
+                    errors.append(f"File {f} in row {row+1} is missing a label (Full workflow enabled)")
                 elif child.item(row, 1).text() != '':
                     label = child.item(row, 1).text()
-                input_string = child.item(row, 0).text() + '\t' + label + '\n'
+                input_string = f + '\t' + label + '\n'
                 full_table.append(input_string)
         if full_table == []:
-            ERROR('No files choosen')
+            errors.append('No files choosen')
+        if errors != []:
+            errors = '\n'.join(errors)
+            ERROR(errors)
             return 1
-        with open(f"{output_path}/file_list.txt", 'w') as file:
+
+        with open(f"{output_path}/file_list.txt", 'w') as fp:
             for line in full_table:
-                file.write(line)
+                fp.write(line)
         batch_file_path = f"{output_path}/file_list.txt"
         self.nf_settings_parser.write("params.batch_file", batch_file_path)
 
