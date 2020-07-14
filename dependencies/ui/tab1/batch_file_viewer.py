@@ -52,7 +52,9 @@ class batch_file_viewer(QTableWidget):
 
     def keyPressEvent(self, event):
         """Add functionallity to keyboard"""
-        if event.key() == QtCore.Qt.Key_Delete:  # 16777223
+        # Mac OS specifics
+        is_mac_os_delete = (event.key() == QtCore.Qt.Key_H and event.modifiers() == QtCore.Qt.ControlModifier)
+        if event.key() == QtCore.Qt.Key_Delete or is_mac_os_delete:  # 16777223
             for item in self.selectedItems():
                 item.setText('')
         elif event.key() == 16777221 or event.key() == 16777220:  # *.221 is right enter
@@ -125,6 +127,10 @@ class batch_file_viewer(QTableWidget):
         label = self.item(row, 1)
         if label is None or msfile is None:  # NOTE: item == None will give NotImplementedError. Must use "is"
             return  # This might remove some weird errors in the future
+
+        # Fix for adding empty spaces
+        if msfile.text() == ' ':
+            msfile.setText('')
 
         # Ms file
         if not os.path.isfile(msfile.text()):
