@@ -75,25 +75,10 @@ class choose_option(QComboBox):
                         w.default()
 
     def parallel_option(self):  # Will trigger on tab change
-        if not hasattr(self, 'max_forks_widget') and self.parameter != 'parallel_quandenser_tree':
-            self.max_forks_widget = parameter_setter_single(f"{self.parameter}_max_forks", self.settings_file)
-            self.label = tooltip_label(f"Max forks {self.parameter.replace('_', ' ')}",
-                                       "Maximum amount of parallel processes. Set to 0 for no limit")
-            parent = self.parent().layout()
-            parent.addRow(self.label, self.max_forks_widget)
-            self.max_forks_widget.hide()
-            self.label.hide()
-        if self.currentText() == "true" and self.parameter != 'parallel_quandenser_tree':
-            self.max_forks_widget.show()
-            self.label.show()
-        elif self.parameter != 'parallel_quandenser_tree':
-            self.max_forks_widget.hide()
-            self.label.hide()
-
         if not hasattr(self, 'quandenser_tree') and self.parameter == 'parallel_quandenser':
             self.quandenser_tree = choose_option(f"{self.parameter}_tree", self.settings_file)
             self.tree_label = tooltip_label(f"Quandenser tree parallelization",
-                                             """EXPERIMENTAL: Enable this to run parallel_3 in parallel. This may cause unforseen crashes""")
+                                             """Enable this to run parallel_3 in parallel""")
             parent = self.parent().layout()
             parent.addRow(self.tree_label, self.quandenser_tree)
             self.quandenser_tree.hide()

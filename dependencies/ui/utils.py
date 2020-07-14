@@ -8,7 +8,7 @@ from PySide2.QtWidgets import QMessageBox
 import json
 
 # Custom parser
-from custom_config_parser import custom_config_parser
+import custom_config_parser as custom_config_parser
 from tooltip_label import tooltip_label
 
 def ERROR(message):
@@ -23,8 +23,8 @@ def WARNING(message):
 
 def check_corrupt(config_path):
     # Check for corrupt files/old/missing
-    installed_parser = custom_config_parser()
-    packed_parser = custom_config_parser()
+    installed_parser = custom_config_parser.custom_config_parser()
+    packed_parser = custom_config_parser.custom_config_parser()
 
     if not os.path.isdir(f"{config_path}"):
         WARNING(f"Missing config directory {config_path}. Initalizing directory")
@@ -37,43 +37,43 @@ def check_corrupt(config_path):
              "run_quandenser.nf",
              "run_quandenser.sh",
              "nextflow"]
-    for file in files:
+    for f in files:
         corrupted = False
-        if not os.path.isfile(f"{config_path}/{file}"):
-            WARNING(f"Missing file {file}. Installing file")
-            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
-            os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
-            if file == "run_quandenser.sh":
+        if not os.path.isfile(f"{config_path}/{f}"):
+            WARNING(f"Missing file {f}. Installing file")
+            shutil.copyfile(f"config/{f}", f"{config_path}/{f}")
+            os.chmod(f"{config_path}/{f}", 0o700)  # Only user will get access
+            if f == "run_quandenser.sh":
                 # CONFIG DIRECTORY #
-                sh_parser = custom_config_parser()
-                sh_parser.load(f"{config_path}/{file}")
+                sh_parser = custom_config_parser.custom_config_parser()
+                sh_parser.load(f"{config_path}/{f}")
                 sh_parser.write("CONFIG_LOCATION", f"{config_path}")  # In sh
         else:  # check corrupt/old versions of config
-            if (file.split('.')[-1] in ['config', 'sh'] or file == 'PIPE') and file != 'ui.config':
-                installed_parser.load(f"{config_path}/{file}")
+            if (f.split('.')[-1] in ['config', 'sh'] or f == 'PIPE') and f != 'ui.config':
+                installed_parser.load(f"{config_path}/{f}")
                 installed_parameters = installed_parser.get_params()
-                packed_parser.load(f"config/{file}")
+                packed_parser.load(f"config/{f}")
                 packed_parameters = packed_parser.get_params()
                 if not installed_parameters == packed_parameters:
                     corrupted = True
-            elif file == "nf.config":  # Check for old versions
-                lines = open(f"{config_path}/{file}", 'r').readlines()
+            elif f == "nf.config":  # Check for old versions
+                lines = open(f"{config_path}/{f}", 'r').readlines()
                 if not any("slurm_cluster" in line for line in lines):  # Very specific
                     corrupted=True
             else:
-                if not filecmp.cmp(f"{config_path}/{file}", f"config/{file}") and file not in ['ui.config', 'jobs.txt']:  # check if files are the same
+                if not filecmp.cmp(f"{config_path}/{f}", f"config/{f}") and f not in ['ui.config', 'jobs.txt']:  # check if files are the same
                     corrupted = True
 
         if corrupted:
-            WARNING(f"Detected old or corrupt version of {file}. Replacing file")
-            os.remove(f"{config_path}/{file}")
-            shutil.copyfile(f"config/{file}", f"{config_path}/{file}")
-            os.chmod(f"{config_path}/{file}", 0o700)  # Only user will get access
+            WARNING(f"Detected old or corrupt version of {f}. Replacing file")
+            os.remove(f"{config_path}/{f}")
+            shutil.copyfile(f"config/{f}", f"{config_path}/{f}")
+            os.chmod(f"{config_path}/{f}", 0o700)  # Only user will get access
 
 def check_running(config_path):
-    pipe_parser = custom_config_parser()
+    pipe_parser = custom_config_parser.custom_config_parser()
     pipe_parser.load(f"{config_path}/PIPE")
-    sh_parser = custom_config_parser()
+    sh_parser = custom_config_parser.custom_config_parser()
     sh_parser.load(f"{config_path}/run_quandenser.sh")
 
     exit_code = int(pipe_parser.get("exit_code"))

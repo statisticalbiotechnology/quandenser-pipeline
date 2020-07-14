@@ -23,5 +23,9 @@ class parameter_setter_single(QSpinBox):
         self.blockSignals(False)
 
     def default(self):
-        value = int(self.nf_settings_parser.get(f"params.{self.parameter}"))
+        value = self.nf_settings_parser.get(f"params.{self.parameter}")
+        try:
+            value = int(value)
+        except:
+            return None
         self.setValue(value)

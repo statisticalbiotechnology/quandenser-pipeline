@@ -33,15 +33,19 @@ def init_tab2(paths):
     tab2_choose_option_workflow = choose_option('workflow', paths['nf'])
     tab2_choose_option_boxcar_convert = choose_option('boxcar_convert', paths['nf'])
     tab2_choose_option_profile = choose_option('profile', paths['sh'])
-    tab2_choose_option_parallel_msconvert = choose_option('parallel_msconvert', paths['nf'])
     tab2_choose_option_parallel_quandenser = choose_option('parallel_quandenser', paths['nf'])
+    tab2_max_forks_quandenser = parameter_setter_single('parallel_quandenser_max_forks', paths['nf'])
+    tab2_max_forks_msconvert = parameter_setter_single('parallel_msconvert_max_forks', paths['nf'])
+    tab2_max_forks_boxcar = parameter_setter_single('parallel_boxcar_max_forks', paths['nf'])
 
     # Always visible
     tab2_leftbox_top_layout.addRow(QLabel('Choose workflow'), tab2_choose_option_workflow)
     tab2_leftbox_top_layout.addRow(QLabel('Profile'), tab2_choose_option_profile)
     tab2_leftbox_top_layout.addRow(QLabel('Enable boxcar conversion'), tab2_choose_option_boxcar_convert)
-    tab2_leftbox_top_layout.addRow(QLabel('Enable parallel MSconvert'), tab2_choose_option_parallel_msconvert)
     tab2_leftbox_top_layout.addRow(QLabel('Enable parallel quandenser'), tab2_choose_option_parallel_quandenser)
+    tab2_leftbox_top_layout.addRow(QLabel('Max forks msconvert convert'), tab2_max_forks_msconvert)
+    tab2_leftbox_top_layout.addRow(QLabel('Max forks boxcar'), tab2_max_forks_boxcar)
+    tab2_leftbox_top_layout.addRow(QLabel('Max forks quandenser'), tab2_max_forks_quandenser)
     tab2_leftbox_top_layout.addRow(filler, filler)  # Empty space
     tab2_leftbox_layout.addWidget(tab2_leftbox_top)
 
