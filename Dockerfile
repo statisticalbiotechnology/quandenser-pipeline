@@ -68,7 +68,9 @@ COPY --from=qp-dep-quandenser-pwiz /tmp/build/ubuntu64/tools /tmp/build/ubuntu64
 RUN apt-get update && \
     apt-get --no-install-recommends -y install \
       git ca-certificates sudo wget rsync bzip2
-    
+
+ADD https://api.github.com/repos/statisticalbiotechnology/quandenser/git/refs/heads/quandenser-pipeline version.json
+
 RUN echo "Installing quandenser" && \
     cd /tmp && \
     export DEBIAN_FRONTEND=noninteractive && \
