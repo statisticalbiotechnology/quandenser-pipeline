@@ -200,7 +200,9 @@ process quandenser_parallel_1_dinosaur {  // About 3 min/run
   mkdir -p Quandenser_output/dinosaur
   if [ -n "${params.resume_directory}" ]; then
     mzML_file=\$(basename -s .mzML mzML/*)
-    cp -as \$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file* Quandenser_output/dinosaur/
+    if [ -e "\$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file.features.tsv" ]; then
+      cp -as \$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file.features.tsv Quandenser_output/dinosaur/
+    fi
     if [ -e "\$(pwd)/Quandenser_output_resume/dinosaur/features.${file_idx-1}.dat" ]; then
       cp -as \$(pwd)/Quandenser_output_resume/dinosaur/features.${file_idx-1}.dat Quandenser_output/dinosaur/
     fi
@@ -545,7 +547,7 @@ process quandenser_parallel_4_consensus {
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
+    mkdir -p Quandenser_output\$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file.features.tsv
     cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
   fi
   rm -rf Quandenser_output/tmp
