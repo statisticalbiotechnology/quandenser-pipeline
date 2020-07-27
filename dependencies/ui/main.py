@@ -113,6 +113,7 @@ class Main(QMainWindow):
                             child.change_stack()
                         elif hasattr(child, 'parallel_option') and 'parallel' in child.parameter:
                             child.parallel_option()
+                            child.change_stack()
                     else:
                         recurse_children(child)
 

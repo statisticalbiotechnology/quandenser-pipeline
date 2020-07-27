@@ -50,6 +50,8 @@ class choose_option(QComboBox):
     def change_stack(self):
         parent = self.parentWidget()
         # Check if parallel quandenser is enabled
+        quandenser_parallel = 'false'
+        maracluster_parallel = 'false'
         for child in parent.children():
             if hasattr(child, 'parameter'):
                 if child.parameter == 'parallel_quandenser':

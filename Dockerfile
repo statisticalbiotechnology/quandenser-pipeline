@@ -145,7 +145,7 @@ RUN echo "Installing packages with apt-get" && \
     export DEBIAN_FRONTEND=noninteractive && \
     mkdir -p /usr/share/man/man1 && \
     apt-get update && \
-    apt-get  --no-install-recommends -y install default-jre libxkbcommon-x11-0 libgomp1 && \
+    apt-get  --no-install-recommends -y install default-jre libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libgomp1 && \
     rm -rf \
       /var/lib/apt/lists/* \
       /usr/share/doc \
