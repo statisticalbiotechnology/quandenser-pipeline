@@ -327,7 +327,7 @@ process quandenser_parallel_2_maracluster_parallel_2_pvalue {
     file('Quandenser_output/maracluster/*') from maracluster_out_1_to_2.collect()
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-    file "Quandenser_output/maracluster/${datFile}.pvalue_tree.tsv" into maracluster_out_2_to_3, maracluster_out_2_to_4
+    file "Quandenser_output/maracluster/${datFile}.pvalue*" into maracluster_out_2_to_3, maracluster_out_2_to_4
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true && params.parallel_maracluster == true
   script:
@@ -628,7 +628,7 @@ process quandenser_parallel_4_consensus_parallel_2_pvalue {
     
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-    file "Quandenser_output/maracluster_extra_features/${datFile}.pvalue_tree.tsv" into consensus_out_2_to_3, consensus_out_2_to_4
+    file "Quandenser_output/maracluster_extra_features/${datFile}.pvalue*" into consensus_out_2_to_3, consensus_out_2_to_4
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true && params.parallel_maracluster == true
   script:
