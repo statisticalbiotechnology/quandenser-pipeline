@@ -271,8 +271,10 @@ process quandenser_parallel_2_maracluster {
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mkdir -p Quandenser_output/maracluster
+    if [ -d \$(pwd)/Quandenser_output_resume/maracluster ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster/* Quandenser_output/maracluster/
+    fi
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -297,10 +299,12 @@ process quandenser_parallel_2_maracluster_parallel_1_index {
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true && params.parallel_maracluster == true
   script:
   """
-  mkdir -p Quandenser_output
   if [ -n "${params.resume_directory}" ]; then
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
-    rm Quandenser_output/maracluster/*.pvalue_tree.tsv
+    mkdir -p Quandenser_output/maracluster
+    if [ -d \$(pwd)/Quandenser_output_resume/maracluster ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster/* Quandenser_output/maracluster/
+    fi
+    rm -f Quandenser_output/maracluster/*.pvalue_tree.tsv
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -333,8 +337,10 @@ process quandenser_parallel_2_maracluster_parallel_2_pvalue {
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mkdir -p Quandenser_output/maracluster
+    if [ -e "\$(pwd)/Quandenser_output_resume/maracluster/${datFile}.pvalue_tree.tsv" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster/${datFile}.pvalue* Quandenser_output/maracluster/
+    fi
   fi
   quandenser --batch list.txt --partial-2-maracluster pvalue:${datFile} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
@@ -361,14 +367,16 @@ process quandenser_parallel_2_maracluster_parallel_3_overlap {
     file("Quandenser_output/maracluster/*") from maracluster_out_2_to_3.collect()
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-    file "Quandenser_output/maracluster/overlap.${overlapBatchIdx}.pvalue_tree.tsv" into maracluster_out_3_to_4
+    file "Quandenser_output/maracluster/overlap.${overlapBatchIdx}.pvalue*" into maracluster_out_3_to_4
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true && params.parallel_maracluster == true
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mkdir -p Quandenser_output/maracluster
+    if [ -e "\$(pwd)/Quandenser_output_resume/maracluster/overlap.${overlapBatchIdx}.pvalue_tree.tsv" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster/overlap.${overlapBatchIdx}.pvalue* Quandenser_output/maracluster/
+    fi
   fi
   quandenser --batch list.txt --partial-2-maracluster overlap:${overlapBatchIdx} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
@@ -394,8 +402,10 @@ process quandenser_parallel_2_maracluster_parallel_4_cluster {
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mkdir -p Quandenser_output/maracluster
+    if [ -d "\$(pwd)/Quandenser_output_resume/maracluster" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster/* Quandenser_output/maracluster/
+    fi
   fi
   quandenser --batch list.txt --partial-2-maracluster cluster ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt
   """
@@ -455,8 +465,10 @@ if (params.parallel_quandenser == true){
       .collectFile()  // Get file, will wait for process to finish
       .map { it.text }  // Convert file to text
       .splitText()  // Split text by line
-      .map { it -> [it.tokenize('\t')[0].toInteger(), [file(it.tokenize('\t')[1]),
-                                                       file(it.tokenize('\t')[2])]] }
+      .map { it -> [it.tokenize('\t')[0].toInteger(), 
+                     [file(it.tokenize('\t')[1]), file(it.tokenize('\t')[2])],
+                     [it.tokenize('\t')[3].toInteger(), it.tokenize('\t')[4].toInteger()]
+                   ] }
       .into { processing_tree; processing_tree_copy }
 
   tree = new Tree()
@@ -486,7 +498,7 @@ process quandenser_parallel_3_match_features {  // About 3 min/run
   errorStrategy 'retry'  // If actor cell does something stupid, this should retry it once on clusters when the time run out
   input:
     file 'list.txt' from file_def
-    set val(depth), val(filepair) from processing_tree_changed  // Get a filepair from a round
+    set val(depth), val(filepair), val(fileidxs) from processing_tree_changed  // Get a filepair from a round
     // This will replace percolator directory with a link to work directory percolator
     each prev_percolator from Channel.fromPath("${params.output_path}/work/percolator_${params.random_hash}")
     each prev_tmp from Channel.fromPath("${params.output_path}/work/tmp_${params.random_hash}")
@@ -516,11 +528,17 @@ process quandenser_parallel_3_match_features {  // About 3 min/run
     echo "PROCESSED FILES BEFORE: ${feedback_val}"
     mkdir -p pair/file1; mkdir pair/file2
     ln -s ${filepair[0]} pair/file1/; ln -s ${filepair[1]} pair/file2/
-    rm -rf Quandenser_output/percolator
+    
+    shopt -s extglob
+    rm Quandenser_output/dinosaur/!("features.${fileidxs[0]}.dat"|"features.${fileidxs[1]}.dat")
+    rm Quandenser_output/maracluster/!("featureAlignmentQueue.txt"|"alignRetention.txt")
+    
     ln -s ${prev_percolator} Quandenser_output/percolator
-    rm -rf Quandenser_output/tmp
     ln -s ${prev_tmp} Quandenser_output/tmp
     python -s /usr/local/bin/command_wrapper.py 'quandenser --batch list.txt --partial-3-match-round ${feedback_val} ${params.quandenser_additional_arguments} 2>&1 | tee -a stdout.txt'
+    
+    rm -f Quandenser_output/percolator/search_and_link_${fileidxs[0]}_to_${fileidxs[1]}.psms.pout.dinosaur_targets.tsv
+    rm -f Quandenser_output/percolator/search_and_link_${fileidxs[0]}_to_${fileidxs[1]}.psms.pout_dinosaur/*.csv
     """
 }
 
@@ -547,8 +565,10 @@ process quandenser_parallel_4_consensus {
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output\$(pwd)/Quandenser_output_resume/dinosaur/\$mzML_file.features.tsv
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    mkdir -p Quandenser_output
+    if [ -d "\$(pwd)/Quandenser_output_resume/maracluster_extra_features" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster_extra_features/* Quandenser_output/maracluster_extra_features/
+    fi
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -589,9 +609,11 @@ process quandenser_parallel_4_consensus_parallel_1_index {
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
-    mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
-    rm Quandenser_output/maracluster_extra_features/*.pvalue_tree.tsv
+    mkdir -p Quandenser_output/maracluster_extra_features
+    if [ -d "\$(pwd)/Quandenser_output_resume/maracluster_extra_features" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster_extra_features/* Quandenser_output/maracluster_extra_features/
+    fi
+    rm -f Quandenser_output/maracluster_extra_features/*.pvalue_tree.tsv
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -635,7 +657,9 @@ process quandenser_parallel_4_consensus_parallel_2_pvalue {
   """
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    if [ -e "\$(pwd)/Quandenser_output_resume/maracluster_extra_features/${datFile}.pvalue_tree.tsv" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster_extra_features/${datFile}.pvalue* Quandenser_output/maracluster_extra_features/
+    fi
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -674,14 +698,16 @@ process quandenser_parallel_4_consensus_parallel_3_overlap {
     
     file('Quandenser_output_resume') from resume_directory  // optional
   output:
-    file "Quandenser_output/maracluster_extra_features/overlap.${overlapBatchIdx}.pvalue_tree.tsv" into consensus_out_3_to_4
+    file "Quandenser_output/maracluster_extra_features/overlap.${overlapBatchIdx}.pvalue*" into consensus_out_3_to_4
   when:
     (params.workflow == "Full" || params.workflow == "Quandenser") && params.parallel_quandenser == true && params.parallel_maracluster == true
   script:
   """
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    if [ -e "\$(pwd)/Quandenser_output_resume/maracluster_extra_features/overlap.${overlapBatchIdx}.pvalue_tree.tsv" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster_extra_features/overlap.${overlapBatchIdx}.pvalue* Quandenser_output/maracluster_extra_features/
+    fi
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -718,7 +744,9 @@ process quandenser_parallel_4_consensus_parallel_4_cluster {
   """
   if [ -n "${params.resume_directory}" ]; then
     mkdir -p Quandenser_output
-    cp -asf \$(pwd)/Quandenser_output_resume/* Quandenser_output/
+    if [ -d "\$(pwd)/Quandenser_output_resume/maracluster_extra_features" ]; then
+      cp -asf \$(pwd)/Quandenser_output_resume/maracluster_extra_features/* Quandenser_output/maracluster_extra_features/
+    fi
   fi
   rm -rf Quandenser_output/tmp
   ln -s ${prev_tmp} Quandenser_output/tmp
@@ -741,24 +769,24 @@ process tide_search {
   }
   containerOptions "$params.custom_mounts"
   input:
-  file 'seqdb.fa' from db
-  file ms2_files from spectra.collect()  // N.B.: Sensitive to naming (no blankspace, parenthesis and such)
+    file 'seqdb.fa' from db
+    file ms2_files from spectra.collect()  // N.B.: Sensitive to naming (no blankspace, parenthesis and such)
   output:
-  file("crux-output/*") into id_files
-  file("${seq_index_name}") into index_files
+    file("crux-output/*") into id_files
+    file("${seq_index_name}") into index_files
   when:
     params.workflow == "Full"
   script:
   """
-  crux tide-index --missed-cleavages ${params.missed_cleavages} --mods-spec ${params.mods_spec} --decoy-format protein-reverse ${params.crux_index_additional_arguments} seqdb.fa ${seq_index_name}
-  crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name} ${params.crux_search_additional_arguments}
-  crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments}
+  crux tide-index --missed-cleavages ${params.missed_cleavages} --mods-spec ${params.mods_spec} --decoy-format protein-reverse ${params.crux_index_additional_arguments} seqdb.fa ${seq_index_name} 2>&1 | tee -a stdout.txt
+  crux tide-search --precursor-window ${params.precursor_window} --precursor-window-type ppm --overwrite T --concat T ${ms2_files} ${seq_index_name} ${params.crux_search_additional_arguments} 2>&1 | tee -a stdout.txt
+  crux percolator --top-match 1 crux-output/tide-search.txt ${params.crux_percolator_additional_arguments} 2>&1 | tee -a stdout.txt
   """
 }
 
 process triqler {
   if( params.publish_triqler == true ){
-    publishDir "$publish_output_path/triqler_output", mode: 'copy', pattern: "*proteins.*",overwrite: true
+    publishDir publish_output_path, mode: 'copy', pattern: "triqler_output/*", overwrite: false
   }
   containerOptions "$params.custom_mounts"
   input:
@@ -766,13 +794,15 @@ process triqler {
     file("crux-output/*") from id_files.collect()
     file 'list.txt' from file_def
   output:
-    file("*proteins.*") into triqler_output
-    file("triqler.zip") into triqler_zip_output
+    file("triqler_output/*") into triqler_output
+    file("triqler_output/triqler.zip") into triqler_zip_output
   when:
     params.workflow == "Full"
   script:
   """
-  python -s /usr/local/bin/prepare_input.py -l list.txt -f Quandenser_output/Quandenser.feature_groups.tsv -i crux-output/percolator.target.psms.txt,crux-output/percolator.decoy.psms.txt -q triqler_input.tsv
+  mkdir -p triqler_output
+  cd triqler_output
+  python -m triqler.convert.quandenser --file_list_file ../list.txt --psm_files ../crux-output/percolator.target.psms.txt,../crux-output/percolator.decoy.psms.txt --out_file triqler_input.tsv --retain_unidentified ../Quandenser_output/Quandenser.feature_groups.tsv 2>&1 | tee -a stdout.txt
   python -sm triqler --fold_change_eval ${params.fold_change_eval} triqler_input.tsv ${params.triqler_additional_arguments} 2>&1 | tee -a stdout.txt
   zip triqler.zip *.tsv *.csv -x "triqler_input*"
   """

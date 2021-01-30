@@ -13,10 +13,11 @@ sleep_time = 6
 
 def main():
     print(f"running command: {args.command}")
-    process = subprocess.Popen(args.command,
+    process = subprocess.Popen("set -o pipefail; " + args.command,
                                shell=True,
-                               preexec_fn=os.setsid)
-                               # For some goddamned reason, it seems this fixed the hanging
+                               preexec_fn=os.setsid, # For some reason, it seems this fixed the hanging
+                               executable='/bin/bash')
+                               
 
     checker = {'msconvert': False,
                'dinosaur': False}
@@ -33,13 +34,14 @@ def main():
         with open('debug.txt', 'a') as debug_file:
             debug_file.write(f"Killing process and it's children")
             debug_file.write(str(e))
-        p = psutil.Process(process.pid)
-        children = p.children(recursive=True)
-        for child in children:
-            with open('debug.txt', 'a') as debug_file:
-                debug_file.write(str(child) + '\n')
-            child.kill()
-        p.kill()
+        if psutil.pid_exists(process.pid):
+          p = psutil.Process(process.pid)
+          children = p.children(recursive=True)
+          for child in children:
+              with open('debug.txt', 'a') as debug_file:
+                  debug_file.write(str(child) + '\n')
+              child.kill()
+          p.kill()
         exit(1)
 
 def check_error(checker, process):
@@ -84,7 +86,10 @@ def check_error(checker, process):
             break  # If process had stopped, exit here
     if process.returncode != 0:
         stdout, stderr = process.communicate()
-        raise Exception(f"ERROR CAUGHT: Unknown error. Stderr:\n {stderr.decode('utf-8')}")
+        if stderr:
+          raise Exception(f"ERROR CAUGHT: Unexpected error. Exit code: {process.returncode}. Stderr:\n {stderr.decode('utf-8')}")
+        else:
+          raise Exception(f"ERROR CAUGHT: Unexpected error. Exit code: {process.returncode}")
     print("Process finished")
     return 0
 
