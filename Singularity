@@ -46,7 +46,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
    dependencies/ui /
    # Due to some bugs in quandenser, the modified quandenser version will be used instead in an effort to fix the bugs
    # This comes from quandenser-pipeline branch of quandenser
-   dependencies/quandenser-v0-02-linux-amd64.deb /
+   # dependencies/quandenser-v200508-linux-amd64.deb /
    # Boxcar converter
    dependencies/boxcar_converter.py /usr/local/bin/boxcar_converter.py
    # Command wrapper, which prevents some errors from occuring
@@ -61,7 +61,7 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     rm -r ui/
     chmod -R a+x /var/local/quandenser_ui/*  # So everybody can access the files
 
-    echo "Installling packages with apt-get"
+    echo "Installing packages with apt-get"
     apt-get update
     apt-get -y install wget
     wget -nc https://dl.winehq.org/wine-builds/winehq.key  # Add key, since it does not exist in image.
@@ -69,6 +69,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     apt-get update
     apt-get -y install default-jre git unzip bzip2 nano curl zip gcc
     apt-get -y install libcanberra-gtk-module libcanberra-gtk3-module
+    apt-get -y install build-essential zlib1g-dev libssl-dev  # For building python
+    apt-get -y install maven  # For building quandenser
 
     echo "Updating nextflow"
     #curl -s https://get.nextflow.io | bash
@@ -89,16 +91,20 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     chmod a+rx /usr/local/bin/link_wine.sh  # also set so everybody can link with the script
 
     echo "Installing python 3.6"
-#    add-apt-repository ppa:jonathonf/python-3.6  # Add repo for python 3.6
-    add-apt-repository ppa:deadsnakes/ppa
-    apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6 python3.6-dev
+    cd $(mktemp -d)
+    wget -nc https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
+    tar -xvf Python-3.6.3.tgz
+    cd Python-3.6.3
+    ./configure
+    make
+    make install
+    # DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6 python3.6-dev
     wget -nc https://bootstrap.pypa.io/get-pip.py
     python3.6 get-pip.py
-    ln -sf /usr/bin/python3.6 /usr/local/bin/python
+    ln -sf /usr/local/bin/python3 /usr/local/bin/python
     ln -sf /usr/local/bin/pip /usr/local/bin/pip3
 
-    echo "Installling packages with pip"
+    echo "Installing packages with pip"
     # psutil requires gcc
     pip install psutil
     pip install PySide2
@@ -107,34 +113,36 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     pip install matplotlib
     pip install numpy
     pip install tqdm
-    apt-get -y install python3.6-tk
+    #apt-get -y install python3.6-tk
 
-    echo "Installling dependencies for OpenGL and X11"
+    echo "Installing dependencies for OpenGL and X11"
     # Qt dependencies
-    apt-get -y install build-essential cmake qt5-default libxml2 libxslt1.1 qtbase5-dev
+    apt-get -y install build-essential cmake qt5-default libxml2 libxslt1.1 qtbase5-dev libxcb-xinerama0 gcc
     apt-get -y install qttools5-dev-tools libqt5clucene5 libqt5concurrent5 libqt5core5a libqt5dbus5 libqt5designer5 libqt5designercomponents5 libqt5feedback5 libqt5gui5 libqt5help5 libqt5multimedia5 libqt5network5 libqt5opengl5 libqt5opengl5-dev libqt5organizer5 libqt5positioning5 libqt5printsupport5 libqt5qml5 libqt5quick5 libqt5quickwidgets5 libqt5script5 libqt5scripttools5 libqt5sql5 libqt5sql5-sqlite libqt5svg5 libqt5test5 libqt5webkit5 libqt5widgets5 libqt5xml5 libqt5xmlpatterns5 libqt5xmlpatterns5-dev
 
     # Downloading tmp files here
     cd $(mktemp -d)
 
-    echo "Installling quandenser"
-    # Use wget when quandenser has fixed the bugs
-    #wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
-    dpkg -i /quandenser-v0-02-linux-amd64.deb
+    echo "Installing quandenser"
+    # wget -nc https://github.com/statisticalbiotechnology/quandenser/releases/download/rel-0-01/quandenser-v0-01-linux-amd64.deb
+    git clone --recursive https://github.com/statisticalbiotechnology/quandenser.git
+    cd quandenser
+    # git checkout e07136fdc1ba5fd61f2b41462ef19a82847824aa
+    git checkout quandenser-pipeline
+    git submodule update --recursive
+    ./quickbuild.sh
+    cd ..
+    dpkg -i ./release/ubuntu64/quandenser-*-linux-amd64.deb
     # Weird stuff with permissions. Fixing
     chmod 755 /usr/bin/quandenser
     chmod 755 /usr/share/java/advParams_dinosaur_targeted.txt
-    chmod 755 /usr/share/java/Dinosaur-1.1.3.free.jar
+    chmod 755 /usr/share/java/Dinosaur-*.free.jar
     apt-get install -f
 
-    echo "Installling triqler (quandenser-pipeline version)"
+    echo "Installing triqler (quandenser-pipeline version)"
     pip install triqler
-    #git clone -b quandenser-pipeline https://github.com/statisticalbiotechnology/triqler.git
-    #cd triqler
-    #pip install .
-    #cd ..
 
-    echo "Installling crux"
+    echo "Installing crux"
     wget -nc https://noble.gs.washington.edu/crux-downloads/crux-3.2/crux-3.2.Linux.x86_64.zip  # -nc checks if it exist
     unzip -uq crux-3.2.Linux.x86_64.zip
     cp -f crux-3.2.Linux.x86_64/bin/crux /usr/local/bin/
@@ -164,5 +172,5 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
 %runscript
     GREEN="\033[1;92m"
     RESET="\033[0m\n"
-    VERSION="v0.0831"
+    VERSION="v0.0837"
     printf "${GREEN}Quandenser-pipeline ${VERSION}${RESET}"

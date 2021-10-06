@@ -50,10 +50,14 @@ class choose_option(QComboBox):
     def change_stack(self):
         parent = self.parentWidget()
         # Check if parallel quandenser is enabled
+        quandenser_parallel = 'false'
+        maracluster_parallel = 'false'
         for child in parent.children():
             if hasattr(child, 'parameter'):
                 if child.parameter == 'parallel_quandenser':
                     quandenser_parallel = child.currentText()
+                elif child.parameter == 'parallel_maracluster':
+                    maracluster_parallel = child.currentText()
                 elif child.parameter == 'profile':
                     profile = child.currentText()
 
@@ -61,9 +65,11 @@ class choose_option(QComboBox):
             current_stack = 0
         elif quandenser_parallel == 'false':
             current_stack = 1
-        elif quandenser_parallel == 'true':
+        elif quandenser_parallel == 'true' and maracluster_parallel == 'false':
             current_stack = 2
-
+        elif quandenser_parallel == 'true' and maracluster_parallel == 'true':
+            current_stack = 3
+        
         parent = parent.parentWidget()  # To get to hidden box, widget is 2 levels up
         children = parent.children()
         for child in children:
@@ -75,35 +81,43 @@ class choose_option(QComboBox):
                         w.default()
 
     def parallel_option(self):  # Will trigger on tab change
-        if not hasattr(self, 'max_forks_widget') and self.parameter != 'parallel_quandenser_tree':
-            self.max_forks_widget = parameter_setter_single(f"{self.parameter}_max_forks", self.settings_file)
-            self.label = tooltip_label(f"Max forks {self.parameter.replace('_', ' ')}",
-                                       "Maximum amount of parallel processes. Set to 0 for no limit")
-            parent = self.parent().layout()
-            parent.addRow(self.label, self.max_forks_widget)
-            self.max_forks_widget.hide()
-            self.label.hide()
-        if self.currentText() == "true" and self.parameter != 'parallel_quandenser_tree':
-            self.max_forks_widget.show()
-            self.label.show()
-        elif self.parameter != 'parallel_quandenser_tree':
-            self.max_forks_widget.hide()
-            self.label.hide()
-
         if not hasattr(self, 'quandenser_tree') and self.parameter == 'parallel_quandenser':
-            self.quandenser_tree = choose_option(f"{self.parameter}_tree", self.settings_file)
+            self.quandenser_tree = choose_option(f"parallel_quandenser_tree", self.settings_file)
             self.tree_label = tooltip_label(f"Quandenser tree parallelization",
-                                             """EXPERIMENTAL: Enable this to run parallel_3 in parallel. This may cause unforseen crashes""")
+                                             """Enable this to run parallel_3 in parallel""")
+            self.parallel_maracluster = choose_option('parallel_maracluster', self.settings_file)
+            self.parallel_maracluster_label = tooltip_label(f"Enable parallel maracluster",
+                                             """Enable this to run parallel_2 in parallel""")
+            self.max_forks_maracluster = parameter_setter_single('parallel_maracluster_max_forks', self.settings_file)
+            self.max_forks_maracluster_label = tooltip_label(f"Max forks maracluster",
+                                             """Set maximum number of forks for parallel_2""")
+            
             parent = self.parent().layout()
             parent.addRow(self.tree_label, self.quandenser_tree)
+            parent.addRow(self.parallel_maracluster_label, self.parallel_maracluster)
+            parent.addRow(self.max_forks_maracluster_label, self.max_forks_maracluster)
+            
             self.quandenser_tree.hide()
             self.tree_label.hide()
+            self.parallel_maracluster_label.hide()
+            self.parallel_maracluster.hide()
+            self.max_forks_maracluster_label.hide()
+            self.max_forks_maracluster.hide()
+        
         if self.currentText() == "true" and self.parameter == 'parallel_quandenser':
             self.quandenser_tree.show()
             self.tree_label.show()
+            self.parallel_maracluster_label.show()
+            self.parallel_maracluster.show()
+            self.max_forks_maracluster_label.show()
+            self.max_forks_maracluster.show()
         elif self.parameter == 'parallel_quandenser':
             self.quandenser_tree.hide()
             self.tree_label.hide()
+            self.parallel_maracluster_label.hide()
+            self.parallel_maracluster.hide()
+            self.max_forks_maracluster_label.hide()
+            self.max_forks_maracluster.hide()
 
     def default(self):
         if self.parameter == 'profile':

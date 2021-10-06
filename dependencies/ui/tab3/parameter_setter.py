@@ -11,9 +11,9 @@ class parameter_setter_single(QSpinBox):
         self.nf_settings_parser = custom_config_parser()
         self.nf_settings_parser.load(self.nf_settings_path)
         self.parameter = parameter
-        if self.parameter == "params.missed_clevages":
+        if self.parameter == "params.missed_cleavages":
             self.setMaximum(500)
-            self.setSuffix(" clevages")
+            self.setSuffix(" cleavages")
         elif self.parameter == "params.max_missing":
             self.setMaximum(1000)
             self.setSuffix(" features")
@@ -30,7 +30,11 @@ class parameter_setter_single(QSpinBox):
         self.blockSignals(False)
 
     def default(self):
-        value = int(self.nf_settings_parser.get(f"{self.parameter}"))
+        value = self.nf_settings_parser.get(f"{self.parameter}")
+        try:
+            value = int(value)
+        except:
+            return None
         self.setValue(value)
 
 class parameter_setter_double(QDoubleSpinBox):
@@ -57,5 +61,9 @@ class parameter_setter_double(QDoubleSpinBox):
         self.blockSignals(False)
 
     def default(self):
-        value = float(self.nf_settings_parser.get(f"{self.parameter}"))
+        value = self.nf_settings_parser.get(f"{self.parameter}")
+        try:
+            value = float(value)
+        except:
+            return None
         self.setValue(value)

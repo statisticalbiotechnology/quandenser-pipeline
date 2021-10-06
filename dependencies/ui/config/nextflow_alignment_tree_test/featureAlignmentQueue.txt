@@ -1,0 +1,16 @@
+0	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C1.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C2.mzML	6	7
+1	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B3.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B2.mzML	5	4
+1	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C2.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C3.mzML	7	8
+2	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B2.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A2.mzML	4	1
+2	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C3.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A3.mzML	8	2
+3	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A2.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A1.mzML	1	0
+3	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A3.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A1.mzML	2	0
+3	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B1.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A1.mzML	3	0
+4	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A1.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A2.mzML	0	1
+4	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A1.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A3.mzML	0	2
+4	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A1.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B1.mzML	0	3
+5	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A2.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B2.mzML	1	4
+5	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/A3.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C3.mzML	2	8
+6	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B2.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/B3.mzML	4	5
+6	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C3.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C2.mzML	8	7
+7	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C2.mzML	/media/hdd/matthew/mergespec/data/iPRG2016/mzML/C1.mzML	7	6
