@@ -89,7 +89,8 @@ From:chambm/wine-dotnet:4.7-x64  # Prebuilt, WIP trying to convert to Ubuntu 18.
     chmod a+rx /usr/local/bin/link_wine.sh  # also set so everybody can link with the script
 
     echo "Installing python 3.6"
-    add-apt-repository ppa:jonathonf/python-3.6  # Add repo for python 3.6
+#    add-apt-repository ppa:jonathonf/python-3.6  # Add repo for python 3.6
+    add-apt-repository ppa:deadsnakes/ppa
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get -y install python3.6 python3.6-dev
     wget -nc https://bootstrap.pypa.io/get-pip.py
